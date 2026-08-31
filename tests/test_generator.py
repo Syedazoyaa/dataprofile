@@ -1,4 +1,5 @@
-from app.generator import CITY_STATES, generate_profiles
+from app.generator import generate_profiles
+from app.geography import COUNTRIES
 from app.schemas import PROFILE_COLUMNS
 
 def test_schema_is_meaningful_and_complete():
@@ -19,5 +20,5 @@ def test_determinism_uniqueness_and_constraints():
     for profile in first:
         assert 16 <= profile["age"] <= 78
         assert profile["monthly_savings"] <= profile["monthly_income"]
-        assert profile["state"] == CITY_STATES[profile["city"]]
+        assert profile["currency"] == COUNTRIES[profile["country"]]["currency"]
         assert profile["years_of_experience"] <= profile["age"] - 16

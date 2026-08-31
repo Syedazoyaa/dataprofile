@@ -19,3 +19,12 @@ def test_invalid_request_controls_are_rejected():
     assert client.post("/generate", json={"persona": "not a persona"}).status_code == 422
     assert client.post("/generate", json={"preferred_language": "Klingon"}).status_code == 422
     assert client.post("/generate", json={"format": "xml"}).status_code == 422
+    assert client.post("/generate", json={"country": "Atlantis"}).status_code == 422
+
+def test_global_and_specific_country_generation():
+    specific = client.post("/generate", json={"count": 2, "seed": 7, "country": "Japan"})
+    assert specific.status_code == 200
+    assert {p["country"] for p in specific.json()["profiles"]} == {"Japan"}
+    global_result = client.post("/generate", json={"count": 20, "seed": 7, "country_mode": "global"})
+    assert global_result.status_code == 200
+    assert len({p["country"] for p in global_result.json()["profiles"]}) > 1

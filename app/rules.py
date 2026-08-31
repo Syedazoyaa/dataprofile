@@ -1,12 +1,176 @@
-def validate_profile(profile: dict) -> None:
-    """Explicit generation-time constraints; never use assert for validation."""
-    required = {"profile_id", "age", "life_stage", "annual_income", "monthly_income", "monthly_expenses", "monthly_savings"}
-    missing = required - profile.keys()
-    if missing: raise ValueError(f"Profile is missing required fields: {sorted(missing)}")
-    if not 16 <= profile["age"] <= 78: raise ValueError("Age is outside the supported range")
-    if profile["monthly_savings"] < 0 or profile["monthly_savings"] > profile["monthly_income"]: raise ValueError("Savings are inconsistent with monthly income")
-    if profile["life_stage"] == "Teenager" and profile["employment_status"] not in {"School student", "Student"}: raise ValueError("Teenager employment is inconsistent")
-    if profile["life_stage"] == "University Student" and profile["career_level"] != "None": raise ValueError("Student career level is inconsistent")
-    if profile["life_stage"] == "Retired" and profile["employment_status"] != "Retired": raise ValueError("Retired life stage is inconsistent")
-    if profile["age"] < 20 and profile["number_of_children"] > 0: raise ValueError("Child count is implausible for age")
-    if profile["years_of_experience"] > max(0, profile["age"] - 16): raise ValueError("Experience exceeds age-derived maximum")
+from .geography import COUNTRIES
+
+# Rank maps for behavioral coherence (ordinal 1-5)
+TRAIT_RANK = {
+    "Very low":1, "Low":2, "Moderate":3, "High":4, "Very high":5,
+    "Technology cautious":1, "Technology practical":2, "Technology comfortable":3, "Technology enthusiastic":4, "Technology leading":5,
+    "Price insensitive":1, "Slightly price aware":2, "Price conscious":3, "Price sensitive":4, "Highly price sensitive":5,
+    "Health disengaged":1, "Health aware":2, "Health balanced":3, "Health focused":4, "Highly health focused":5,
+}
+FREQ_RANK = {"Never":1, "Rarely":2, "Occasionally":3, "Frequently":4, "Very frequently":5}
+INTEREST_RANK = {"Not interested":1, "Slightly interested":2, "Moderately interested":3, "Interested":4, "Highly interested":5}
+LEVEL_RANK = {"Low":1, "Moderate":2, "High":3}
+
+def _rank(value, mapping):
+    return mapping.get(value, 3)
+
+def _behavioral_coherence(profile: dict) -> dict:
+    """Compute heuristic behavioral alignment scores 0-1 (not realism claims).
+    Each dimension compares upstream driver vs downstream observable probabilistically.
+    Scores are transparent linear distances, not learned models.
+    """
+    scores = {}
+    # Age / life stage alignment
+    age = profile.get("age", 0)
+    life = profile.get("life_stage", "")
+    expected = "Teenager" if age<18 else "University Student" if age<23 else "Early Career" if age<30 else "Established Professional" if age<40 else "Mid-Career" if age<52 else "Senior Professional" if age<64 else "Retired"
+    scores["age_life_stage_alignment"] = 1.0 if life==expected else 0.45  # allow some flexibility for edge ages
+
+    # Age / education alignment (years_of_education plausible)
+    yoe = profile.get("years_of_education", 10)
+    edu = profile.get("education_level","")
+    # Teenager must be school, student undergrad etc already hard-checked; soft score for adults
+    if life in {"Teenager","University Student","Retired"}:
+        scores["age_education_alignment"] = 1.0
+    else:
+        # Postgraduate should be >=17 etc already enforced; score high if plausible
+        plausible = (edu=="School education" and yoe==10) or (edu!="School education" and yoe>=12)
+        scores["age_education_alignment"] = 1.0 if plausible else 0.6
+
+    # Education / career alignment
+    # Higher education weakly associated with higher career_level (probabilistic, not deterministic)
+    career = profile.get("career_level","Early")
+    edu_rank = {"School education":1, "Professional diploma":2, "Undergraduate":3, "Postgraduate":4}.get(edu,2)
+    career_rank = {"None":0, "Early":1, "Mid-level":2, "Senior":3, "Leadership":4, "Former professional":2}.get(career,1)
+    # Alignment is not strict: score reduces only if strong mismatch (e.g., School+Leadership with no experience is less coherent)
+    exp = profile.get("years_of_experience",0)
+    if edu_rank <=1 and career_rank >=4 and exp < 12:
+        scores["education_career_alignment"] = 0.55
+    elif edu_rank >=4 and career_rank <=1 and exp > 8:
+        scores["education_career_alignment"] = 0.62
+    else:
+        scores["education_career_alignment"] = 0.92
+
+    # Career / income alignment (income should roughly increase with career+experience+education)
+    income = profile.get("annual_income",0)
+    country = profile.get("country","India")
+    scale = COUNTRIES.get(country, {}).get("income",900000)
+    income_factor = income / (scale*2.8) if scale else 0
+    expected_factor = 0.15 + career_rank*0.14 + min(exp,20)/50*0.25  # heuristic expected
+    diff = abs(income_factor - expected_factor)
+    scores["career_income_alignment"] = max(0.45, 1 - diff*1.4)
+
+    # Financial alignment (expenses <= income, savings rate plausible with planning)
+    savings_rate = profile.get("savings_rate",0)
+    planning_rank = _rank(profile.get("planning_orientation","Moderate"), TRAIT_RANK)
+    # High planning should correlate with higher savings, but probabilistically
+    # Score high if savings_rate in [0.05,0.45] for most, zero only if income zero
+    if income==0:
+        scores["financial_alignment"] = 1.0 if savings_rate==0 else 0.5
+    else:
+        # Check expenses consistency already hard; behavioral: savings_rate vs planning
+        # Expect planning High => savings >=0.15 somewhat
+        expected_savings = 0.12 + (planning_rank-3)*0.04
+        diff2 = abs(savings_rate - expected_savings)
+        scores["financial_alignment"] = max(0.55, 1 - diff2*2.2)
+
+    # Family / household alignment
+    marital = profile.get("marital_status","Single")
+    children = profile.get("number_of_children",0)
+    hsize = profile.get("household_size",1)
+    # Household should be at least 1+spouse+children (+possible parents)
+    min_expected = 1 + (1 if marital=="Married" else 0) + children
+    if hsize < min_expected: scores["family_household_alignment"] = 0.35
+    elif hsize > min_expected+2: scores["family_household_alignment"] = 0.78  # extended family plausible but slight mismatch
+    else: scores["family_household_alignment"] = 1.0
+
+    # Personality / behavior alignment (trait vs observable)
+    # Tech affinity vs digital adoption & smartphone usage
+    tech_r = _rank(profile.get("technology_affinity","Moderate"), TRAIT_RANK)
+    dig_r = _rank(profile.get("digital_adoption","Moderate"), TRAIT_RANK) if "digital_adoption" in profile else 3
+    # digital_adoption stored as label "Technology leading" etc? Actually traits all label-mapped, but digital_adoption is also label? In generator we map all traits via _trait_label, so digital_adoption label is generic Very low..Very high, not tech-specific. Use TRAIT_RANK generic.
+    # For compatibility, treat both via TRAIT_RANK
+    tech_digital_diff = abs(tech_r - dig_r)/4
+    scores["personality_tech_alignment"] = max(0.45, 1 - tech_digital_diff*1.1)
+    # Health orientation vs wellness behavior
+    health_r = _rank(profile.get("health_orientation","Moderate"), TRAIT_RANK)
+    wellness_freq = _rank(profile.get("wellness_fitness_usage_frequency_score","Occasionally"), FREQ_RANK)
+    # Map health 1-5 vs wellness freq 1-5
+    health_wellness_diff = abs(health_r - wellness_freq)/4
+    scores["personality_health_alignment"] = max(0.50, 1 - health_wellness_diff*0.95)
+    # Price sensitivity vs discount/brand behavior
+    price_r = _rank(profile.get("price_sensitivity","Moderate"), TRAIT_RANK) if "Highly price sensitive" in str(profile.get("price_sensitivity")) or "Price" in str(profile.get("price_sensitivity")) else _rank(profile.get("price_sensitivity","Moderate"), TRAIT_RANK)
+    # Actually price_sensitivity label is price-specific, rank via TRAIT_RANK works
+    discount_r = _rank(profile.get("discount_sensitivity","Moderate"), LEVEL_RANK) if profile.get("discount_sensitivity") in LEVEL_RANK else 2
+    # Convert LEVEL 1-3 to 1-5 scale: Low=1, Moderate=3, High=5 approx
+    level_to_5 = {1:1, 2:3, 3:5}
+    discount_5 = level_to_5.get(discount_r,3)
+    price_discount_diff = abs(price_r - discount_5)/4
+    scores["personality_price_alignment"] = max(0.50, 1 - price_discount_diff*0.9)
+    # Social orientation vs social frequency
+    social_r = _rank(profile.get("social_orientation","Moderate"), TRAIT_RANK)
+    msg_r = _rank(profile.get("messaging_frequency","Occasionally"), FREQ_RANK)
+    # scale msg 1-5 vs social 1-5
+    social_msg_diff = abs(social_r - ((msg_r+1)//1))/4  # rough
+    # Actually use FREQ directly: FREQ 1-5 vs TRAIT 1-5
+    # Map msg freq to 1-5 already
+    social_msg_diff = abs(social_r - msg_r)/4
+    scores["personality_social_alignment"] = max(0.50, 1 - social_msg_diff*0.95)
+
+    # Geography / environment alignment (check context consistency not personality)
+    country_ctx = COUNTRIES.get(country)
+    geo_score = 1.0
+    if country_ctx:
+        if profile.get("currency") != country_ctx["currency"]: geo_score *= 0.4
+        if profile.get("primary_language") not in country_ctx["languages"]: geo_score *= 0.5
+        if profile.get("available_payment_method") not in country_ctx["payments"]: geo_score *= 0.5
+        if profile.get("primary_transport_mode") not in country_ctx["transport"]: geo_score *= 0.5
+        if profile.get("local_food_pattern") not in country_ctx["foods"]: geo_score *= 0.5
+    scores["geography_environment_alignment"] = geo_score
+
+    # Overall behavioral coherence = mean of alignments
+    overall = round(sum(scores.values()) / len(scores), 3) if scores else 0.0
+    scores["overall_behavioral_coherence"] = overall
+    # Round individual
+    for k in list(scores.keys()):
+        if k != "overall_behavioral_coherence":
+            scores[k] = round(scores[k], 3)
+    return scores
+
+def assess_profile(profile: dict) -> dict:
+    """Return structured constraints and scores derived from their outcomes."""
+    violations = []
+    def check(condition, rule, message):
+        if not condition: violations.append({"rule": rule, "severity": "error", "message": message})
+    check(16 <= profile.get("age", 0) <= 78, "age_bounds", "Age is outside the supported range.")
+    check(profile.get("monthly_savings", -1) >= 0 and profile.get("monthly_savings", 0) <= profile.get("monthly_income", -1), "finance_consistency", "Savings are inconsistent with monthly income.")
+    check(profile.get("years_of_experience", 999) <= max(0, profile.get("age", 0) - 16), "career_age_consistency", "Experience exceeds plausible career duration.")
+    check(not (profile.get("age", 0) < 20 and profile.get("number_of_children", 0) > 0), "family_age_consistency", "Child count is implausible for age.")
+    check(not (profile.get("life_stage") == "University Student" and profile.get("career_level") != "None"), "student_career_consistency", "Student career level is inconsistent.")
+    check(not (profile.get("life_stage") == "Retired" and profile.get("employment_status") != "Retired"), "retirement_consistency", "Retired life stage is inconsistent.")
+    check(profile.get("household_size", 1) >= 1 and profile.get("household_size", 1) >= profile.get("number_of_children", 0) + (1 if profile.get("marital_status")=="Married" else 0) or profile.get("parents_in_household"), "household_consistency", "Household size inconsistent with family structure.")
+    country = COUNTRIES.get(profile.get("country"))
+    check(country is not None and profile.get("currency") == country["currency"], "country_currency_consistency", "Currency does not match geographic context.")
+    if country:
+        check(profile.get("primary_language") in country["languages"], "country_language_consistency", "Language is not available in geographic context.")
+        check(profile.get("available_payment_method") in country["payments"], "country_payment_consistency", "Payment method is not available in geographic context.")
+        check(profile.get("primary_transport_mode") in country["transport"], "country_transport_consistency", "Transport mode is not available in geographic context.")
+        check(profile.get("local_food_pattern") in country["foods"], "country_food_consistency", "Food pattern is not available in geographic context.")
+        check(profile.get("country_code") == country["code"], "country_code_consistency", "Country code mismatch.")
+    # Education / experience additional hard check
+    edu = profile.get("education_level")
+    yoe = profile.get("years_of_education", 0)
+    if edu == "School education":
+        check(yoe == 10, "education_years_consistency", "Years of education inconsistent with school level.")
+    # Income non-negative
+    check(profile.get("annual_income", -1) >= 0, "income_nonnegative", "Income negative.")
+    check(profile.get("monthly_income", -1) >= 0, "monthly_income_nonnegative", "Monthly income negative.")
+
+    coherence_score = round(max(0.0, 1 - len(violations) * .15), 2)
+    behavioral = _behavioral_coherence(profile)
+    return {"valid": not violations, "violations": violations, "coherence_score": coherence_score, "behavioral_coherence": behavioral, "behavioral_coherence_score": behavioral["overall_behavioral_coherence"]}
+
+def validate_profile(profile: dict) -> dict:
+    result = assess_profile(profile)
+    if not result["valid"]: raise ValueError(result["violations"][0]["message"])
+    return result

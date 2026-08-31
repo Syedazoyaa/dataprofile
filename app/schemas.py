@@ -42,9 +42,19 @@ CORE_FIELDS = (
     ("openness", "traits", "number", "latent trait"), ("conscientiousness", "traits", "number", "latent trait"), ("extraversion", "traits", "number", "latent trait"), ("agreeableness", "traits", "number", "latent trait"), ("risk_tolerance", "traits", "number", "latent trait"), ("novelty_seeking", "traits", "number", "latent trait"), ("social_orientation", "traits", "number", "latent trait"), ("health_orientation", "traits", "number", "latent trait"), ("luxury_orientation", "traits", "number", "latent trait"), ("planning_orientation", "traits", "number", "latent trait"), ("cultural_openness", "traits", "number", "latent trait"), ("environmental_awareness", "traits", "number", "latent trait"),
     ("decision_speed", "decision", "category", "risk + planning"), ("comparison_behavior", "decision", "category", "analytical orientation"), ("analytical_orientation", "decision", "category", "openness + planning"), ("recommendation_dependence", "decision", "category", "social orientation"), ("brand_trust", "decision", "category", "conscientiousness"), ("information_seeking", "decision", "category", "curiosity"), ("digital_payment_preference", "payments", "category", "digital adoption"), ("card_usage", "payments", "category", "income + digital adoption"), ("wallet_usage", "payments", "category", "digital adoption"), ("cash_usage", "payments", "category", "digital adoption"), ("recurring_payment_behavior", "payments", "category", "digital adoption + conscientiousness"), ("pet_ownership", "hobbies", "category", "household + lifestyle"), ("hobby_count", "hobbies", "integer", "openness + leisure"), ("reading_frequency", "hobbies", "category", "openness"), ("sports_interest", "hobbies", "category", "health + social orientation"), ("photography_interest", "hobbies", "category", "openness + travel"), ("creative_interest", "hobbies", "category", "openness"), ("volunteering_interest", "hobbies", "category", "agreeableness"),
 )
+GEOGRAPHY_FIELDS = (
+    ("country_code", "location", "string", "geographic context"),
+    ("currency", "finance", "string", "geographic context"),
+    ("cultural_context", "culture", "category", "geographic probability distribution"),
+    ("religious_affiliation", "culture", "category", "geographic probability distribution"),
+    ("local_food_pattern", "food", "category", "geographic context + health orientation"),
+    ("available_payment_method", "payments", "category", "geographic payment ecosystem"),
+    ("primary_transport_mode", "mobility", "category", "geographic infrastructure + income"),
+    ("transport_infrastructure", "mobility", "category", "geographic context"),
+)
 
 def build_feature_schema() -> tuple[FeatureSpec, ...]:
-    fields = [FeatureSpec(*item) for item in CORE_FIELDS]
+    fields = [FeatureSpec(*item) for item in (*CORE_FIELDS, *GEOGRAPHY_FIELDS)]
     for domain, topics in DOMAIN_TOPICS.items():
         for topic in topics:
             for measure in MEASURES:
@@ -60,7 +70,9 @@ PROFILE_COLUMNS = tuple(field.name for field in PROFILE_SCHEMA)
 class GenerateRequest(BaseModel):
     count: int = Field(default=1, ge=1)
     seed: int = Field(default=42, ge=0)
-    country: Literal["India"] = "India"
+    country_mode: Literal["specific", "global"] = "specific"
+    country: str | None = "India"
+    region: str | None = None
     age_range: tuple[int, int] | None = None
     persona: str | None = None
     preferred_language: str | None = None

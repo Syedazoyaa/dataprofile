@@ -6,6 +6,7 @@ from fastapi.responses import Response
 from .config import get_settings
 from .exports import export_bytes
 from .generator import LANGUAGES, generate_profiles
+from .geography import supported_countries
 from .personas import PERSONAS
 from .schemas import GenerateRequest, PROFILE_COLUMNS, PROFILE_SCHEMA_VERSION
 
@@ -22,17 +23,18 @@ def root(): return {"service": "DataProfile API", "version": PROFILE_SCHEMA_VERS
 def health(): return {"status": "ok", "environment": settings.app_env, "schema_version": PROFILE_SCHEMA_VERSION}
 
 @app.get("/personas")
-def personas(): return {"personas": [{"name": name, "typical_genres": genres} for name, genres in PERSONAS.items()], "supported_languages": sorted(LANGUAGES)}
+def personas(): return {"personas": [{"name": name, "typical_genres": genres} for name, genres in PERSONAS.items()], "supported_languages": sorted(LANGUAGES), "supported_countries": supported_countries()}
 
 @app.post("/generate")
 def generate(request: GenerateRequest):
     if request.count > settings.max_profiles_per_request: raise HTTPException(422, "count exceeds configured request limit")
     if request.persona and request.persona not in PERSONAS: raise HTTPException(422, "Unsupported persona")
     if request.preferred_language and request.preferred_language not in LANGUAGES: raise HTTPException(422, "Unsupported preferred_language")
+    if request.country_mode == "specific" and request.country not in supported_countries(): raise HTTPException(422, "Unsupported country")
     started = time.perf_counter()
     try:
         logger.info("generation started count=%s format=%s", request.count, request.format)
-        profiles = generate_profiles(request.count, request.seed, request.country, request.age_range, request.preferred_language, request.persona)
+        profiles = generate_profiles(request.count, request.seed, request.country, request.age_range, request.preferred_language, request.persona, country_mode=request.country_mode, region=request.region)
         duration = time.perf_counter() - started
         logger.info("generation completed count=%s format=%s duration=%.3fs", request.count, request.format, duration)
         metadata = {"count": len(profiles), "seed": request.seed, "profile_schema_version": PROFILE_SCHEMA_VERSION, "feature_count": len(PROFILE_COLUMNS), "generation_seconds": round(duration, 4)}
