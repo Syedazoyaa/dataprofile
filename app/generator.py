@@ -3,7 +3,7 @@ from datetime import date, timedelta
 from .personas import PERSONAS
 from .geography import get_context, supported_languages
 from .rules import validate_profile
-from .schemas import DOMAIN_TOPICS, MEASURES, PROFILE_COLUMNS, PROFILE_SCHEMA_VERSION
+from .schemas import DOMAIN_TOPICS, MEASURES, PERSONALITY_ARCHETYPES, PROFILE_COLUMNS, PROFILE_SCHEMA_VERSION
 from .utils import choose, level, profile_rng
 
 AGE_BANDS = ((16, 17, 3), (18, 22, 13), (23, 29, 20), (30, 39, 24), (40, 49, 18), (50, 59, 12), (60, 69, 7), (70, 78, 3))
@@ -143,6 +143,54 @@ def _refine_digital_adoption(rng, traits: dict, context, age: int):
     base = traits["digital_adoption"]
     # Geo-conditioned refinement: digital_access adds environmentally conditioned boost
     traits["digital_adoption"] = _clip(base * 0.78 + 0.15 * context.digital_access + 0.07 * traits["technology_affinity"] + rng.gauss(0, 0.05))
+
+def _derive_personality_name(traits: dict[str, float]) -> str:
+    """Deterministic behavior-derived archetype summary (not random).
+    Uses weighted multi-trait scores; geography does not directly influence.
+    Scores are 0-1; Balanced is fallback when no archetype dominates.
+    Ordering of PERSONALITY_ARCHETYPES defines deterministic tie-break.
+    To ensure validation consistency (profile stores traits as 5-level labels),
+    we discretize raw trait values to the same label-midpoints validator uses.
+    """
+    # Discretize to label midpoints for validator consistency
+    def _discretize(name: str, val: float) -> float:
+        label = _trait_label(name, val)
+        mapping = {
+            "Very low": 0.12, "Low": 0.30, "Moderate": 0.50, "High": 0.72, "Very high": 0.88,
+            "Technology cautious": 0.12, "Technology practical": 0.30, "Technology comfortable": 0.50, "Technology enthusiastic": 0.72, "Technology leading": 0.88,
+            "Price insensitive": 0.12, "Slightly price aware": 0.30, "Price conscious": 0.50, "Price sensitive": 0.72, "Highly price sensitive": 0.88,
+            "Health disengaged": 0.12, "Health aware": 0.30, "Health balanced": 0.50, "Health focused": 0.72, "Highly health focused": 0.88,
+        }
+        return mapping.get(label, 0.50)
+    t = {k: _discretize(k, v) for k, v in traits.items()}
+    # Helper for inverse
+    def inv(v): return 1 - v
+    scores = {
+        "Analytical":  0.34 * t["openness"] + 0.30 * t["conscientiousness"] + 0.20 * t["planning_orientation"] + 0.10 * t["technology_affinity"] + 0.06 * inv(t["risk_tolerance"]),
+        "Adventurous": 0.34 * t["novelty_seeking"] + 0.24 * t["openness"] + 0.20 * t["risk_tolerance"] + 0.12 * t["extraversion"] + 0.10 * t["cultural_openness"],
+        "Social":       0.30 * t["extraversion"] + 0.28 * t["social_orientation"] + 0.20 * t["agreeableness"] + 0.12 * t["cultural_openness"] + 0.10 * t["novelty_seeking"],
+        "Creative":     0.38 * t["openness"] + 0.24 * t["cultural_openness"] + 0.16 * t["novelty_seeking"] + 0.12 * t["extraversion"] + 0.10 * t["environmental_awareness"],
+        "Disciplined":  0.34 * t["conscientiousness"] + 0.30 * t["planning_orientation"] + 0.14 * t["health_orientation"] + 0.12 * inv(t["risk_tolerance"]) + 0.10 * t["conscientiousness"] * 0.2,
+        "Empathetic":   0.34 * t["agreeableness"] + 0.24 * t["social_orientation"] + 0.16 * t["health_orientation"] + 0.14 * t["cultural_openness"] + 0.12 * t["openness"],
+        "Independent":  0.28 * t["openness"] + 0.24 * t["risk_tolerance"] + 0.20 * t["technology_affinity"] + 0.16 * inv(t["agreeableness"]) + 0.12 * t["extraversion"],
+        "Practical":    0.30 * t["conscientiousness"] + 0.24 * t["planning_orientation"] + 0.20 * t["price_sensitivity"] + 0.14 * inv(t["luxury_orientation"]) + 0.12 * t["health_orientation"],
+        "Ambitious":    0.28 * t["conscientiousness"] + 0.20 * t["extraversion"] + 0.20 * t["luxury_orientation"] + 0.16 * t["technology_affinity"] + 0.16 * t["risk_tolerance"],
+    }
+    # Balanced score: high when traits cluster near 0.5 (low variance)
+    vals = [t[k] for k in ("openness","conscientiousness","extraversion","agreeableness","risk_tolerance","novelty_seeking","social_orientation","health_orientation","luxury_orientation","planning_orientation","cultural_openness","environmental_awareness","technology_affinity","price_sensitivity")]
+    mad = sum(abs(v - 0.5) for v in vals) / len(vals)
+    balanced_score = _clip(1 - mad * 2.2)  # 1 at 0.5, ~0.56 at 0.2 avg deviation
+    # Slight boost to keep Balanced achievable but not dominant (~8-15% population)
+    scores["Balanced"] = balanced_score * 0.92
+    # Deterministic winner: max score, tie-break by PERSONALITY_ARCHETYPES order
+    best = None
+    best_score = -1
+    for name in PERSONALITY_ARCHETYPES:
+        s = scores[name]
+        if s > best_score + 1e-9:
+            best_score = s
+            best = name
+    return best
 
 def _domain_base(domain: str, traits: dict[str, float], income_factor: float, age: int, children: int, ses: float, context) -> float:
     # SES and income_factor now intermediate upstream
@@ -539,6 +587,8 @@ def generate_profile(seed: int, index: int, country: str | None = "India", age_r
 
     context = get_context(rng, country_mode, country, region)
     _refine_digital_adoption(rng, traits, context, age)
+    # Step 1b: Derive behavior-based personality archetype before downstream domains (must not use geography)
+    personality_name = _derive_personality_name(traits)
     # Step 2: Language (geography-conditioned but not deterministic)
     language = preferred_language or choose(rng, list(context.languages))
     # Step 3: Education chain (age → education → field)
@@ -613,7 +663,7 @@ def generate_profile(seed: int, index: int, country: str | None = "India", age_r
     preferred_ott_platform = _conditional_platform(rng, context, language, traits)
 
     profile = {
-        "profile_id": f"{context.country_code}-{seed:08x}-{index:05d}", "profile_schema_version": PROFILE_SCHEMA_VERSION, "age": age, "age_band": next(f"{a}-{b}" for a,b,_ in AGE_BANDS if a <= age <= b), "date_of_birth": str(date(2026, 8, 20) - timedelta(days=age * 365 + rng.randint(0, 364))), "gender": choose(rng, ["Female", "Male", "Non-binary"], [48, 48, 4]), "country": context.country, "country_code": context.country_code, "state": context.state, "city": context.city, "region": context.region, "urban_rural": context.urban_rural, "nationality": context.nationality, "primary_language": language, "preferred_language": language if traits["cultural_openness"] < .65 else choose(rng, list(context.languages)), "population_segment": "Working professional" if employment.startswith("Employed") else stage, "life_stage": stage,
+        "personality_name": personality_name, "profile_id": f"{context.country_code}-{seed:08x}-{index:05d}", "profile_schema_version": PROFILE_SCHEMA_VERSION, "age": age, "age_band": next(f"{a}-{b}" for a,b,_ in AGE_BANDS if a <= age <= b), "date_of_birth": str(date(2026, 8, 20) - timedelta(days=age * 365 + rng.randint(0, 364))), "gender": choose(rng, ["Female", "Male", "Non-binary"], [48, 48, 4]), "country": context.country, "country_code": context.country_code, "state": context.state, "city": context.city, "region": context.region, "urban_rural": context.urban_rural, "nationality": context.nationality, "primary_language": language, "preferred_language": language if traits["cultural_openness"] < .65 else choose(rng, list(context.languages)), "population_segment": "Working professional" if employment.startswith("Employed") else stage, "life_stage": stage,
         "marital_status": marital, "relationship_status": "Married" if marital == "Married" else marital, "number_of_children": children, "dependents_count": dependents, "household_size": household_size, "family_type": family_type, "living_arrangement": living_arrangement, "parents_in_household": parents_in_house, "siblings_count": siblings,
         "education_level": education, "highest_degree": education, "field_of_study": field_of_study, "institution_type": institution_type, "graduation_status": graduation_status, "years_of_education": degree_years, "academic_orientation": _category((traits["openness"] + traits["conscientiousness"]) / 2), "education_quality": _category(.35 + income_factor * .28 + traits["conscientiousness"] * .22 + edu_score*0.15),
         "employment_status": employment, "occupation": occupation, "industry": industry, "job_function": industry, "career_level": career, "years_of_experience": experience, "employer_type": employer_type, "work_mode": work_mode, "weekly_work_hours": weekly_hours, "leadership_status": leadership_status, "job_stability": job_stability, "career_growth_orientation": growth_orientation,
@@ -645,6 +695,8 @@ def generate_profile(seed: int, index: int, country: str | None = "India", age_r
     # Price sensitivity and others already labels; reset numeric version for statistical tests? Keep labels per existing behavior
     missing = set(PROFILE_COLUMNS) - profile.keys()
     if missing: raise RuntimeError(f"Generator missed schema columns: {sorted(missing)}")
+    # Explicitly order output so personality_name is first (and matches PROFILE_COLUMNS)
+    profile = {col: profile[col] for col in PROFILE_COLUMNS}
     # Extra coherence: validate hard constraints
     validate_profile(profile)
     return profile

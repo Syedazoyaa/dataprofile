@@ -1,4 +1,5 @@
 from .geography import COUNTRIES
+from .schemas import PERSONALITY_ARCHETYPES
 
 # Rank maps for behavioral coherence (ordinal 1-5)
 TRAIT_RANK = {
@@ -10,6 +11,35 @@ TRAIT_RANK = {
 FREQ_RANK = {"Never":1, "Rarely":2, "Occasionally":3, "Frequently":4, "Very frequently":5}
 INTEREST_RANK = {"Not interested":1, "Slightly interested":2, "Moderately interested":3, "Interested":4, "Highly interested":5}
 LEVEL_RANK = {"Low":1, "Moderate":2, "High":3}
+
+def _expected_personality_name(profile: dict) -> str | None:
+    """Re-derive expected archetype by delegating to generator's deterministic mapping.
+    This ensures validation uses exactly the same discretization and scoring as generation,
+    avoiding label-midpoint rounding divergence.
+    """
+    # Lazy import to avoid circular dependency (generator imports validate_profile)
+    try:
+        from .generator import _derive_personality_name, _trait_label
+    except ImportError:
+        return None
+    # Reconstruct traits dict from stored labels by mapping back to midpoints,
+    # then feed through same _derive which will discretize again identically.
+    label_to_val = {
+        "Very low": 0.12, "Low": 0.30, "Moderate": 0.50, "High": 0.72, "Very high": 0.88,
+        "Technology cautious": 0.12, "Technology practical": 0.30, "Technology comfortable": 0.50, "Technology enthusiastic": 0.72, "Technology leading": 0.88,
+        "Price insensitive": 0.12, "Slightly price aware": 0.30, "Price conscious": 0.50, "Price sensitive": 0.72, "Highly price sensitive": 0.88,
+        "Health disengaged": 0.12, "Health aware": 0.30, "Health balanced": 0.50, "Health focused": 0.72, "Highly health focused": 0.88,
+    }
+    def get_trait(name):
+        v = profile.get(name)
+        if isinstance(v, (int, float)):
+            return float(v)
+        if isinstance(v, str) and v in label_to_val:
+            return label_to_val[v]
+        return 0.5
+    t = {k: get_trait(k) for k in ("openness","conscientiousness","extraversion","agreeableness","risk_tolerance","novelty_seeking","social_orientation","health_orientation","luxury_orientation","planning_orientation","cultural_openness","environmental_awareness","technology_affinity","price_sensitivity")}
+    # _derive expects raw dict but will discretize via _trait_label internally, so passing midpoints is safe (idempotent)
+    return _derive_personality_name(t)
 
 def _rank(value, mapping):
     return mapping.get(value, 3)
@@ -165,6 +195,19 @@ def assess_profile(profile: dict) -> dict:
     # Income non-negative
     check(profile.get("annual_income", -1) >= 0, "income_nonnegative", "Income negative.")
     check(profile.get("monthly_income", -1) >= 0, "monthly_income_nonnegative", "Monthly income negative.")
+    # personality_name mandatory and behavior-derived
+    pname = profile.get("personality_name")
+    check(isinstance(pname, str) and pname.strip() != "", "personality_name_required", "personality_name is required and non-empty.")
+    check(pname in PERSONALITY_ARCHETYPES, "personality_name_archetype", f"personality_name must be one of {PERSONALITY_ARCHETYPES}.")
+    # ordering: personality_name must be first key (dict insertion order)
+    try:
+        first_key = next(iter(profile))
+        check(first_key == "personality_name", "personality_name_ordering", "personality_name must be the first column/field.")
+    except StopIteration:
+        check(False, "personality_name_ordering", "Profile is empty.")
+    # consistency with underlying traits (deterministic mapping) — strict, same discretization as generator
+    expected = _expected_personality_name(profile)
+    check(pname == expected, "personality_name_consistency", f"personality_name '{pname}' is inconsistent with underlying traits (expected '{expected}').")
 
     coherence_score = round(max(0.0, 1 - len(violations) * .15), 2)
     behavioral = _behavioral_coherence(profile)

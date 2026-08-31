@@ -5,6 +5,19 @@ from pydantic import BaseModel, Field, field_validator, model_validator
 
 PROFILE_SCHEMA_VERSION = "1.0"
 
+PERSONALITY_ARCHETYPES = (
+    "Analytical",
+    "Adventurous",
+    "Social",
+    "Creative",
+    "Disciplined",
+    "Empathetic",
+    "Independent",
+    "Practical",
+    "Ambitious",
+    "Balanced",
+)
+
 @dataclass(frozen=True)
 class FeatureSpec:
     name: str
@@ -30,6 +43,7 @@ DOMAIN_TOPICS = {
 MEASURES = ("interest_score", "usage_frequency_score", "purchase_intent_score", "research_intensity_score")
 
 CORE_FIELDS = (
+    ("personality_name", "personality", "string", "derived archetype from latent traits (openness,conscientiousness,extraversion,agreeableness,risk,novelty,social,health,luxury,planning,cultural,environmental,tech,price)"),
     ("profile_id", "identity", "string", "seed + profile index"), ("profile_schema_version", "identity", "string", "schema version"), ("age", "demographics", "integer", "weighted age band"), ("age_band", "demographics", "category", "age"), ("date_of_birth", "demographics", "date", "age + seed"), ("gender", "demographics", "category", "weighted demographic distribution"), ("country", "location", "string", "request"), ("state", "location", "string", "city"), ("city", "location", "string", "location record"), ("region", "location", "string", "location record"), ("urban_rural", "location", "category", "city"), ("nationality", "demographics", "string", "country"), ("primary_language", "language", "category", "location/request"), ("preferred_language", "language", "category", "language + cultural openness"), ("population_segment", "demographics", "category", "age + income"), ("life_stage", "demographics", "category", "age + family"),
     ("marital_status", "family", "category", "age + life stage"), ("relationship_status", "family", "category", "marital status"), ("number_of_children", "family", "integer", "age + marital status"), ("dependents_count", "family", "integer", "children + life stage"), ("household_size", "family", "integer", "children + living arrangement"), ("family_type", "family", "category", "marital status + children"), ("living_arrangement", "family", "category", "age + income"), ("parents_in_household", "family", "boolean", "age + life stage"), ("siblings_count", "family", "integer", "demographic distribution"),
     ("education_level", "education", "category", "age + life stage"), ("highest_degree", "education", "category", "education level"), ("field_of_study", "education", "category", "education + technology affinity"), ("institution_type", "education", "category", "education + income"), ("graduation_status", "education", "category", "age + education"), ("years_of_education", "education", "integer", "education level"), ("academic_orientation", "education", "category", "openness + conscientiousness"), ("education_quality", "education", "category", "income + education"),
