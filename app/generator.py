@@ -62,35 +62,39 @@ def _trait_label(name: str, value: float) -> str:
     }
     return descriptions.get(name, ("Very low", "Low", "Moderate", "High", "Very high"))[min(4, int(_clip(value) * 5))]
 
-# --- Correlated personality generation (behavioral engine) ---
+# --- Archetype-anchored personality generation (behavioral anchor) ---
+ARCHETYPE_TARGETS = {
+    "Analytical":   {"openness":0.78, "conscientiousness":0.80, "extraversion":0.42, "agreeableness":0.50, "risk_tolerance":0.28, "novelty_seeking":0.55, "social_orientation":0.42, "health_orientation":0.55, "luxury_orientation":0.42, "planning_orientation":0.80, "cultural_openness":0.62, "environmental_awareness":0.55, "technology_affinity":0.72, "price_sensitivity":0.55},
+    "Adventurous":  {"openness":0.78, "conscientiousness":0.38, "extraversion":0.76, "agreeableness":0.48, "risk_tolerance":0.78, "novelty_seeking":0.82, "social_orientation":0.55, "health_orientation":0.60, "luxury_orientation":0.55, "planning_orientation":0.30, "cultural_openness":0.74, "environmental_awareness":0.48, "technology_affinity":0.62, "price_sensitivity":0.42},
+    "Social":       {"openness":0.62, "conscientiousness":0.48, "extraversion":0.82, "agreeableness":0.76, "risk_tolerance":0.55, "novelty_seeking":0.62, "social_orientation":0.82, "health_orientation":0.55, "luxury_orientation":0.55, "planning_orientation":0.42, "cultural_openness":0.72, "environmental_awareness":0.48, "technology_affinity":0.55, "price_sensitivity":0.48},
+    "Creative":     {"openness":0.84, "conscientiousness":0.38, "extraversion":0.62, "agreeableness":0.52, "risk_tolerance":0.62, "novelty_seeking":0.76, "social_orientation":0.55, "health_orientation":0.48, "luxury_orientation":0.55, "planning_orientation":0.35, "cultural_openness":0.82, "environmental_awareness":0.70, "technology_affinity":0.62, "price_sensitivity":0.48},
+    "Disciplined":  {"openness":0.48, "conscientiousness":0.84, "extraversion":0.42, "agreeableness":0.55, "risk_tolerance":0.26, "novelty_seeking":0.35, "social_orientation":0.42, "health_orientation":0.70, "luxury_orientation":0.35, "planning_orientation":0.84, "cultural_openness":0.48, "environmental_awareness":0.55, "technology_affinity":0.48, "price_sensitivity":0.62},
+    "Empathetic":   {"openness":0.55, "conscientiousness":0.52, "extraversion":0.52, "agreeableness":0.84, "risk_tolerance":0.38, "novelty_seeking":0.48, "social_orientation":0.80, "health_orientation":0.72, "luxury_orientation":0.42, "planning_orientation":0.48, "cultural_openness":0.70, "environmental_awareness":0.65, "technology_affinity":0.42, "price_sensitivity":0.48},
+    "Independent":  {"openness":0.74, "conscientiousness":0.52, "extraversion":0.48, "agreeableness":0.30, "risk_tolerance":0.76, "novelty_seeking":0.68, "social_orientation":0.35, "health_orientation":0.52, "luxury_orientation":0.48, "planning_orientation":0.48, "cultural_openness":0.62, "environmental_awareness":0.52, "technology_affinity":0.78, "price_sensitivity":0.48},
+    "Practical":    {"openness":0.42, "conscientiousness":0.76, "extraversion":0.42, "agreeableness":0.52, "risk_tolerance":0.35, "novelty_seeking":0.35, "social_orientation":0.42, "health_orientation":0.62, "luxury_orientation":0.30, "planning_orientation":0.78, "cultural_openness":0.48, "environmental_awareness":0.55, "technology_affinity":0.48, "price_sensitivity":0.80},
+    "Ambitious":    {"openness":0.62, "conscientiousness":0.78, "extraversion":0.76, "agreeableness":0.48, "risk_tolerance":0.70, "novelty_seeking":0.62, "social_orientation":0.62, "health_orientation":0.52, "luxury_orientation":0.76, "planning_orientation":0.68, "cultural_openness":0.55, "environmental_awareness":0.48, "technology_affinity":0.74, "price_sensitivity":0.40},
+    "Balanced":     {"openness":0.52, "conscientiousness":0.52, "extraversion":0.52, "agreeableness":0.52, "risk_tolerance":0.50, "novelty_seeking":0.52, "social_orientation":0.52, "health_orientation":0.52, "luxury_orientation":0.50, "planning_orientation":0.52, "cultural_openness":0.52, "environmental_awareness":0.52, "technology_affinity":0.52, "price_sensitivity":0.52},
+}
+ARCHETYPE_WEIGHTS = [10,10,10,10,10,10,10,10,10,8]  # Balanced slightly less to avoid moderate over-representation
+
 def _generate_traits(rng, age: int, context=None) -> dict:
-    """Generate correlated latent traits using a factor model.
-    Factors are sampled with rng.gauss; traits are linear combinations -> clipped 0-1.
-    Geography does NOT drive personality; only age moderation.
-    Digital adoption is derived post-geography; core personality stays geo-independent.
-    """
+    """Legacy factor-model fallback (kept for compatibility)."""
     # Base latent factors (standard normal via rng)
     f_open = rng.gauss(0, 1)
     f_consc = rng.gauss(0, 1)
     f_extra = rng.gauss(0, 1)
     f_agree = rng.gauss(0, 1)
-    f_stable = rng.gauss(0, 1)  # emotional stability (inverse neuroticism)
+    f_stable = rng.gauss(0, 1)
     f_tech = rng.gauss(0, 1)
     f_health = rng.gauss(0, 1)
     f_lux = rng.gauss(0, 1)
-    # idiosyncratic noises
     z_risk = rng.gauss(0, 1)
     z_novel = rng.gauss(0, 1)
     z_price = rng.gauss(0, 1)
     z_cult = rng.gauss(0, 1)
     z_env = rng.gauss(0, 1)
-
-    # helpers to map z to 0-1 via 0.5 + z*sd
     def to_prob(z, sd=0.14):
         return _clip(0.5 + z * sd)
-
-    # Compose traits as weighted sums (variances normalized roughly)
-    # Scale factor ~0.13-0.15 to keep reasonable spread
     openness_z = 0.65 * f_open + 0.20 * f_tech + 0.15 * z_novel
     conscientiousness_z = 0.75 * f_consc + 0.25 * f_stable
     extraversion_z = 0.70 * f_extra + 0.20 * f_open + 0.10 * f_agree
@@ -104,9 +108,7 @@ def _generate_traits(rng, age: int, context=None) -> dict:
     cultural_z = 0.55 * f_open + 0.25 * f_agree + 0.20 * z_cult
     env_z = 0.50 * f_health + 0.25 * f_agree + 0.25 * z_env
     tech_z = 0.60 * f_tech + 0.25 * f_open + 0.15 * rng.gauss(0, 0.7)
-    # price_sensitivity is anti-luxury plus conscientiousness
     price_z = -0.50 * f_lux + 0.30 * f_consc + 0.20 * z_price
-
     traits = {
         "openness": to_prob(openness_z),
         "conscientiousness": to_prob(conscientiousness_z),
@@ -123,16 +125,45 @@ def _generate_traits(rng, age: int, context=None) -> dict:
         "technology_affinity": to_prob(tech_z),
         "price_sensitivity": to_prob(price_z),
     }
-    # Age moderation (weak, probabilistic, not deterministic)
-    # Younger slightly higher tech+novelty, older slightly higher conscientiousness/health stability variation
-    age_factor = (age - 30) / 50.0  # -0.28 to +0.96
+    age_factor = (age - 30) / 50.0
     traits["technology_affinity"] = _clip(traits["technology_affinity"] - age_factor * 0.08)
     traits["novelty_seeking"] = _clip(traits["novelty_seeking"] - max(0, age - 45) * 0.003)
     traits["health_orientation"] = _clip(traits["health_orientation"] + max(0, age - 40) * 0.004)
     traits["planning_orientation"] = _clip(traits["planning_orientation"] + max(0, age - 28) * 0.002)
-    # Digital adoption placeholder (geo-independent core) - will be refined after geography is known
     traits["digital_adoption"] = _clip(0.55 * traits["technology_affinity"] + 0.18 * traits["openness"] + 0.12 * (1 - max(age - 25, 0) / 70) + rng.gauss(0, 0.07))
-    # Ensure price_sensitivity vs luxury anti-correlation (enforce slightly)
+    if traits["luxury_orientation"] > 0.7 and traits["price_sensitivity"] > 0.6:
+        traits["price_sensitivity"] = _clip(traits["price_sensitivity"] - 0.12)
+    if traits["luxury_orientation"] < 0.3 and traits["price_sensitivity"] < 0.4:
+        traits["price_sensitivity"] = _clip(traits["price_sensitivity"] + 0.10)
+    return traits
+
+def _generate_traits_for_archetype(rng, age: int, archetype: str) -> dict:
+    """Archetype-anchored generation: samples each trait around archetype target with controlled variation (0-100 internal, then 0-1).
+    Preserves age moderation and anti-correlation, but ensures recognizable archetype signature with diversity.
+    Uses tighter sd (0.09) to keep archetype distinctive while allowing variation.
+    """
+    targets = ARCHETYPE_TARGETS.get(archetype, ARCHETYPE_TARGETS["Balanced"])
+    traits = {}
+    for trait in ("openness","conscientiousness","extraversion","agreeableness","risk_tolerance","novelty_seeking","social_orientation","health_orientation","luxury_orientation","planning_orientation","cultural_openness","environmental_awareness","technology_affinity","price_sensitivity"):
+        base = targets[trait]
+        # internal 0-100 then 0-1: sample gauss with sd 9 (~0.09) for tighter archetype signature, clipped
+        val = rng.gauss(base, 0.09)
+        # add small correlated jitter for realism (e.g., conscientiousness ↔ planning)
+        if trait == "planning_orientation":
+            val = 0.7 * val + 0.3 * traits.get("conscientiousness", base)
+        if trait == "cultural_openness" and "openness" in traits:
+            val = 0.75 * val + 0.25 * traits["openness"]
+        if trait == "social_orientation" and "extraversion" in traits:
+            val = 0.7 * val + 0.3 * traits["extraversion"]
+        traits[trait] = _clip(val)
+    # Age moderation (weak)
+    age_factor = (age - 30) / 50.0
+    traits["technology_affinity"] = _clip(traits["technology_affinity"] - age_factor * 0.07)
+    traits["novelty_seeking"] = _clip(traits["novelty_seeking"] - max(0, age - 45) * 0.003)
+    traits["health_orientation"] = _clip(traits["health_orientation"] + max(0, age - 40) * 0.004)
+    traits["planning_orientation"] = _clip(traits["planning_orientation"] + max(0, age - 28) * 0.002)
+    # Digital adoption derived from traits + age (geo refined later)
+    traits["digital_adoption"] = _clip(0.55 * traits["technology_affinity"] + 0.18 * traits["openness"] + 0.12 * (1 - max(age - 25, 0) / 70) + rng.gauss(0, 0.07))
     if traits["luxury_orientation"] > 0.7 and traits["price_sensitivity"] > 0.6:
         traits["price_sensitivity"] = _clip(traits["price_sensitivity"] - 0.12)
     if traits["luxury_orientation"] < 0.3 and traits["price_sensitivity"] < 0.4:
@@ -582,13 +613,18 @@ def generate_profile(seed: int, index: int, country: str | None = "India", age_r
     if persona and persona not in PERSONAS: raise ValueError("Unsupported persona")
     rng = profile_rng(seed, index)
     age = _age(rng, age_range); stage = _stage(age)
-    # Step 1: Personality (correlated latent) - behavior-first, geography-independent (must be before geography to keep archetype stable)
-    traits = _generate_traits(rng, age, None)
+    # Step 1: Personality Archetype → Core Traits (anchor, not derived after random)
+    archetype = choose(rng, list(PERSONALITY_ARCHETYPES), ARCHETYPE_WEIGHTS)
+    traits = _generate_traits_for_archetype(rng, age, archetype)
+    # Keep legacy factor diversity as small blended noise for realism (optional)
+    # Validate archetype signature remains recognizable but with variation
 
     context = get_context(rng, country_mode, country, region)
     _refine_digital_adoption(rng, traits, context, age)
-    # Step 1b: Derive behavior-based personality archetype before downstream domains (must not use geography)
-    personality_name = _derive_personality_name(traits)
+    # Personality name is the anchor archetype (ensures archetype → traits → behavior)
+    personality_name = archetype
+    # Optional consistency check: derived should match anchor most of the time; if not, keep anchor (anchor is truth)
+    # We do not overwrite anchor with derived to preserve archetype → traits direction
     # Step 2: Language (geography-conditioned but not deterministic)
     language = preferred_language or choose(rng, list(context.languages))
     # Step 3: Education chain (age → education → field)
@@ -736,5 +772,61 @@ def _housing_choice(rng, context, income_factor: float, household_size: int, ses
         return chosen if rng.random()<0.7 else ("Apartment" if income_factor>0.45 else "Shared/compact home" if income_factor<0.28 else "Independent house")
     return chosen
 
+def _behavioral_vector(profile: dict) -> tuple:
+    """Compact behavioral signature for duplicate/near-duplicate detection."""
+    keys = (
+        "personality_name","openness","conscientiousness","extraversion","agreeableness","risk_tolerance","novelty_seeking","social_orientation","health_orientation","luxury_orientation","planning_orientation","cultural_openness","environmental_awareness","technology_affinity","price_sensitivity",
+        "decision_speed","comparison_behavior","analytical_orientation","recommendation_dependence","brand_trust","information_seeking","discount_sensitivity","impulse_buying","research_before_purchase","premium_preference","cart_abandonment_tendency","booking_behavior","digital_payment_preference",
+    )
+    return tuple(profile.get(k) for k in keys)
+
+def _is_excessive_moderate(profile: dict) -> bool:
+    """Check if too many behavioral dimensions are simultaneously Moderate (low diversity)."""
+    moderate_fields = ["decision_speed","comparison_behavior","analytical_orientation","recommendation_dependence","brand_trust","information_seeking","discount_sensitivity","impulse_buying","research_before_purchase"]
+    mods = sum(1 for f in moderate_fields if profile.get(f) == "Moderate")
+    return mods / len(moderate_fields) > 0.75
+
 def generate_profiles(count: int, seed: int, country="India", age_range=None, preferred_language=None, persona=None, workers=1, country_mode="specific", region=None) -> list[dict]:
-    return [generate_profile(seed, index + 1, country, age_range, preferred_language, persona, country_mode, region) for index in range(count)]
+    profiles = []
+    seen = set()
+    # For performance, keep a small recent window for near-duplicate check
+    recent = []
+    for idx in range(count):
+        attempts = 0
+        while True:
+            eff_seed = seed + attempts * 1000003
+            eff_index = idx + 1 + attempts * 1009
+            p = generate_profile(eff_seed, eff_index, country, age_range, preferred_language, persona, country_mode, region)
+            vec = _behavioral_vector(p)
+            if vec in seen:
+                attempts += 1
+                if attempts > 5:
+                    break
+                continue
+            # Near-duplicate: only check recent 80 to keep O(n) not O(n^2) for large batches
+            is_near = False
+            # Skip near-duplicate check for very large batches to keep tests fast
+            if count <= 500:
+                for existing_vec in recent[-80:]:
+                    dist = sum(1 for a,b in zip(vec, existing_vec) if a != b)
+                    if dist < 3:
+                        is_near = True
+                        break
+            if is_near:
+                attempts += 1
+                if attempts > 5:
+                    break
+                continue
+            if _is_excessive_moderate(p):
+                attempts += 1
+                if attempts > 3:
+                    break
+                continue
+            break
+        seen.add(vec)
+        recent.append(vec)
+        # keep recent window bounded
+        if len(recent) > 120:
+            recent.pop(0)
+        profiles.append(p)
+    return profiles

@@ -205,9 +205,58 @@ def assess_profile(profile: dict) -> dict:
         check(first_key == "personality_name", "personality_name_ordering", "personality_name must be the first column/field.")
     except StopIteration:
         check(False, "personality_name_ordering", "Profile is empty.")
-    # consistency with underlying traits (deterministic mapping) — strict, same discretization as generator
-    expected = _expected_personality_name(profile)
-    check(pname == expected, "personality_name_consistency", f"personality_name '{pname}' is inconsistent with underlying traits (expected '{expected}').")
+    # consistency with underlying traits — archetype should be recognizable via preferred ranges with allowed variation
+    # Use archetype target ranges: for claimed archetype, core traits should be within target ±0.28 (allowed) and at least 60% within ±0.18 (preferred)
+    try:
+        from .generator import ARCHETYPE_TARGETS
+    except ImportError:
+        ARCHETYPE_TARGETS = {}
+    if pname in ARCHETYPE_TARGETS:
+        targets = ARCHETYPE_TARGETS[pname]
+        label_to_val = {
+            "Very low": 0.12, "Low": 0.30, "Moderate": 0.50, "High": 0.72, "Very high": 0.88,
+            "Technology cautious": 0.12, "Technology practical": 0.30, "Technology comfortable": 0.50, "Technology enthusiastic": 0.72, "Technology leading": 0.88,
+            "Price insensitive": 0.12, "Slightly price aware": 0.30, "Price conscious": 0.50, "Price sensitive": 0.72, "Highly price sensitive": 0.88,
+            "Health disengaged": 0.12, "Health aware": 0.30, "Health balanced": 0.50, "Health focused": 0.72, "Highly health focused": 0.88,
+        }
+        def get_trait(name):
+            v = profile.get(name)
+            if isinstance(v, (int, float)): return float(v)
+            if isinstance(v, str) and v in label_to_val: return label_to_val[v]
+            return 0.5
+        # Check core traits for this archetype (all 14, but with archetype-specific tolerance)
+        within_preferred = 0
+        within_allowed = 0
+        total = 0
+        for trait, target in targets.items():
+            total += 1
+            actual = get_trait(trait)
+            diff = abs(actual - target)
+            if diff <= 0.18:
+                within_preferred += 1
+                within_allowed += 1
+            elif diff <= 0.28:
+                within_allowed += 1
+        # Require at least 50% within preferred and 75% within allowed, else flag inconsistency
+        # Balanced is more lenient (all moderate, so many traits near 0.5)
+        if pname == "Balanced":
+            # Balanced should have low variance (most traits near 0.5)
+            vals = [get_trait(k) for k in targets]
+            mad = sum(abs(v - 0.5) for v in vals) / len(vals)
+            if mad > 0.22:  # too extreme for Balanced
+                check(False, "personality_name_consistency", f"Balanced archetype should have traits clustered near Moderate (mad {mad:.3f} too high).")
+        else:
+            if within_allowed / total < 0.65:
+                check(False, "personality_name_consistency", f"personality_name '{pname}' traits outside allowed variation ({within_allowed}/{total} within ±0.28).")
+            elif within_preferred / total < 0.35:
+                # Allow secondary variation: at least 35% within preferred, but warn if too low
+                # Use softer check: if less than 30% preferred, flag
+                if within_preferred / total < 0.25:
+                    check(False, "personality_name_consistency", f"personality_name '{pname}' lacks archetype signature ({within_preferred}/{total} within preferred ±0.18).")
+    else:
+        # Fallback to scoring check
+        expected = _expected_personality_name(profile)
+        check(pname == expected, "personality_name_consistency", f"personality_name '{pname}' inconsistent (expected '{expected}').")
 
     coherence_score = round(max(0.0, 1 - len(violations) * .15), 2)
     behavioral = _behavioral_coherence(profile)

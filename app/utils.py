@@ -13,4 +13,7 @@ def choose(rng: random.Random, values: list[str], weights: list[float] | None = 
 
 
 def level(value: float) -> str:
-    return "High" if value >= .67 else "Low" if value <= .33 else "Moderate"
+    # Narrowed moderate band to reduce excessive Moderate dominance (was 0.33/0.67 → 34% width)
+    # Now 0.40/0.60 → 20% width, allowing more High/Low differentiation while preserving vocabulary
+    # Internal 0-100 (0-1) still used; mapping is the display layer
+    return "High" if value >= .60 else "Low" if value <= .40 else "Moderate"
