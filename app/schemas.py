@@ -84,9 +84,11 @@ PROFILE_COLUMNS = tuple(field.name for field in PROFILE_SCHEMA)
 class GenerateRequest(BaseModel):
     count: int = Field(default=1, ge=1)
     seed: int = Field(default=42, ge=0)
-    country_mode: Literal["specific", "global"] = "specific"
+    country_mode: Literal["specific", "global", "random", "continent", "region", "subregion"] = "specific"
     country: str | None = "India"
     region: str | None = None
+    continent: str | None = None
+    subregion: str | None = None
     age_range: tuple[int, int] | None = None
     persona: str | None = None
     preferred_language: str | None = None

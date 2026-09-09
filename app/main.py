@@ -6,7 +6,7 @@ from fastapi.responses import Response
 from .config import get_settings
 from .exports import export_bytes
 from .generator import LANGUAGES, generate_profiles
-from .geography import supported_countries
+from .geography import supported_continents, supported_countries, supported_subregions
 from .personas import PERSONAS
 from .schemas import GenerateRequest, PROFILE_COLUMNS, PROFILE_SCHEMA_VERSION
 
@@ -23,7 +23,7 @@ def root(): return {"service": "DataProfile API", "version": PROFILE_SCHEMA_VERS
 def health(): return {"status": "ok", "environment": settings.app_env, "schema_version": PROFILE_SCHEMA_VERSION}
 
 @app.get("/personas")
-def personas(): return {"personas": [{"name": name, "typical_genres": genres} for name, genres in PERSONAS.items()], "supported_languages": sorted(LANGUAGES), "supported_countries": supported_countries()}
+def personas(): return {"personas": [{"name": name, "typical_genres": genres} for name, genres in PERSONAS.items()], "supported_languages": sorted(LANGUAGES), "supported_countries": supported_countries(), "supported_continents": supported_continents(), "supported_subregions": supported_subregions()}
 
 @app.post("/generate")
 def generate(request: GenerateRequest):
@@ -31,10 +31,15 @@ def generate(request: GenerateRequest):
     if request.persona and request.persona not in PERSONAS: raise HTTPException(422, "Unsupported persona")
     if request.preferred_language and request.preferred_language not in LANGUAGES: raise HTTPException(422, "Unsupported preferred_language")
     if request.country_mode == "specific" and request.country not in supported_countries(): raise HTTPException(422, "Unsupported country")
+    if request.country_mode == "continent" and request.continent and request.continent not in supported_continents(): raise HTTPException(422, "Unsupported continent")
+    if request.country_mode in {"region","subregion"} and request.subregion and request.subregion not in supported_subregions(): raise HTTPException(422, "Unsupported subregion")
     started = time.perf_counter()
     try:
         logger.info("generation started count=%s format=%s", request.count, request.format)
-        profiles = generate_profiles(request.count, request.seed, request.country, request.age_range, request.preferred_language, request.persona, country_mode=request.country_mode, region=request.region)
+        # Map new request fields to geography context (continent/subregion via region param)
+        geo_region = request.region or request.subregion or request.continent
+        geo_continent = request.continent
+        profiles = generate_profiles(request.count, request.seed, request.country, request.age_range, request.preferred_language, request.persona, country_mode=request.country_mode, region=geo_region, continent=geo_continent)
         duration = time.perf_counter() - started
         logger.info("generation completed count=%s format=%s duration=%.3fs", request.count, request.format, duration)
         metadata = {"count": len(profiles), "seed": request.seed, "profile_schema_version": PROFILE_SCHEMA_VERSION, "feature_count": len(PROFILE_COLUMNS), "generation_seconds": round(duration, 4)}
