@@ -15,13 +15,19 @@ For local development use `uvicorn app.main:app --reload`.
 
 - `GET /health` — service status and schema version
 - `GET /personas` — valid media personas and supported languages
+- `GET /countries` — canonical 193-country registry with coverage levels
+- `GET /segments/definitions` — behavioural segment catalogue
 - `POST /generate` — generate profiles or directly download an export
+- `POST /segments` — generate and classify into behavioural segments
+- `POST /filter` — generate then filter (demographic/behavioural/segment/country)
+- `POST /compare` — compare two or more labelled populations
+- `POST /analytics` — chart-ready dashboard data for a (filtered) population
 
 ```json
 {"count": 100, "seed": 12345, "country_mode": "specific", "country": "Japan", "age_range": [24, 45], "format": "json"}
 ```
 
-`format` accepts `json`, `csv`, or `parquet`. JSON returns metadata and `profiles`; CSV and Parquet return only the requested in-memory download. No files are created on disk. `country_mode` accepts `specific` (the backwards-compatible default, `India`) or `global`; global mode uses configured, non-uniform country weights.
+`format` accepts `json`, `csv`, or `parquet`. JSON returns metadata and `profiles`; CSV and Parquet return only the requested in-memory download. No files are created on disk. `country_mode` accepts `specific` (the backwards-compatible default, `India`), `global`, `continent`, `region`/`subregion`. An optional `countries` list selects a multi-country population (per-profile country picked with registry weights); a single-element list behaves like `country`. Country names and ISO 3166-1 alpha-2/alpha-3 codes are accepted anywhere a country is given.
 
 ## Schema and realism
 
@@ -31,7 +37,9 @@ Profiles use a profile-specific hash-derived random stream, so the same seed, re
 
 ## Geographic model and validation
 
-`app/geography.py` is the country configuration layer. It currently provides modeled contexts for India, United States, United Kingdom, Japan, Saudi Arabia, Brazil, and Nigeria. Each context supplies weighted global selection, locations, languages, currency, income scale, industries, media platforms, payment ecosystem, transport modes, food patterns, cultural/religious distributions, and digital access. Generators consume the selected context; they do not contain country-specific branches. Add a country by adding one context record and its locations.
+`app/geography_world.py` is the canonical registry of 193 countries (ISO 3166-1 alpha-2/alpha-3/numeric, continent, subregion, nationality, currency, languages, places, industries, payments, transport, foods, religions, weights). `app/geography.py` exposes it via `country_registry()`, `resolve_country_name()` (one shared name/code resolver for generation, filtering, analytics and validation) and `get_context()`, which conditions city, currency, language pool, income scale, industries and ecosystems **before** traits and income are derived — a selected country shapes the profile; it never overwrites a global one. Generators contain no country-specific branches. `GET /countries` serves the registry for frontend dropdowns.
+
+Coverage levels (see `DEEP_COVERAGE`): `deep` — India, United States, United Kingdom, Japan, Saudi Arabia, Brazil, Nigeria (curated contexts plus city-language affinity data); `standard` — the other 186 countries (real registry data, probabilistic generation, no curated tuning); `fallback` — per-field default paths (generic job functions, generic language weighting, subregion/global fallbacks), not a country tier.
 
 `app/rules.py` returns structured validation violations and a coherence score derived from those checks. It verifies lifecycle, finance, country/currency, language, payment, transport, and food constraints before a profile is returned.
 
@@ -81,7 +89,7 @@ Relationships are probabilistic plausibility models, never rigid rules. Unusual 
              "behavioural_segment": "deliberate_researcher"}}
 ```
 
-Supported filters: `age_min`/`age_max`, `gender`, `country`, `education`, `employment_status`, `career_level`, `income_band`, `research_intensity`, `comparison_behaviour`, `purchase_intent` (median of commerce purchase-intent scores), `price_sensitivity`, `brand_loyalty`, `decision_speed`, `planning_behaviour`, `impulse_buying`, `behavioural_segment`. Invalid values return `422` with the valid options; empty matches return `matched_count: 0` (not an error). Filter logic lives in `app/filtering.py::apply_filters` (`FILTER_REGISTRY` extends it without endpoint changes).
+Supported filters: `age_min`/`age_max`, `gender`, `country` (single value or list with OR semantics, e.g. `{"country": ["IN", "SA", "AE"]}`), `education`, `employment_status`, `career_level`, `income_band`, `research_intensity`, `comparison_behaviour`, `purchase_intent` (median of commerce purchase-intent scores), `price_sensitivity`, `brand_loyalty`, `decision_speed`, `planning_behaviour`, `impulse_buying`, `behavioural_segment`. Invalid values return `422` with the valid options; empty matches return `matched_count: 0` (not an error). Filter logic lives in `app/filtering.py::apply_filters` (`FILTER_REGISTRY` extends it without endpoint changes).
 
 ## Population comparison
 
@@ -92,7 +100,35 @@ Supported filters: `age_min`/`age_max`, `gender`, `country`, `education`, `emplo
                  {"label": "Saudi Arabia", "generation": {"count": 5000, "seed": 7, "country": "Saudi Arabia"}}]}
 ```
 
-Response: `{populations: {label: {n}}, demographics: [...], behavioural: [...], segments: {...}}`. Each dimension entry is `{dimension, categories, populations: {label: {n, counts, percentages}}}` covering age/gender/education/employment/career/income, eight behavioural attributes, and segment distribution. Logic lives in `app/comparison.py::compare_populations`.
+Response: `{populations: {label: {n}}, demographics: [...], behavioural: [...], segments: {...}}`. Each dimension entry is `{dimension, categories, populations: {label: {n, counts, percentages}}}` covering age/gender/education/employment/career/income, eight behavioural attributes, and segment distribution. Logic lives in `app/comparison.py::compare_populations`. Comparisons are descriptive only; no causal claims are made.
+
+## Analytics for frontend graphs
+
+`POST /analytics` accepts `{generation, filters}` (same generation fields as `/generate`, including `countries`; same filters as `/filter`) and returns chart-ready data computed by `app/analytics.py::compute_analytics` over the filtered in-memory population:
+
+```json
+{"generation": {"count": 10000, "seed": 7, "country": "Saudi Arabia"},
+ "filters": {"age_min": 25, "age_max": 40}}
+```
+
+Response sections (categorical data as `[{label, count}]` bar-ready lists; no images are rendered server-side):
+
+1. **overview** — total, mean/median/min/max age, mean/median income **with its currency** (largest currency group), employment rate + distribution, dominant education/segment, country/city counts.
+2. **demographics** — age buckets, gender, education, employment, career level, experience buckets.
+3. **geography** — country/state/city distributions (state/city top 15; no maps — no coordinates exist).
+4. **financial** — currency-neutral `income_bands`, per-currency income/expense stats, expense-to-income ratio buckets, `income_vs_expenses` scatter (capped at 500 deterministic points). Raw values are **never pooled across currencies**; cross-country views must use bands or per-currency figures.
+5. **behavioural** — research, comparison, price sensitivity, purchase intent (commerce median), brand loyalty, decision speed, planning, impulse, discount, information seeking, risk tolerance.
+6. **segments** — reuses `summarize_segments` (no second algorithm).
+7. **relationships** — numeric pairs as `{sample_size, points, correlation, method: "spearman"}` plus grouped means (education→research, career→intent). Associations within synthetic data only — never causality.
+8. **data_quality** — missing values, duplicate IDs, invalid categories, nulls, inconsistency counts (age/experience, career/life-stage, income/expense, gender/language mapping), segment and country coverage, and a transparent `data_quality_score = 100 * (1 - failed_checks / (n * 7))` (a consistency score, **not** accuracy).
+
+Empty populations return zeroed structures (score `null`); missing fields are counted, never crash. Single-pass aggregation with O(n log n) sorts; no heavy dependencies.
+
+## Synthetic assumptions (explicit)
+
+- Region/places, language lists, currency, income scales, digital access and ecosystem lists are **synthetic modelling assumptions** for behavioural simulation, not sourced official statistics — except ISO 3166-1 codes/names, which follow the standard.
+- Income scales are relative simulation anchors (e.g. India 900000 INR vs USA 68000 USD); do not read them as real median incomes and do not convert between them.
+- No external data was scraped for this task; calibration to public statistics remains future work.
 
 ## Known limitations
 

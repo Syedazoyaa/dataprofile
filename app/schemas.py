@@ -86,6 +86,7 @@ class GenerateRequest(BaseModel):
     seed: int = Field(default=42, ge=0)
     country_mode: Literal["specific", "global", "random", "continent", "region", "subregion"] = "specific"
     country: str | None = "India"
+    countries: list[str] | None = None
     region: str | None = None
     continent: str | None = None
     subregion: str | None = None
@@ -103,6 +104,8 @@ class GenerateRequest(BaseModel):
     def valid_age_range(self):
         if self.age_range and (self.age_range[0] < 16 or self.age_range[1] > 78 or self.age_range[0] > self.age_range[1]):
             raise ValueError("age_range must be between 16 and 78 with min <= max")
+        if self.countries is not None and not self.countries:
+            raise ValueError("countries must be a non-empty list when provided")
         return self
 
 
@@ -113,6 +116,7 @@ class GenerationSpec(BaseModel):
     seed: int = Field(default=42, ge=0)
     country_mode: Literal["specific", "global", "random", "continent", "region", "subregion"] = "specific"
     country: str | None = "India"
+    countries: list[str] | None = None
     region: str | None = None
     continent: str | None = None
     subregion: str | None = None
@@ -124,6 +128,8 @@ class GenerationSpec(BaseModel):
     def valid_age_range(self):
         if self.age_range and (self.age_range[0] < 16 or self.age_range[1] > 78 or self.age_range[0] > self.age_range[1]):
             raise ValueError("age_range must be between 16 and 78 with min <= max")
+        if self.countries is not None and not self.countries:
+            raise ValueError("countries must be a non-empty list when provided")
         return self
 
 
@@ -133,7 +139,7 @@ class ProfileFilter(BaseModel):
     age_min: int | None = Field(default=None, ge=16, le=78)
     age_max: int | None = Field(default=None, ge=16, le=78)
     gender: str | None = None
-    country: str | None = None
+    country: str | list[str] | None = None
     education: str | None = None
     employment_status: str | None = None
     career_level: str | None = None
@@ -162,6 +168,11 @@ class FilterRequest(BaseModel):
 
 class SegmentsRequest(BaseModel):
     generation: GenerationSpec = Field(default_factory=GenerationSpec)
+
+
+class AnalyticsRequest(BaseModel):
+    generation: GenerationSpec = Field(default_factory=GenerationSpec)
+    filters: ProfileFilter = Field(default_factory=ProfileFilter)
 
 
 class PopulationSpec(BaseModel):

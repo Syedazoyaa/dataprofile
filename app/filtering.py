@@ -5,6 +5,7 @@ generation, so dependency relationships are preserved. New filters are added
 by extending FILTER_REGISTRY, not by changing endpoints.
 """
 
+from .geography import resolve_country_name
 from .schemas import ProfileFilter
 from .segmentation import aggregate_purchase_intent, classify_profile
 
@@ -54,6 +55,12 @@ _SEGMENT_IDS = (
 )
 
 
+def _country_set(value) -> set[str]:
+    """Normalise a country filter (name/code or list) to canonical names (OR semantics)."""
+    entries = value if isinstance(value, list) else [value]
+    return {resolve_country_name(entry) for entry in entries}
+
+
 def validate_filters(filters: ProfileFilter, supported_countries=None):
     """Raise ValueError with a meaningful message for any invalid filter."""
     for name, (key, allowed, _helper) in FILTER_REGISTRY.items():
@@ -61,8 +68,14 @@ def validate_filters(filters: ProfileFilter, supported_countries=None):
         if value is None:
             continue
         if name == "country":
-            if supported_countries is not None and value not in supported_countries:
-                raise ValueError(f"Unsupported filter country: {value!r}")
+            try:
+                names = _country_set(value)
+            except ValueError:
+                raise ValueError(f"Unsupported filter country: {value!r}") from None
+            if supported_countries is not None:
+                unknown = [n for n in names if n not in supported_countries]
+                if unknown:
+                    raise ValueError(f"Unsupported filter country: {sorted(unknown)!r}")
             continue
         if name == "behavioural_segment":
             if value not in _SEGMENT_IDS:
@@ -82,7 +95,10 @@ def _matches(profile, filters: ProfileFilter) -> bool:
         value = getattr(filters, name, None)
         if value is None:
             continue
-        if name == "behavioural_segment":
+        if name == "country":
+            if profile.get("country") not in _country_set(value):
+                return False
+        elif name == "behavioural_segment":
             if classify_profile(profile)["segment_id"] != value:
                 return False
         elif helper is not None:

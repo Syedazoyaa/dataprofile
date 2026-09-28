@@ -23,6 +23,20 @@ COUNTRIES = COUNTRIES_WORLD
 # For weighted global selection, use original weights where defined, else 3
 # Keep original 6 weights (18,14,5,7,4,8,10) and 3 for others.
 
+# Coverage levels: data-driven, not pretended.
+# - "deep": the 7 originally curated contexts (weight >= 4) with tuned places,
+#   languages, income scales and city-language affinity data.
+# - "standard": all other registry countries (real ISO/currency/languages/
+#   places) with probabilistic generation but no curated affinity tuning.
+# - "fallback" is not a country tier: it names the per-field default paths
+#   used when a context lacks specifics (generic job functions, generic
+#   language weighting, subregion/global fallbacks). See coherence.py and
+#   get_context/choose_language for those paths.
+DEEP_COVERAGE = frozenset({
+    "India", "United States", "United Kingdom", "Japan",
+    "Saudi Arabia", "Brazil", "Nigeria",
+})
+
 @dataclass(frozen=True)
 class GeographicContext:
     country: str
@@ -80,10 +94,65 @@ def _fallback_item(country: str) -> dict:
             return v
     raise ValueError(f"Unsupported country: {country}")
 
-def get_context(rng, country_mode: str = "specific", country: str | None = "India", region: str | None = None, continent: str | None = None) -> GeographicContext:
+def resolve_country_name(value: str) -> str:
+    """Canonical country name for a name, alpha-2 or alpha-3 code (case-insensitive).
+
+    Single shared helper for generation, filtering, analytics and validation
+    so country lists are never duplicated across files.
+    """
+    if not isinstance(value, str):
+        raise ValueError(f"Unsupported country: {value!r}")
+    text = value.strip()
+    if text in COUNTRIES:
+        return text
+    lowered = text.lower()
+    for name, item in COUNTRIES.items():
+        if (name.lower() == lowered or item["code"].lower() == lowered
+                or item["alpha3"].lower() == lowered):
+            return name
+    raise ValueError(f"Unsupported country: {value!r}")
+
+def coverage_for(country: str) -> str:
+    """Coverage level ('deep' or 'standard') for a country name or code."""
+    return "deep" if resolve_country_name(country) in DEEP_COVERAGE else "standard"
+
+def country_summary(country: str) -> dict:
+    """Frontend-ready registry record for one country (dropdowns, analytics)."""
+    name = resolve_country_name(country)
+    item = COUNTRIES[name]
+    return {
+        "name": name,
+        "alpha2": item["code"],
+        "alpha3": item["alpha3"],
+        "numeric": item["numeric"],
+        "continent": item["continent"],
+        "subregion": item["subregion"],
+        "nationality": item["nationality"],
+        "currency": item["currency"],
+        "languages": list(item["languages"]),
+        "coverage": "deep" if name in DEEP_COVERAGE else "standard",
+    }
+
+def country_registry() -> list[dict]:
+    """Full canonical registry (sorted by name) for dropdowns and validation."""
+    return [country_summary(name) for name in sorted(COUNTRIES.keys())]
+
+def get_context(rng, country_mode: str = "specific", country: str | None = "India", region: str | None = None, continent: str | None = None, countries: list[str] | None = None) -> GeographicContext:
     # Resolve country
     chosen = country
-    if country_mode == "global" or country_mode == "random":
+    if country_mode == "multiple":
+        # Explicit multi-country selection: per-profile pick weighted by
+        # registry weights, so larger populations stay proportionally mixed.
+        if not countries:
+            raise ValueError("countries must be a non-empty list for multiple-country generation")
+        canonical = []
+        for entry in countries:
+            name = resolve_country_name(entry)
+            if name not in canonical:
+                canonical.append(name)
+        weights = [COUNTRIES[n]["weight"] for n in canonical]
+        chosen = choose(rng, canonical, weights)
+    elif country_mode == "global" or country_mode == "random":
         # weighted random across all countries
         names = list(COUNTRIES.keys())
         weights = [COUNTRIES[n]["weight"] for n in names]
@@ -107,17 +176,7 @@ def get_context(rng, country_mode: str = "specific", country: str | None = "Indi
         weights = [COUNTRIES[n]["weight"] for n in candidates]
         chosen = choose(rng, candidates, weights)
     else:  # specific
-        if chosen not in COUNTRIES:
-            # allow alpha2/alpha3 lookup
-            found = None
-            for n, v in COUNTRIES.items():
-                if v["code"] == chosen or v["alpha3"] == chosen:
-                    found = n
-                    break
-            if found:
-                chosen = found
-            else:
-                raise ValueError(f"Unsupported country: {chosen}")
+        chosen = resolve_country_name(chosen)
 
     item = _fallback_item(chosen)
     # Places: filter by region if provided and mode is specific with region

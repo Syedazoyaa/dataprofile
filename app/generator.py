@@ -617,7 +617,7 @@ def _conditional_platform(rng, context, language: str, traits: dict):
         weights.append(w * rng.uniform(0.88,1.12))
     return choose(rng, opts, weights)
 
-def generate_profile(seed: int, index: int, country: str | None = "India", age_range=None, preferred_language=None, persona=None, country_mode="specific", region=None, continent=None) -> dict:
+def generate_profile(seed: int, index: int, country: str | None = "India", age_range=None, preferred_language=None, persona=None, country_mode="specific", region=None, continent=None, countries=None) -> dict:
     if preferred_language and preferred_language not in LANGUAGES: raise ValueError("Unsupported preferred_language")
     if persona and persona not in PERSONAS: raise ValueError("Unsupported persona")
     rng = profile_rng(seed, index)
@@ -628,7 +628,7 @@ def generate_profile(seed: int, index: int, country: str | None = "India", age_r
     # Keep legacy factor diversity as small blended noise for realism (optional)
     # Validate archetype signature remains recognizable but with variation
 
-    context = get_context(rng, country_mode, country, region, continent)
+    context = get_context(rng, country_mode, country, region, continent, countries)
     _refine_digital_adoption(rng, traits, context, age)
     # Personality name is the anchor archetype (ensures archetype → traits → behavior)
     personality_name = archetype
@@ -813,7 +813,7 @@ def _is_excessive_moderate(profile: dict) -> bool:
     mods = sum(1 for f in moderate_fields if profile.get(f) == "Moderate")
     return mods / len(moderate_fields) > 0.75
 
-def generate_profiles(count: int, seed: int, country="India", age_range=None, preferred_language=None, persona=None, workers=1, country_mode="specific", region=None, continent=None) -> list[dict]:
+def generate_profiles(count: int, seed: int, country="India", age_range=None, preferred_language=None, persona=None, workers=1, country_mode="specific", region=None, continent=None, countries=None) -> list[dict]:
     profiles = []
     seen = set()
     recent = []
@@ -822,7 +822,7 @@ def generate_profiles(count: int, seed: int, country="India", age_range=None, pr
         while True:
             eff_seed = seed + attempts * 1000003
             eff_index = idx + 1 + attempts * 1009
-            p = generate_profile(eff_seed, eff_index, country, age_range, preferred_language, persona, country_mode, region, continent)
+            p = generate_profile(eff_seed, eff_index, country, age_range, preferred_language, persona, country_mode, region, continent, countries)
             vec = _behavioral_vector(p)
             if vec in seen:
                 attempts += 1
