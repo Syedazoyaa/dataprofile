@@ -1,6 +1,15 @@
 from datetime import date, timedelta
 
 from .personas import PERSONAS
+from .coherence import (
+    choose_language,
+    financial_support_for,
+    job_function_for_industry,
+    occupation_title,
+    professional_training_for,
+    resolve_life_stage,
+    supported_student_expenses,
+)
 from .geography import get_context, supported_languages
 from .rules import validate_profile
 from .schemas import DOMAIN_TOPICS, MEASURES, PERSONALITY_ARCHETYPES, PROFILE_COLUMNS, PROFILE_SCHEMA_VERSION
@@ -625,8 +634,8 @@ def generate_profile(seed: int, index: int, country: str | None = "India", age_r
     personality_name = archetype
     # Optional consistency check: derived should match anchor most of the time; if not, keep anchor (anchor is truth)
     # We do not overwrite anchor with derived to preserve archetype → traits direction
-    # Step 2: Language (geography-conditioned but not deterministic)
-    language = preferred_language or choose(rng, list(context.languages))
+    # Step 2: Language (geography-conditioned with migration probability, never deterministic)
+    language = preferred_language or choose_language(rng, list(context.languages), context.state, context.city)
     # Step 3: Education chain (age → education → field)
     education, years_of_education, graduation_status = _education_for_stage(rng, stage, age, traits, context)
     field_of_study = _field_of_study(rng, education, traits)
@@ -666,14 +675,26 @@ def generate_profile(seed: int, index: int, country: str | None = "India", age_r
         # Ensure owned vs rented aligns loosely with SES/income_factor
         pass
 
-    # Finance
+    # Finance (support-aware: zero personal income does not imply zero spending)
+    financial_support = financial_support_for(rng, employment, monthly_income)
     # expense_ratio conditional on children, luxury, planning, household, ses
     expense_ratio = _clip(0.36 + children * 0.055 + traits["luxury_orientation"]*0.16 - traits["planning_orientation"]*0.13 + (0.05 if household_size>4 else 0) - ses*0.04 + rng.gauss(0,0.04))
     expense_ratio = max(0.28, min(0.92, expense_ratio))
-    expenses = int(monthly_income * expense_ratio) if monthly_income else 0
-    savings = monthly_income - expenses
-    # ensure savings non-negative (allow small negative jitter then clip)
-    if savings < 0: savings = 0; expenses = monthly_income
+    if monthly_income:
+        expenses = int(monthly_income * expense_ratio)
+        savings = monthly_income - expenses
+        # ensure savings non-negative (allow small negative jitter then clip)
+        if savings < 0: savings = 0; expenses = monthly_income
+    elif financial_support in ("Family support", "Scholarship/stipend", "Self-funded", "Pension/savings"):
+        # Supported with no personal income: probabilistic non-zero spending, no savings.
+        expenses = supported_student_expenses(rng, context.income_scale) if rng.random() < 0.72 else 0
+        savings = 0
+    else:
+        expenses = 0
+        savings = 0
+
+    # Life stage reconciliation: age anchor adjusted by realised career state.
+    life_stage = resolve_life_stage(rng, age, experience, career, employment, stage)
 
     # Persona - behavior first (traits/culture/age) then geography platform mapping
     # Weight personas by traits, not country
@@ -690,7 +711,13 @@ def generate_profile(seed: int, index: int, country: str | None = "India", age_r
         if name == "Horror Fan": w += 0.7 * traits["risk_tolerance"] if age<38 else -0.3
         persona_weights.append(max(0.2, w))
     persona_value = persona or choose(rng, list(PERSONAS), persona_weights)
-    occupation = employment if employment in {"School student", "Student", "Retired"} else f"{career} {industry} professional"
+    if employment in {"School student", "Student", "Retired"}:
+        job_function = "Not applicable"
+        occupation = employment
+    else:
+        job_function = job_function_for_industry(rng, industry, field_of_study, career)
+        occupation = occupation_title(career, industry, job_function, employment)
+    professional_training = professional_training_for(rng, education, industry, career, experience) if employment not in {"School student", "Student"} else ("In progress" if employment == "Student" else "Not applicable")
     degree_years = {"School education": 10, "Undergraduate": 15, "Postgraduate": 17, "Professional diploma": 13}[education] if education in {"School education","Undergraduate","Postgraduate","Professional diploma"} else years_of_education
     # Conditional geography behavior (not deterministic)
     local_food_pattern = _conditional_food_pattern(rng, context, income_factor, traits["health_orientation"], age, household_size)
@@ -699,11 +726,11 @@ def generate_profile(seed: int, index: int, country: str | None = "India", age_r
     preferred_ott_platform = _conditional_platform(rng, context, language, traits)
 
     profile = {
-        "personality_name": personality_name, "profile_id": f"{context.country_code}-{seed:08x}-{index:05d}", "profile_schema_version": PROFILE_SCHEMA_VERSION, "age": age, "age_band": next(f"{a}-{b}" for a,b,_ in AGE_BANDS if a <= age <= b), "date_of_birth": str(date(2026, 8, 20) - timedelta(days=age * 365 + rng.randint(0, 364))), "gender": choose(rng, ["Female", "Male", "Non-binary"], [48, 48, 4]), "country": context.country, "country_code": context.country_code, "state": context.state, "city": context.city, "region": context.region, "urban_rural": context.urban_rural, "nationality": context.nationality, "primary_language": language, "preferred_language": language if traits["cultural_openness"] < .65 else choose(rng, list(context.languages)), "population_segment": "Working professional" if employment.startswith("Employed") else stage, "life_stage": stage,
+        "personality_name": personality_name, "profile_id": f"{context.country_code}-{seed:08x}-{index:05d}", "profile_schema_version": PROFILE_SCHEMA_VERSION, "age": age, "age_band": next(f"{a}-{b}" for a,b,_ in AGE_BANDS if a <= age <= b), "date_of_birth": str(date(2026, 8, 20) - timedelta(days=age * 365 + rng.randint(0, 364))), "gender": choose(rng, ["Female", "Male", "Non-binary"], [48, 48, 4]), "country": context.country, "country_code": context.country_code, "state": context.state, "city": context.city, "region": context.region, "urban_rural": context.urban_rural, "nationality": context.nationality, "primary_language": language, "preferred_language": language if traits["cultural_openness"] < .65 else choose_language(rng, list(context.languages), context.state, context.city), "population_segment": "Working professional" if employment.startswith("Employed") else life_stage, "life_stage": life_stage,
         "marital_status": marital, "relationship_status": "Married" if marital == "Married" else marital, "number_of_children": children, "dependents_count": dependents, "household_size": household_size, "family_type": family_type, "living_arrangement": living_arrangement, "parents_in_household": parents_in_house, "siblings_count": siblings,
         "education_level": education, "highest_degree": education, "field_of_study": field_of_study, "institution_type": institution_type, "graduation_status": graduation_status, "years_of_education": degree_years, "academic_orientation": _category((traits["openness"] + traits["conscientiousness"]) / 2), "education_quality": _category(.35 + income_factor * .28 + traits["conscientiousness"] * .22 + edu_score*0.15),
-        "employment_status": employment, "occupation": occupation, "industry": industry, "job_function": industry, "career_level": career, "years_of_experience": experience, "employer_type": employer_type, "work_mode": work_mode, "weekly_work_hours": weekly_hours, "leadership_status": leadership_status, "job_stability": job_stability, "career_growth_orientation": growth_orientation,
-        "annual_income": annual_income, "monthly_income": monthly_income, "income_band": "Limited" if annual_income < 300000 and context.currency=="INR" else ("Limited" if annual_income < context.income_scale*0.45 else "Modest" if annual_income < context.income_scale*0.85 else "Comfortable" if annual_income < context.income_scale*1.6 else "Affluent"), "household_income": household_income, "monthly_expenses": expenses, "monthly_savings": savings, "savings_rate": round(savings / monthly_income, 3) if monthly_income else 0, "financial_stability": _category((traits["planning_orientation"] + min(savings / max(monthly_income,1) * 2, 1)) / 2), "spending_power": _category(_clip(0.55*income_factor+0.45*ses)), "price_sensitivity": traits["price_sensitivity"], "financial_risk_tolerance": _category(traits["risk_tolerance"]), "investment_interest": _category(_clip(0.42*income_factor + 0.38*traits["risk_tolerance"] + 0.20*ses)), "credit_behavior": _category((income_factor + traits["conscientiousness"]) / 2),
+        "employment_status": employment, "occupation": occupation, "industry": industry, "job_function": job_function, "professional_training": professional_training, "career_level": career, "years_of_experience": experience, "employer_type": employer_type, "work_mode": work_mode, "weekly_work_hours": weekly_hours, "leadership_status": leadership_status, "job_stability": job_stability, "career_growth_orientation": growth_orientation,
+        "annual_income": annual_income, "monthly_income": monthly_income, "income_band": "Limited" if annual_income < 300000 and context.currency=="INR" else ("Limited" if annual_income < context.income_scale*0.45 else "Modest" if annual_income < context.income_scale*0.85 else "Comfortable" if annual_income < context.income_scale*1.6 else "Affluent"), "household_income": household_income, "financial_support_source": financial_support, "monthly_expenses": expenses, "monthly_savings": savings, "savings_rate": round(savings / monthly_income, 3) if monthly_income else 0, "financial_stability": _category((traits["planning_orientation"] + min(savings / max(monthly_income,1) * 2, 1)) / 2), "spending_power": _category(_clip(0.55*income_factor+0.45*ses)), "price_sensitivity": traits["price_sensitivity"], "financial_risk_tolerance": _category(traits["risk_tolerance"]), "investment_interest": _category(_clip(0.42*income_factor + 0.38*traits["risk_tolerance"] + 0.20*ses)), "credit_behavior": _category((income_factor + traits["conscientiousness"]) / 2),
         "shopping_frequency": _category(_clip(0.42*income_factor + 0.32*traits["digital_adoption"] + 0.16*ses + 0.10*traits["social_orientation"])), "online_shopping_frequency": _category(_clip(0.65*traits["digital_adoption"]+0.20*income_factor+0.15*ses)), "offline_shopping_frequency": _category(traits["social_orientation"] *0.7 + (0.3 if context.shopping_ecosystems else 0)), "preferred_marketplace": "Value marketplace" if traits["price_sensitivity"] > .58 else "Brand marketplace" if traits["luxury_orientation"]>0.58 else choose(rng, ["Value marketplace","Brand marketplace","Balanced marketplace"], [32,28,40]), "preferred_category": "Home and family" if children else "Electronics" if traits["technology_affinity"] > .62 else "Fashion" if traits["luxury_orientation"]>0.56 else choose(rng, ["Home and family","Electronics","Fashion","Groceries"], [22,28,24,26]), "average_order_value": int(520 + income_factor * 5200 + traits["luxury_orientation"] * 2400 + ses*1200 + rng.randint(-280,420)), "discount_sensitivity": _category(traits["price_sensitivity"]), "brand_loyalty": _category(_clip(0.45*traits["conscientiousness"] + 0.25*(1-traits["price_sensitivity"]) + 0.20*income_factor +0.10*ses)), "impulse_buying": _category(1 - traits["planning_orientation"]*0.75 - traits["conscientiousness"]*0.15 + traits["risk_tolerance"]*0.10), "research_before_purchase": _category((traits["openness"] + traits["planning_orientation"]) / 2), "premium_preference": _category(_clip(0.42*income_factor + 0.36*traits["luxury_orientation"] +0.22*ses)), "cart_abandonment_tendency": _category(_clip(0.55*traits["price_sensitivity"]+0.25*(1-traits["planning_orientation"])+0.20*(1-income_factor))),
         "technology_affinity": traits["technology_affinity"], "digital_adoption": traits["digital_adoption"], "daily_screen_time_hours": round(max(0.8, 1.2 + traits["digital_adoption"] * 6.2 - max(age-50,0)*.038 + (0.6 if employment in {"Student","School student"} else 0) + rng.gauss(0,0.45)), 1), "device_preference": "Smartphone-first" if traits["technology_affinity"] < .60 else "Multi-device", "ai_interest": _category((traits["technology_affinity"] + traits["openness"]) / 2), "social_media_activity": _category((traits["social_orientation"] + traits["digital_adoption"]) / 2), "instagram_usage": _category((traits["social_orientation"] + (1 if age < 40 else .36)) / 2), "youtube_usage": _category(traits["digital_adoption"]), "facebook_usage": _category(.68 if age > 42 else .34), "linkedin_usage": _category(.74 if employment.startswith("Employed") else .28), "messaging_frequency": _category(traits["social_orientation"]), "content_creation": _category((traits["openness"] + traits["social_orientation"]) / 2), "influencer_following": _category(traits["novelty_seeking"]*0.7 + traits["social_orientation"]*0.3),
         "entertainment_persona": persona_value, "preferred_ott_platform": preferred_ott_platform, "preferred_movie_genres": PERSONAS[persona_value][:2], "streaming_hours_weekly": round(max(1.2, 1.8 + traits["digital_adoption"] * 13.5 + traits["openness"]*2.1 + rng.gauss(0,1.2)), 1), "gaming_frequency": _category(traits["technology_affinity"] * (1.05 if age < 40 else .62) + traits["novelty_seeking"]*0.12), "music_frequency": _category((traits["openness"] + traits["digital_adoption"]) / 2), "preferred_music_genre": choose(rng, ["Film music", "Pop", "Indie", "Regional", "Classical", "Hip-hop", "Electronic"], [18,24,14,18,8,10,8]), "regional_music_preference": _category(.48 + (.22 if language != "English" else 0) + traits["cultural_openness"]*0.18), "international_music_preference": _category(traits["cultural_openness"]*0.75 + traits["openness"]*0.25),

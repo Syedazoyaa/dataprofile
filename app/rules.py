@@ -50,11 +50,34 @@ def _behavioral_coherence(profile: dict) -> dict:
     Scores are transparent linear distances, not learned models.
     """
     scores = {}
-    # Age / life stage alignment
+    # Age / life stage alignment (career-aware: a reconciled stage that matches
+    # career state scores highly even when it differs from the pure age anchor)
     age = profile.get("age", 0)
     life = profile.get("life_stage", "")
     expected = "Teenager" if age<18 else "University Student" if age<23 else "Early Career" if age<30 else "Established Professional" if age<40 else "Mid-Career" if age<52 else "Senior Professional" if age<64 else "Retired"
-    scores["age_life_stage_alignment"] = 1.0 if life==expected else 0.45  # allow some flexibility for edge ages
+    if life == expected:
+        scores["age_life_stage_alignment"] = 1.0
+    else:
+        order = ["Teenager", "University Student", "Early Career", "Established Professional", "Mid-Career", "Senior Professional", "Retired"]
+        career = profile.get("career_level", "Early")
+        exp = profile.get("years_of_experience", 0)
+        # A senior/experienced career legitimately pulls the stage upward.
+        career_consistent = (
+            (life == "Established Professional" and expected == "Early Career"
+             and (career in ("Mid-level", "Senior", "Leadership") or exp >= 5))
+            or (life == "Mid-Career" and expected in ("Early Career", "Established Professional")
+                and (career in ("Senior", "Leadership") or exp >= 8))
+            or (life == "Early Career" and expected == "Established Professional"
+                and (career == "Early" or exp <= 4))
+            or (life in ("Mid-Career", "Established Professional") and expected == "Senior Professional"
+                and career == "Early")
+        )
+        if career_consistent:
+            scores["age_life_stage_alignment"] = 0.9
+        elif life in order and expected in order and abs(order.index(life) - order.index(expected)) <= 1:
+            scores["age_life_stage_alignment"] = 0.75
+        else:
+            scores["age_life_stage_alignment"] = 0.45
 
     # Age / education alignment (years_of_education plausible)
     yoe = profile.get("years_of_education", 10)
@@ -74,8 +97,12 @@ def _behavioral_coherence(profile: dict) -> dict:
     career_rank = {"None":0, "Early":1, "Mid-level":2, "Senior":3, "Leadership":4, "Former professional":2}.get(career,1)
     # Alignment is not strict: score reduces only if strong mismatch (e.g., School+Leadership with no experience is less coherent)
     exp = profile.get("years_of_experience",0)
+    training = profile.get("professional_training", "")
     if edu_rank <=1 and career_rank >=4 and exp < 12:
         scores["education_career_alignment"] = 0.55
+    elif edu_rank <=1 and career_rank >=4:
+        # Long experience and/or a professional-training pathway keeps this plausible.
+        scores["education_career_alignment"] = 0.85 if training and training != "No formal additional training" else 0.72
     elif edu_rank >=4 and career_rank <=1 and exp > 8:
         scores["education_career_alignment"] = 0.62
     else:
@@ -173,7 +200,17 @@ def assess_profile(profile: dict) -> dict:
     def check(condition, rule, message):
         if not condition: violations.append({"rule": rule, "severity": "error", "message": message})
     check(16 <= profile.get("age", 0) <= 78, "age_bounds", "Age is outside the supported range.")
-    check(profile.get("monthly_savings", -1) >= 0 and profile.get("monthly_savings", 0) <= profile.get("monthly_income", -1), "finance_consistency", "Savings are inconsistent with monthly income.")
+    _income = profile.get("monthly_income", -1)
+    _savings = profile.get("monthly_savings", -1)
+    _support = profile.get("financial_support_source", "Self-funded")
+    if _income == 0:
+        # Zero personal income with an external support source may still spend.
+        check(_savings == 0, "finance_consistency", "Savings are inconsistent with monthly income.")
+        check(profile.get("monthly_expenses", -1) >= 0, "finance_consistency", "Expenses are inconsistent with monthly income.")
+        if profile.get("monthly_expenses", 0) > 0:
+            check(_support not in (None, "", "None"), "finance_support_consistency", "Non-zero expenses with zero income require a financial support source.")
+    else:
+        check(_savings >= 0 and _savings <= _income, "finance_consistency", "Savings are inconsistent with monthly income.")
     check(profile.get("years_of_experience", 999) <= max(0, profile.get("age", 0) - 16), "career_age_consistency", "Experience exceeds plausible career duration.")
     check(not (profile.get("age", 0) < 20 and profile.get("number_of_children", 0) > 0), "family_age_consistency", "Child count is implausible for age.")
     check(not (profile.get("life_stage") == "University Student" and profile.get("career_level") != "None"), "student_career_consistency", "Student career level is inconsistent.")
@@ -187,6 +224,10 @@ def assess_profile(profile: dict) -> dict:
         check(profile.get("primary_transport_mode") in country["transport"], "country_transport_consistency", "Transport mode is not available in geographic context.")
         check(profile.get("local_food_pattern") in country["foods"], "country_food_consistency", "Food pattern is not available in geographic context.")
         check(profile.get("country_code") == country["code"], "country_code_consistency", "Country code mismatch.")
+    # Gender values must never leak into language fields (schema/mapping guard).
+    _gender_values = {"Female", "Male", "Non-binary"}
+    check(profile.get("primary_language") not in _gender_values, "language_gender_mapping", "Language field contains a gender value.")
+    check(profile.get("preferred_language") not in _gender_values, "language_gender_mapping", "Language field contains a gender value.")
     # Education / experience additional hard check
     edu = profile.get("education_level")
     yoe = profile.get("years_of_education", 0)
