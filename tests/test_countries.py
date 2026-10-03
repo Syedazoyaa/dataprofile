@@ -127,10 +127,10 @@ def test_countries_endpoint_and_generation_api():
     assert r.status_code == 200
     assert {p["country"] for p in r.json()["profiles"]} <= {"India", "Saudi Arabia"}
 
-    # No country selected preserves existing behaviour (default India).
-    r = client.post("/generate", json={"count": 3, "seed": 13})
+    # No country selected uses the neutral global mode, never India by default.
+    r = client.post("/generate", json={"count": 50, "seed": 13})
     assert r.status_code == 200
-    assert {p["country"] for p in r.json()["profiles"]} == {"India"}
+    assert len({p["country"] for p in r.json()["profiles"]}) > 1
 
     r = client.post("/generate", json={"count": 3, "seed": 13, "countries": ["Atlantis"]})
     assert r.status_code == 422

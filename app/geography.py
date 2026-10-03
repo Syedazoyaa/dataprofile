@@ -137,7 +137,7 @@ def country_registry() -> list[dict]:
     """Full canonical registry (sorted by name) for dropdowns and validation."""
     return [country_summary(name) for name in sorted(COUNTRIES.keys())]
 
-def get_context(rng, country_mode: str = "specific", country: str | None = "India", region: str | None = None, continent: str | None = None, countries: list[str] | None = None) -> GeographicContext:
+def get_context(rng, country_mode: str = "global", country: str | None = None, region: str | None = None, continent: str | None = None, countries: list[str] | None = None) -> GeographicContext:
     # Resolve country
     chosen = country
     if country_mode == "multiple":

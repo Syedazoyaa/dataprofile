@@ -618,7 +618,7 @@ def _conditional_platform(rng, context, language: str, traits: dict):
         weights.append(w * rng.uniform(0.88,1.12))
     return choose(rng, opts, weights)
 
-def generate_profile(seed: int, index: int, country: str | None = "India", age_range=None, preferred_language=None, persona=None, country_mode="specific", region=None, continent=None, countries=None) -> dict:
+def generate_profile(seed: int, index: int, country: str | None = None, age_range=None, preferred_language=None, persona=None, country_mode=None, region=None, continent=None, countries=None) -> dict:
     if preferred_language and preferred_language not in LANGUAGES: raise ValueError("Unsupported preferred_language")
     if persona and persona not in PERSONAS: raise ValueError("Unsupported persona")
     rng = profile_rng(seed, index)
@@ -629,6 +629,10 @@ def generate_profile(seed: int, index: int, country: str | None = "India", age_r
     # Keep legacy factor diversity as small blended noise for realism (optional)
     # Validate archetype signature remains recognizable but with variation
 
+    # Direct library callers may omit geography; that means global, while an
+    # explicitly supplied country remains a specific-country request.
+    if country_mode is None:
+        country_mode = "specific" if country else "global"
     context = get_context(rng, country_mode, country, region, continent, countries)
     _refine_digital_adoption(rng, traits, context, age)
     # Personality name is the anchor archetype (ensures archetype → traits → behavior)
@@ -817,7 +821,7 @@ def _is_excessive_moderate(profile: dict) -> bool:
     mods = sum(1 for f in moderate_fields if profile.get(f) == "Moderate")
     return mods / len(moderate_fields) > 0.75
 
-def generate_profiles(count: int, seed: int, country="India", age_range=None, preferred_language=None, persona=None, workers=1, country_mode="specific", region=None, continent=None, countries=None) -> list[dict]:
+def generate_profiles(count: int, seed: int, country=None, age_range=None, preferred_language=None, persona=None, workers=1, country_mode=None, region=None, continent=None, countries=None) -> list[dict]:
     profiles = []
     seen = set()
     recent = []

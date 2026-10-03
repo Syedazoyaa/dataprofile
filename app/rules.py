@@ -1,6 +1,8 @@
 from .geography import COUNTRIES
 from .schemas import PERSONALITY_ARCHETYPES
 
+GLOBAL_INCOME_SCALE = sum(item["income"] for item in COUNTRIES.values()) / len(COUNTRIES)
+
 # Rank maps for behavioral coherence (ordinal 1-5)
 TRAIT_RANK = {
     "Very low":1, "Low":2, "Moderate":3, "High":4, "Very high":5,
@@ -110,8 +112,11 @@ def _behavioral_coherence(profile: dict) -> dict:
 
     # Career / income alignment (income should roughly increase with career+experience+education)
     income = profile.get("annual_income",0)
-    country = profile.get("country","India")
-    scale = COUNTRIES.get(country, {}).get("income",900000)
+    country = profile.get("country")
+    # Profiles normally always include a country.  For partial records used by
+    # analytics, fall back to a neutral global income scale rather than a
+    # country-specific assumption.
+    scale = COUNTRIES.get(country, {}).get("income", GLOBAL_INCOME_SCALE)
     income_factor = income / (scale*2.8) if scale else 0
     expected_factor = 0.15 + career_rank*0.14 + min(exp,20)/50*0.25  # heuristic expected
     diff = abs(income_factor - expected_factor)

@@ -28,3 +28,11 @@ def test_global_and_specific_country_generation():
     global_result = client.post("/generate", json={"count": 20, "seed": 7, "country_mode": "global"})
     assert global_result.status_code == 200
     assert len({p["country"] for p in global_result.json()["profiles"]}) > 1
+
+
+def test_omitted_geography_is_global_and_country_requests_stay_explicit():
+    default_result = client.post("/generate", json={"count": 50, "seed": 17})
+    explicit_global = client.post("/generate", json={"count": 50, "seed": 17, "country_mode": "global"})
+    assert default_result.status_code == explicit_global.status_code == 200
+    assert default_result.json()["profiles"] == explicit_global.json()["profiles"]
+    assert client.post("/generate", json={"count": 1, "country_mode": "global", "country": "Japan"}).status_code == 422

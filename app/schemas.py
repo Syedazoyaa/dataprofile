@@ -110,8 +110,10 @@ CORE_PROFILE_FIELDS = _core_fields_valid()
 class GenerateRequest(BaseModel):
     count: int = Field(default=1, ge=1)
     seed: int = Field(default=42, ge=0)
-    country_mode: Literal["specific", "global", "random", "continent", "region", "subregion"] = "specific"
-    country: str | None = "India"
+    # An omitted geographic scope is intentionally global.  A country is only
+    # used when the caller explicitly selects the specific-country mode.
+    country_mode: Literal["specific", "global", "random", "continent", "region", "subregion"] = "global"
+    country: str | None = None
     countries: list[str] | None = None
     region: str | None = None
     continent: str | None = None
@@ -135,6 +137,15 @@ class GenerateRequest(BaseModel):
             raise ValueError("age_range must be between 16 and 78 with min <= max")
         if self.countries is not None and not self.countries:
             raise ValueError("countries must be a non-empty list when provided")
+        # Preserve the concise, established {"country": "..."} request form
+        # without making any country an implicit default.
+        if self.country and self.country_mode == "global":
+            if "country_mode" not in self.model_fields_set:
+                self.country_mode = "specific"
+            else:
+                raise ValueError("country must not be provided when country_mode is 'global'")
+        if self.country_mode == "specific" and not self.country and not self.countries:
+            raise ValueError("country is required when country_mode is 'specific'")
         if self.profile_index is not None and self.profile_index > self.count:
             raise ValueError("profile_index must be <= count")
         return self
@@ -145,8 +156,8 @@ class GenerationSpec(BaseModel):
 
     count: int = Field(default=200, ge=1, le=10000)
     seed: int = Field(default=42, ge=0)
-    country_mode: Literal["specific", "global", "random", "continent", "region", "subregion"] = "specific"
-    country: str | None = "India"
+    country_mode: Literal["specific", "global", "random", "continent", "region", "subregion"] = "global"
+    country: str | None = None
     countries: list[str] | None = None
     region: str | None = None
     continent: str | None = None
@@ -161,6 +172,13 @@ class GenerationSpec(BaseModel):
             raise ValueError("age_range must be between 16 and 78 with min <= max")
         if self.countries is not None and not self.countries:
             raise ValueError("countries must be a non-empty list when provided")
+        if self.country and self.country_mode == "global":
+            if "country_mode" not in self.model_fields_set:
+                self.country_mode = "specific"
+            else:
+                raise ValueError("country must not be provided when country_mode is 'global'")
+        if self.country_mode == "specific" and not self.country and not self.countries:
+            raise ValueError("country is required when country_mode is 'specific'")
         return self
 
 
