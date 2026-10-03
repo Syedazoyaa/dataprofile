@@ -93,7 +93,8 @@ def test_multi_country_codes_and_determinism():
 
 
 def test_existing_india_behaviour_preserved():
-    pros = generate_profiles(100, 7004)
+    # Explicit India selection still yields coherent India profiles (no implicit default).
+    pros = generate_profiles(100, 7004, country="India")
     assert {p["country"] for p in pros} == {"India"}
     assert {p["currency"] for p in pros} == {"INR"}
     # Backward compatibility: old positional signature still works.

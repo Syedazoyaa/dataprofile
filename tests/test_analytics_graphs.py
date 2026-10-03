@@ -121,7 +121,7 @@ def test_spearman_math():
 
 
 def test_data_quality_transparent_score():
-    pros = generate_profiles(200, 8007)
+    pros = generate_profiles(200, 8007, country="India")
     quality = compute_analytics(pros)["data_quality"]
     assert quality["total_profiles"] == 200
     assert quality["duplicate_ids"] == 0
