@@ -1,3 +1,4 @@
+import json
 import logging
 import time
 from fastapi import FastAPI, HTTPException
@@ -11,7 +12,7 @@ from .filtering import active_filters, apply_filters, validate_filters
 from .generator import LANGUAGES, generate_profiles
 from .geography import country_registry, resolve_country_name, supported_continents, supported_countries, supported_subregions
 from .personas import PERSONAS
-from .schemas import AnalyticsRequest, CompareRequest, FilterRequest, GenerateRequest, SegmentsRequest, PROFILE_COLUMNS, PROFILE_SCHEMA_VERSION
+from .schemas import AnalyticsRequest, CompareRequest, FilterRequest, GenerateRequest, SegmentsRequest, CORE_PROFILE_FIELDS, PROFILE_COLUMNS, PROFILE_SCHEMA_VERSION
 from .segmentation import SEGMENT_DEFINITIONS, classify_profile, summarize_segments
 
 settings = get_settings()
@@ -149,9 +150,20 @@ def generate(request: GenerateRequest):
         profiles = generate_profiles(request.count, request.seed, gen_country, request.age_range, request.preferred_language, request.persona, country_mode=mode, region=geo_region, continent=geo_continent, countries=gen_countries)
         duration = time.perf_counter() - started
         logger.info("generation completed count=%s format=%s duration=%.3fs", request.count, request.format, duration)
-        metadata = {"count": len(profiles), "seed": request.seed, "profile_schema_version": PROFILE_SCHEMA_VERSION, "feature_count": len(PROFILE_COLUMNS), "generation_seconds": round(duration, 4)}
-        if request.format == "json": return {**metadata, "profiles": profiles}
-        payload, media_type, filename = export_bytes(profiles, request.format)
+        if request.scope == "individual":
+            index = request.profile_index or 1
+            profiles = profiles[index - 1:index]
+            individual_id = profiles[0]["profile_id"] if profiles else None
+        else:
+            individual_id = None
+        if request.view == "summary":
+            profiles = [{col: profile.get(col) for col in CORE_PROFILE_FIELDS} for profile in profiles]
+        metadata = {"count": len(profiles), "seed": request.seed, "profile_schema_version": PROFILE_SCHEMA_VERSION, "view": request.view, "scope": request.scope, "feature_count": len(profiles[0]) if profiles else 0, "canonical_feature_count": len(PROFILE_COLUMNS), "generation_seconds": round(duration, 4)}
+        if request.format == "json" and individual_id is None: return {**metadata, "profiles": profiles}
+        if individual_id is not None and request.format == "json":
+            filename = f"raven_profile_{individual_id}.json"
+            return Response(json.dumps(profiles[0], ensure_ascii=False).encode("utf-8"), media_type="application/json", headers={"Content-Disposition": f'attachment; filename="{filename}"', "X-Profile-Schema-Version": PROFILE_SCHEMA_VERSION})
+        payload, media_type, filename = export_bytes(profiles, request.format, view=request.view, individual=individual_id)
         return Response(payload, media_type=media_type, headers={"Content-Disposition": f'attachment; filename="{filename}"', "X-Profile-Schema-Version": PROFILE_SCHEMA_VERSION})
     except ValueError as exc:
         raise HTTPException(422, str(exc)) from exc

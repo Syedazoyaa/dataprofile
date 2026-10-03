@@ -1,6 +1,7 @@
 from datetime import date, timedelta
 
 from .personas import PERSONAS
+from .derived import derive_extras
 from .coherence import (
     choose_language,
     financial_support_for,
@@ -754,6 +755,9 @@ def generate_profile(seed: int, index: int, country: str | None = "India", age_r
                 if domain=="food" and topic=="healthy_food" and traits["health_orientation"]>0.60: measure_adjustment+=0.07
                 if domain=="wellness" and traits["health_orientation"]>0.60: measure_adjustment+=0.06
                 profile[f"{domain}_{topic}_{measure}"] = _five_level(_score(rng, base + topic_adjustment + measure_adjustment), measure)
+    # Derived experience layer: summary, disposition, review/social-media attributes
+    # (built from generated traits + observables, seeded for determinism).
+    profile.update(derive_extras(rng, traits, profile, age))
     # Ensure consistent numeric traits overwritten? Keep label version as canonical (as before)
     # Price sensitivity and others already labels; reset numeric version for statistical tests? Keep labels per existing behavior
     missing = set(PROFILE_COLUMNS) - profile.keys()

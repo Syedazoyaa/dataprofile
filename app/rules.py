@@ -228,6 +228,15 @@ def assess_profile(profile: dict) -> dict:
     _gender_values = {"Female", "Male", "Non-binary"}
     check(profile.get("primary_language") not in _gender_values, "language_gender_mapping", "Language field contains a gender value.")
     check(profile.get("preferred_language") not in _gender_values, "language_gender_mapping", "Language field contains a gender value.")
+    # Derived experience-layer attributes must carry valid categorical values.
+    _level_values = {"Low", "Moderate", "High"}
+    for _key in ("review_influence", "interactive_content_engagement", "social_shopping_tendency",
+                 "advertisement_responsiveness", "social_consumer_tendency", "social_creator_tendency",
+                 "social_engagement_level", "trend_sensitivity", "influencer_influence",
+                 "brand_interaction_tendency"):
+        check(profile.get(_key) in _level_values, "derived_level_consistency", f"{_key} has an invalid level.")
+    check(profile.get("social_disposition") in {"Introvert", "Ambivert", "Extrovert"}, "derived_disposition_consistency", "social_disposition has an invalid value.")
+    check(isinstance(profile.get("profile_summary"), str) and profile.get("profile_summary", "").strip() != "", "profile_summary_required", "profile_summary is required and non-empty.")
     # Education / experience additional hard check
     edu = profile.get("education_level")
     yoe = profile.get("years_of_education", 0)

@@ -54,7 +54,8 @@ CORE_FIELDS = (
     ("entertainment_persona", "media", "category", "technology + cultural openness + family"), ("preferred_ott_platform", "media", "category", "language"), ("preferred_movie_genres", "media", "array", "persona"), ("streaming_hours_weekly", "media", "number", "entertainment engagement"), ("gaming_frequency", "media", "category", "technology affinity"), ("music_frequency", "music", "category", "entertainment engagement"), ("preferred_music_genre", "music", "category", "age + openness"), ("regional_music_preference", "music", "category", "language"), ("international_music_preference", "music", "category", "cultural openness"),
     ("dining_frequency", "food", "category", "income + social orientation"), ("vegetarian_preference", "food", "category", "probabilistic preference"), ("food_experimentation", "food", "category", "openness"), ("travel_frequency", "travel", "category", "income + novelty seeking"), ("preferred_destination_type", "travel", "category", "family + openness"), ("travel_budget", "travel", "category", "income"), ("planning_behavior", "decision", "category", "planning orientation"), ("booking_behavior", "travel", "category", "digital adoption + planning"), ("adventure_interest", "travel", "category", "risk + novelty"), ("home_ownership", "home", "category", "age + income"), ("housing_type", "home", "category", "household + income"), ("neighborhood_type", "home", "category", "city"),
     ("openness", "traits", "number", "latent trait"), ("conscientiousness", "traits", "number", "latent trait"), ("extraversion", "traits", "number", "latent trait"), ("agreeableness", "traits", "number", "latent trait"), ("risk_tolerance", "traits", "number", "latent trait"), ("novelty_seeking", "traits", "number", "latent trait"), ("social_orientation", "traits", "number", "latent trait"), ("health_orientation", "traits", "number", "latent trait"), ("luxury_orientation", "traits", "number", "latent trait"), ("planning_orientation", "traits", "number", "latent trait"), ("cultural_openness", "traits", "number", "latent trait"), ("environmental_awareness", "traits", "number", "latent trait"),
-    ("decision_speed", "decision", "category", "risk + planning"), ("comparison_behavior", "decision", "category", "analytical orientation"), ("analytical_orientation", "decision", "category", "openness + planning"), ("recommendation_dependence", "decision", "category", "social orientation"), ("brand_trust", "decision", "category", "conscientiousness"), ("information_seeking", "decision", "category", "curiosity"), ("digital_payment_preference", "payments", "category", "digital adoption"), ("card_usage", "payments", "category", "income + digital adoption"), ("wallet_usage", "payments", "category", "digital adoption"), ("cash_usage", "payments", "category", "digital adoption"), ("recurring_payment_behavior", "payments", "category", "digital adoption + conscientiousness"), ("pet_ownership", "hobbies", "category", "household + lifestyle"), ("hobby_count", "hobbies", "integer", "openness + leisure"), ("reading_frequency", "hobbies", "category", "openness"), ("sports_interest", "hobbies", "category", "health + social orientation"), ("photography_interest", "hobbies", "category", "openness + travel"), ("creative_interest", "hobbies", "category", "openness"), ("volunteering_interest", "hobbies", "category", "agreeableness"),
+    ("decision_speed", "decision", "category", "risk + planning"), ("comparison_behavior", "decision", "category", "analytical orientation"), ("analytical_orientation", "decision", "category", "openness + planning"), ("recommendation_dependence", "decision", "category", "social orientation"), ("brand_trust", "decision", "category", "conscientiousness"), ("information_seeking", "decision", "category", "curiosity"), ("digital_payment_preference", "payments", "category", "digital adoption"), ("card_usage", "payments", "category", "income + digital adoption"), ("wallet_usage", "payments", "category", "digital adoption"), ("cash_usage", "payments", "category", "digital adoption"), ("recurring_payment_behavior", "payments", "category", "digital adoption + conscientiousness"), ("pet_ownership", "hobbies", "category", "household + lifestyle"), ("hobby_count", "hobbies", "integer", "openness + leisure"), ("reading_frequency", "hobbies", "category", "openness"), ("sports_interest", "hobbies", "category", "health + social orientation"), ("photography_interest", "hobbies", "category", "openness + travel"),     ("creative_interest", "hobbies", "category", "openness"), ("volunteering_interest", "hobbies", "category", "agreeableness"),
+    ("profile_summary", "profile", "string", "derived narrative from generated attributes"), ("social_disposition", "personality", "category", "extraversion + social orientation (Introvert/Ambivert/Extrovert)"), ("review_influence", "decision", "category", "openness + conscientiousness (information-driven; distinct from recommendation dependence)"), ("interactive_content_engagement", "digital", "category", "digital adoption + novelty (survey/quiz)"), ("social_shopping_tendency", "commerce", "category", "social orientation + online shopping"), ("advertisement_responsiveness", "marketing", "category", "novelty + social orientation + age"), ("social_consumer_tendency", "social_media", "category", "social orientation + digital adoption (Consumer)"), ("social_creator_tendency", "social_media", "category", "content creation + novelty (Creator)"), ("social_engagement_level", "social_media", "category", "activity + messaging + extraversion (Engagement)"), ("trend_sensitivity", "social_media", "category", "novelty + cultural openness (Trend Sensitivity)"), ("influencer_influence", "social_media", "category", "recommendation dependence + following (Influencer Influence)"), ("brand_interaction_tendency", "social_media", "category", "brand loyalty + activity (Brand Interaction)"),
 )
 GEOGRAPHY_FIELDS = (
     ("country_code", "location", "string", "geographic context"),
@@ -81,6 +82,31 @@ def build_feature_schema() -> tuple[FeatureSpec, ...]:
 PROFILE_SCHEMA = build_feature_schema()
 PROFILE_COLUMNS = tuple(field.name for field in PROFILE_SCHEMA)
 
+# Central core/summary field set (single source for summary views and downloads).
+CORE_PROFILE_FIELDS = (
+    "personality_name", "profile_id", "profile_summary", "age", "age_band", "gender",
+    "country", "state", "city", "nationality", "primary_language", "life_stage",
+    "marital_status", "household_size", "education_level", "field_of_study",
+    "employment_status", "occupation", "industry", "job_function", "career_level",
+    "years_of_experience", "annual_income", "monthly_income", "income_band",
+    "monthly_expenses", "social_disposition", "financial_risk_tolerance",
+    "decision_speed", "price_sensitivity", "brand_loyalty", "research_before_purchase",
+    "shopping_frequency", "online_shopping_frequency", "average_order_value",
+    "preferred_marketplace", "review_influence", "recommendation_dependence",
+    "digital_adoption", "social_media_activity", "preferred_music_genre",
+    "travel_frequency", "vegetarian_preference",
+)
+
+def _core_fields_valid() -> tuple[str, ...]:
+    unknown = [name for name in CORE_PROFILE_FIELDS if name not in PROFILE_COLUMNS]
+    if unknown:
+        raise RuntimeError(f"Core profile fields missing from schema: {unknown}")
+    if len(set(CORE_PROFILE_FIELDS)) != len(CORE_PROFILE_FIELDS):
+        raise RuntimeError("Core profile fields contain duplicates")
+    return CORE_PROFILE_FIELDS
+
+CORE_PROFILE_FIELDS = _core_fields_valid()
+
 class GenerateRequest(BaseModel):
     count: int = Field(default=1, ge=1)
     seed: int = Field(default=42, ge=0)
@@ -94,6 +120,9 @@ class GenerateRequest(BaseModel):
     persona: str | None = None
     preferred_language: str | None = None
     format: Literal["json", "csv", "parquet"] = "json"
+    view: Literal["full", "summary"] = "full"
+    scope: Literal["bulk", "individual"] = "bulk"
+    profile_index: int | None = Field(default=None, ge=1)
 
     @field_validator("preferred_language")
     @classmethod
@@ -106,6 +135,8 @@ class GenerateRequest(BaseModel):
             raise ValueError("age_range must be between 16 and 78 with min <= max")
         if self.countries is not None and not self.countries:
             raise ValueError("countries must be a non-empty list when provided")
+        if self.profile_index is not None and self.profile_index > self.count:
+            raise ValueError("profile_index must be <= count")
         return self
 
 
