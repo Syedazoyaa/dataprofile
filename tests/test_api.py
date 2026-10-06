@@ -15,6 +15,7 @@ def test_health_personas_and_json_generation():
 def test_invalid_request_controls_are_rejected():
     assert client.post("/generate", json={"count": 0}).status_code == 422
     assert client.post("/generate", json={"count": 10001}).status_code == 422
+    assert client.post("/generate", json={"count": 2001}).status_code == 422
     assert client.post("/generate", json={"age_range": [40, 20]}).status_code == 422
     assert client.post("/generate", json={"persona": "not a persona"}).status_code == 422
     assert client.post("/generate", json={"preferred_language": "Klingon"}).status_code == 422

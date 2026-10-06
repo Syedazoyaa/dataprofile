@@ -174,7 +174,9 @@ def generate(request: GenerateRequest):
             individual_id = profiles[0]["profile_id"] if profiles else None
         else:
             individual_id = None
-        if request.view == "summary":
+        if request.view == "summary" and request.format == "json":
+            # Trim only for inline JSON responses; file downloads re-select
+            # columns in export_bytes, so no second copy is built for them.
             profiles = [{col: profile.get(col) for col in CORE_PROFILE_FIELDS} for profile in profiles]
         metadata = {"count": len(profiles), "seed": request.seed, "profile_schema_version": PROFILE_SCHEMA_VERSION, "view": request.view, "scope": request.scope, "feature_count": len(profiles[0]) if profiles else 0, "canonical_feature_count": len(PROFILE_COLUMNS), "generation_seconds": round(duration, 4)}
         if request.format == "json" and individual_id is None: return {**metadata, "profiles": profiles}
