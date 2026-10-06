@@ -142,3 +142,35 @@ def test_analytics_endpoints():
 
     r = client.get("/segments/definitions")
     assert r.status_code == 200 and len(r.json()["segments"]) == 5
+
+
+def test_compare_requires_exactly_two_distinct_countries():
+    two = {"populations": [
+        {"label": "A", "generation": {"count": 20, "seed": 71, "country": "Saudi Arabia"}},
+        {"label": "B", "generation": {"count": 20, "seed": 71, "country": "United States"}}]}
+    r = client.post("/compare", json=two)
+    assert r.status_code == 200
+    assert set(r.json()["populations"]) == {"A", "B"}
+    # 0 populations.
+    assert client.post("/compare", json={"populations": []}).status_code == 422
+    # 1 population.
+    assert client.post("/compare", json={"populations": two["populations"][:1]}).status_code == 422
+    # 3 populations.
+    three = {"populations": two["populations"] + [
+        {"label": "C", "generation": {"count": 20, "seed": 71, "country": "Japan"}}]}
+    assert client.post("/compare", json=three).status_code == 422
+    # Duplicate countries.
+    dup = {"populations": [
+        {"label": "A", "generation": {"count": 20, "seed": 71, "country": "India"}},
+        {"label": "B", "generation": {"count": 20, "seed": 72, "country": "IN"}}]}
+    assert client.post("/compare", json=dup).status_code == 422
+    # Missing country (global side).
+    nogeo = {"populations": [
+        {"label": "A", "generation": {"count": 20, "seed": 71, "country": "India"}},
+        {"label": "B", "generation": {"count": 20, "seed": 71}}]}
+    assert client.post("/compare", json=nogeo).status_code == 422
+    # Unknown country.
+    bad = {"populations": [
+        {"label": "A", "generation": {"count": 20, "seed": 71, "country": "India"}},
+        {"label": "B", "generation": {"count": 20, "seed": 71, "country": "Atlantis"}}]}
+    assert client.post("/compare", json=bad).status_code == 422

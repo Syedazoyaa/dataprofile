@@ -96,6 +96,24 @@ def filter_profiles(request: FilterRequest):
 def compare(request: CompareRequest):
     for pop in request.populations:
         if pop.generation.count > settings.max_profiles_per_request: raise HTTPException(422, f"count exceeds configured request limit for population '{pop.label}'")
+    # Each side must pin exactly one explicitly selected country.
+    pinned = []
+    for pop in request.populations:
+        spec = pop.generation
+        try:
+            if spec.countries is not None:
+                resolved = [resolve_country_name(entry) for entry in spec.countries]
+                if len(set(resolved)) != 1:
+                    raise ValueError(f"population '{pop.label}' must select exactly one country")
+                pinned.append(resolved[0])
+            elif spec.country_mode == "specific" and spec.country:
+                pinned.append(resolve_country_name(spec.country))
+            else:
+                raise ValueError(f"population '{pop.label}' must select exactly one country")
+        except ValueError as exc:
+            raise HTTPException(422, str(exc)) from exc
+    if len(set(pinned)) != 2:
+        raise HTTPException(422, "comparison requires two different countries")
     try:
         generated = {pop.label: _generate_from_spec(pop.generation) for pop in request.populations}
     except ValueError as exc:

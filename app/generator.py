@@ -87,6 +87,19 @@ ARCHETYPE_TARGETS = {
 }
 ARCHETYPE_WEIGHTS = [10,10,10,10,10,10,10,10,10,8]  # Balanced slightly less to avoid moderate over-representation
 
+def _entertainment_latents(rng) -> tuple:
+    """Shared latent entertainment factors for the joint persona model.
+
+    Drawn before the personality anchor and consumed by BOTH archetype
+    selection and entertainment-persona selection, so movie/series taste
+    participates in persona construction through shared latents rather than
+    being appended after the fact. Strictly feedforward: nothing downstream
+    ever feeds back into these factors or the personality anchor.
+    - media_appetite: appetite for intense, novel, diverse media.
+    - communal_viewing: orientation toward shared/social viewing.
+    """
+    return _clip(rng.gauss(0.5, 0.16)), _clip(rng.gauss(0.5, 0.16))
+
 def _generate_traits(rng, age: int, context=None) -> dict:
     """Legacy factor-model fallback (kept for compatibility)."""
     # Base latent factors (standard normal via rng)
@@ -623,8 +636,20 @@ def generate_profile(seed: int, index: int, country: str | None = None, age_rang
     if persona and persona not in PERSONAS: raise ValueError("Unsupported persona")
     rng = profile_rng(seed, index)
     age = _age(rng, age_range); stage = _stage(age)
+    # Shared latent persona factors (joint model): these shape both the
+    # personality anchor below and entertainment/media choice later.
+    # Drawn before geography so they never depend on country.
+    media_appetite, communal_viewing = _entertainment_latents(rng)
     # Step 1: Personality Archetype → Core Traits (anchor, not derived after random)
-    archetype = choose(rng, list(PERSONALITY_ARCHETYPES), ARCHETYPE_WEIGHTS)
+    # Archetype selection is jointly conditioned on the entertainment latents
+    # (mild tilt only; the anchor still dominates trait generation).
+    _arch_weights = list(ARCHETYPE_WEIGHTS)
+    _arch_idx = {name: i for i, name in enumerate(PERSONALITY_ARCHETYPES)}
+    _arch_weights[_arch_idx["Creative"]] *= 0.60 + 1.10 * media_appetite
+    _arch_weights[_arch_idx["Adventurous"]] *= 0.60 + 1.10 * media_appetite
+    _arch_weights[_arch_idx["Social"]] *= 0.60 + 1.10 * communal_viewing
+    _arch_weights[_arch_idx["Empathetic"]] *= 0.82 + 0.55 * communal_viewing
+    archetype = choose(rng, list(PERSONALITY_ARCHETYPES), _arch_weights)
     traits = _generate_traits_for_archetype(rng, age, archetype)
     # Keep legacy factor diversity as small blended noise for realism (optional)
     # Validate archetype signature remains recognizable but with variation
@@ -702,18 +727,20 @@ def generate_profile(seed: int, index: int, country: str | None = None, age_rang
     life_stage = resolve_life_stage(rng, age, experience, career, employment, stage)
 
     # Persona - behavior first (traits/culture/age) then geography platform mapping
-    # Weight personas by traits, not country
+    # Weight personas by traits + shared entertainment latents, not country.
+    # The same latents that tilted the personality anchor also tilt media
+    # choice, which is what makes taste participate in the persona jointly.
     persona_weights = []
     for name in PERSONAS:
         w = 1.0
-        if name == "Sci-Fi Enthusiast": w += 1.8 * traits["technology_affinity"] + 0.9 * traits["openness"]
-        if name == "International Cinema Explorer": w += 1.8 * traits["cultural_openness"] + 0.7 * traits["openness"]
-        if name == "Family Entertainment Viewer": w += 0.9 * children + 0.4 * traits["agreeableness"]
-        if name == "Action Enthusiast": w += 0.8 * traits["risk_tolerance"] + 0.5 * traits["extraversion"] if age<40 else 0
-        if name == "Documentary Viewer": w += 0.9 * traits["openness"] + 0.6 * traits["conscientiousness"] if age>32 else 0
-        if name == "Animation / Anime Fan": w += 0.8 * traits["openness"] if age < 36 else -0.4
+        if name == "Sci-Fi Enthusiast": w += 1.8 * traits["technology_affinity"] + 0.9 * traits["openness"] + 1.4 * media_appetite
+        if name == "International Cinema Explorer": w += 1.8 * traits["cultural_openness"] + 0.7 * traits["openness"] + 1.4 * media_appetite
+        if name == "Family Entertainment Viewer": w += 0.9 * children + 0.4 * traits["agreeableness"] + 1.4 * communal_viewing + 0.5 * traits["extraversion"]
+        if name == "Action Enthusiast": w += 0.8 * traits["risk_tolerance"] + 0.5 * traits["extraversion"] + 0.5 * media_appetite if age<40 else 0
+        if name == "Documentary Viewer": w += 0.9 * traits["openness"] + 0.6 * traits["conscientiousness"] + 0.5 * media_appetite if age>32 else 0
+        if name == "Animation / Anime Fan": w += 0.8 * traits["openness"] + 0.5 * media_appetite if age < 36 else -0.4
         if name == "Classic Cinema Lover": w += 0.7 * traits["cultural_openness"] if age>48 else 0
-        if name == "Horror Fan": w += 0.7 * traits["risk_tolerance"] if age<38 else -0.3
+        if name == "Horror Fan": w += 0.7 * traits["risk_tolerance"] + 0.5 * media_appetite if age<38 else -0.3
         persona_weights.append(max(0.2, w))
     persona_value = persona or choose(rng, list(PERSONAS), persona_weights)
     if employment in {"School student", "Student", "Retired"}:
@@ -816,8 +843,11 @@ def _behavioral_vector(profile: dict) -> tuple:
     return tuple(profile.get(k) for k in keys)
 
 def _is_excessive_moderate(profile: dict) -> bool:
-    """Check if too many behavioral dimensions are simultaneously Moderate (low diversity)."""
-    moderate_fields = ["decision_speed","comparison_behavior","analytical_orientation","recommendation_dependence","brand_trust","information_seeking","discount_sensitivity","impulse_buying","research_before_purchase"]
+    """Check if too many behavioral dimensions are simultaneously Moderate (low diversity).
+    Only traits-derived fields are considered: brand_trust mixes in income (and
+    therefore country), which would make retry behaviour country-dependent and
+    break same-seed reproducibility across countries."""
+    moderate_fields = ["decision_speed","comparison_behavior","analytical_orientation","recommendation_dependence","information_seeking","discount_sensitivity","impulse_buying","research_before_purchase"]
     mods = sum(1 for f in moderate_fields if profile.get(f) == "Moderate")
     return mods / len(moderate_fields) > 0.75
 

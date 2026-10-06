@@ -1,14 +1,13 @@
 import csv
 import io
 import json
-import pandas as pd
 from .schemas import CORE_PROFILE_FIELDS, PROFILE_COLUMNS
 
 def _columns(view: str) -> list[str]:
     return list(CORE_PROFILE_FIELDS) if view == "summary" else list(PROFILE_COLUMNS)
 
 def _filename(*, individual: str | None, view: str, requested_format: str, full_count: int) -> str:
-    ext = {"json": "json", "csv": "csv", "parquet": "parquet"}[requested_format]
+    ext = {"json": "json", "csv": "csv"}[requested_format]
     if individual:
         return f"raven_profile_{individual}.{ext}"
     if view == "summary":
@@ -32,7 +31,4 @@ def export_bytes(profiles: list[dict], requested_format: str, view: str = "full"
         writer = csv.DictWriter(stream, fieldnames=columns)
         writer.writeheader(); writer.writerows(rows)
         return stream.getvalue().encode("utf-8"), "text/csv", filename
-    if requested_format == "parquet":
-        stream = io.BytesIO(); pd.DataFrame(rows, columns=columns).to_parquet(stream, index=False)
-        return stream.getvalue(), "application/vnd.apache.parquet", filename
     raise ValueError("Unsupported export format")

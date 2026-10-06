@@ -101,11 +101,9 @@ def test_individual_and_bulk_downloads():
     df = pd.read_csv(io.StringIO(r.text))
     assert list(df.columns) == list(PROFILE_COLUMNS) and len(df) == 4
     assert df["profile_id"].is_unique
-    # Bulk full parquet download.
+    # Parquet is not a user-facing export format.
     r = client.post("/generate", json={"count": 3, "seed": 23, "format": "parquet"})
-    assert r.status_code == 200
-    pdf = pd.read_parquet(io.BytesIO(r.content))
-    assert list(pdf.columns) == list(PROFILE_COLUMNS) and len(pdf) == 3
+    assert r.status_code == 422
 
 
 def test_no_movie_genre_input_required():

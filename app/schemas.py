@@ -121,7 +121,7 @@ class GenerateRequest(BaseModel):
     age_range: tuple[int, int] | None = None
     persona: str | None = None
     preferred_language: str | None = None
-    format: Literal["json", "csv", "parquet"] = "json"
+    format: Literal["json", "csv"] = "json"
     view: Literal["full", "summary"] = "full"
     scope: Literal["bulk", "individual"] = "bulk"
     profile_index: int | None = Field(default=None, ge=1)
@@ -230,13 +230,16 @@ class PopulationSpec(BaseModel):
 
 
 class CompareRequest(BaseModel):
+    """Two-country comparison: exactly two populations, each pinned to one
+    explicitly selected country (no global or multi-country sides)."""
+
     populations: list[PopulationSpec]
 
     @field_validator("populations")
     @classmethod
-    def at_least_two(cls, value: list[PopulationSpec]) -> list[PopulationSpec]:
-        if len(value) < 2:
-            raise ValueError("at least two populations are required for comparison")
+    def exactly_two_countries(cls, value: list[PopulationSpec]) -> list[PopulationSpec]:
+        if len(value) != 2:
+            raise ValueError("comparison requires exactly two populations (Country A + Country B)")
         labels = [p.label for p in value]
         if len(set(labels)) != len(labels):
             raise ValueError("population labels must be unique")

@@ -1,13 +1,15 @@
-"""Country registry, coverage levels and country-conditioned generation tests."""
+"""Country registry and country-conditioned generation tests.
+
+Every supported country is a first-class product citizen: no coverage tiers
+(deep/standard/core/fallback/preferred) may leak into API responses.
+"""
 import pytest
 from fastapi.testclient import TestClient
 
 from app.generator import generate_profiles
 from app.geography import (
     COUNTRIES,
-    DEEP_COVERAGE,
     country_registry,
-    coverage_for,
     resolve_country_name,
     supported_countries,
 )
@@ -26,7 +28,7 @@ def test_registry_completeness_and_iso_codes():
     assert len(registry) == 193
     for entry in registry:
         assert {"name", "alpha2", "alpha3", "numeric", "continent", "subregion",
-                "nationality", "currency", "languages", "coverage"} <= set(entry)
+                "nationality", "currency", "languages"} <= set(entry)
         assert len(entry["alpha2"]) == 2 and len(entry["alpha3"]) == 3
         assert entry["languages"], f"{entry['name']} must list at least one language"
     assert len({e["alpha2"] for e in registry}) == 193
@@ -42,16 +44,18 @@ def test_resolve_country_name_accepts_codes():
         resolve_country_name("Atlantis")
 
 
-def test_coverage_levels_are_explicit():
-    assert DEEP_COVERAGE == {"India", "United States", "United Kingdom", "Japan",
-                             "Saudi Arabia", "Brazil", "Nigeria"}
-    assert coverage_for("India") == "deep"
-    assert coverage_for("SA") == "deep"
-    assert coverage_for("Germany") == "standard"
-    assert coverage_for("Qatar") == "standard"
-    registry = {e["name"]: e["coverage"] for e in country_registry()}
-    assert sum(1 for c in registry.values() if c == "deep") == 7
-    assert sum(1 for c in registry.values() if c == "standard") == 186
+def test_no_coverage_tiers_leak_to_frontend():
+    """No core/fallback/deep/standard/preferred/secondary distinction may be
+    visible in registry records or the /countries response."""
+    banned = {"coverage", "deep", "standard", "fallback", "tier", "core_country",
+              "preferred", "secondary"}
+    for entry in country_registry():
+        assert not (banned & set(entry)), f"tier leakage in {entry.get('name')}"
+        blob = " ".join(str(v) for v in entry.values()).lower()
+        assert "deep" not in blob and "fallback" not in blob
+    body = client.get("/countries").json()
+    assert body["count"] == 193
+    assert not (banned & set(body["countries"][0]))
 
 
 def test_single_country_generation_is_conditioned():

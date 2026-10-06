@@ -23,19 +23,13 @@ COUNTRIES = COUNTRIES_WORLD
 # For weighted global selection, use original weights where defined, else 3
 # Keep original 6 weights (18,14,5,7,4,8,10) and 3 for others.
 
-# Coverage levels: data-driven, not pretended.
-# - "deep": the 7 originally curated contexts (weight >= 4) with tuned places,
-#   languages, income scales and city-language affinity data.
-# - "standard": all other registry countries (real ISO/currency/languages/
-#   places) with probabilistic generation but no curated affinity tuning.
-# - "fallback" is not a country tier: it names the per-field default paths
-#   used when a context lacks specifics (generic job functions, generic
-#   language weighting, subregion/global fallbacks). See coherence.py and
-#   get_context/choose_language for those paths.
-DEEP_COVERAGE = frozenset({
-    "India", "United States", "United Kingdom", "Japan",
-    "Saudi Arabia", "Brazil", "Nigeria",
-})
+# Coverage tiers are intentionally NOT exposed: every supported country is a
+# first-class product citizen. Per-country registry values (places, languages,
+# income scales, selection weights) exist internally where justified, but no
+# visible core/fallback/deep/standard distinction is presented to frontend
+# users. The only documented geographic limitation is that city-language
+# affinity tuning currently covers a small set of known metros; everywhere
+# else a generic dominant-language weighting applies.
 
 @dataclass(frozen=True)
 class GeographicContext:
@@ -112,10 +106,6 @@ def resolve_country_name(value: str) -> str:
             return name
     raise ValueError(f"Unsupported country: {value!r}")
 
-def coverage_for(country: str) -> str:
-    """Coverage level ('deep' or 'standard') for a country name or code."""
-    return "deep" if resolve_country_name(country) in DEEP_COVERAGE else "standard"
-
 def country_summary(country: str) -> dict:
     """Frontend-ready registry record for one country (dropdowns, analytics)."""
     name = resolve_country_name(country)
@@ -130,7 +120,6 @@ def country_summary(country: str) -> dict:
         "nationality": item["nationality"],
         "currency": item["currency"],
         "languages": list(item["languages"]),
-        "coverage": "deep" if name in DEEP_COVERAGE else "standard",
     }
 
 def country_registry() -> list[dict]:

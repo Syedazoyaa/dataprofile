@@ -15,19 +15,19 @@ For local development use `uvicorn app.main:app --reload`.
 
 - `GET /health` — service status and schema version
 - `GET /personas` — valid media personas and supported languages
-- `GET /countries` — canonical 193-country registry with coverage levels
+- `GET /countries` — canonical 193-country registry (names, ISO codes, currency, languages)
 - `GET /segments/definitions` — behavioural segment catalogue
-- `POST /generate` — generate profiles or directly download an export
+- `POST /generate` — generate profiles or directly download an export (`format`: `json` or `csv`)
 - `POST /segments` — generate and classify into behavioural segments
 - `POST /filter` — generate then filter (demographic/behavioural/segment/country)
-- `POST /compare` — compare two or more labelled populations
+- `POST /compare` — compare exactly two countries (Country A + Country B)
 - `POST /analytics` — chart-ready dashboard data for a (filtered) population
 
 ```json
 {"count": 100, "seed": 12345, "country_mode": "specific", "country": "Japan", "age_range": [24, 45], "format": "json"}
 ```
 
-`format` accepts `json`, `csv`, or `parquet`. JSON returns metadata and `profiles`; CSV and Parquet return only the requested in-memory download. No files are created on disk. `country_mode` accepts `global` (the neutral default), `specific`, `continent`, `region`/`subregion`. An optional `countries` list selects a multi-country population (per-profile country picked with registry weights); a single-element list behaves like `country`. Country names and ISO 3166-1 alpha-2/alpha-3 codes are accepted anywhere a country is given. A country is never selected implicitly.
+`format` accepts `json` or `csv`. JSON returns metadata and `profiles`; CSV returns only the requested in-memory download. No files are created on disk. `country_mode` accepts `global` (the neutral default), `specific`, `continent`, `region`/`subregion`. An optional `countries` list selects a multi-country population (per-profile country picked with registry weights); a single-element list behaves like `country`. Country names and ISO 3166-1 alpha-2/alpha-3 codes are accepted anywhere a country is given. A country is never selected implicitly.
 
 `view` (`full` default, `summary`) selects the complete canonical attribute set or the centrally defined core set (`CORE_PROFILE_FIELDS` in `app/schemas.py`). `scope` (`bulk` default, `individual`) with optional `profile_index` (1-based, default 1) downloads one selected person instead of the whole set. Filenames: `raven_profile_<id>.json`, `raven_profiles_summary.csv`, `raven_profiles_full_<N>.csv` where `N` is the canonical count from the registry (never hardcoded). Movie/series preferences (`preferred_movie_genres`, `preferred_music_genre`, per-topic scores) are generated automatically as profile outputs; they are never generation inputs.
 
@@ -35,13 +35,13 @@ For local development use `uvicorn app.main:app --reload`.
 
 Schema version `1.1` defines the canonical attribute registry (`PROFILE_COLUMNS` in `app/schemas.py`; core vs full via `CORE_PROFILE_FIELDS`). Canonical count is currently **625**: 611 original + `professional_training` + `financial_support_source` (v1.1) + 12 derived experience attributes (`profile_summary`, `social_disposition`, `review_influence`, interactive/social/ad engagement, 7 social-media-personality attributes). Counts are asserted by `tests/test_profile_completeness.py` (missing = unexpected = duplicates = 0); any legitimate change must update the registry, never pad it.
 
-Profiles use a profile-specific hash-derived random stream, so the same seed, request configuration, profile index, and generator version always produce the same record. Latent traits (technology affinity, price sensitivity, health orientation, cultural openness, planning orientation, and others) combine with age, career, income, family, and location to produce correlated observables. Behavioral propensities are returned as clear five-level strings—not opaque floats—such as `Not interested` through `Highly interested`, or `Never` through `Very frequently`. Only genuinely continuous quantities (screen time, streaming hours, and savings rate) remain floats.
+Profiles use a profile-specific hash-derived random stream, so the same seed, request configuration, profile index, and generator version always produce the same record. Latent traits (technology affinity, price sensitivity, health orientation, cultural openness, planning orientation, and others) combine with age, career, income, family, and location to produce correlated observables. Personality and entertainment taste are jointly conditioned on shared latent factors (`media_appetite`, `communal_viewing` in `app/generator.py`): the same latents tilt both the personality-anchor selection and the entertainment-persona selection, so movie/series preferences participate in persona construction feedforward — never as user inputs and never circularly. Behavioral propensities are returned as clear five-level strings—not opaque floats—such as `Not interested` through `Highly interested`, or `Never` through `Very frequently`. Only genuinely continuous quantities (screen time, streaming hours, and savings rate) remain floats.
 
 ## Geographic model and validation
 
 `app/geography_world.py` is the canonical registry of 193 countries (ISO 3166-1 alpha-2/alpha-3/numeric, continent, subregion, nationality, currency, languages, places, industries, payments, transport, foods, religions, weights). `app/geography.py` exposes it via `country_registry()`, `resolve_country_name()` (one shared name/code resolver for generation, filtering, analytics and validation) and `get_context()`, which conditions city, currency, language pool, income scale, industries and ecosystems **before** traits and income are derived — a selected country shapes the profile; it never overwrites a global one. Generators contain no country-specific branches. `GET /countries` serves the registry for frontend dropdowns.
 
-Coverage levels (see `DEEP_COVERAGE`): `deep` — India, United States, United Kingdom, Japan, Saudi Arabia, Brazil, Nigeria (curated contexts plus city-language affinity data); `standard` — the other 186 countries (real registry data, probabilistic generation, no curated tuning); `fallback` — per-field default paths (generic job functions, generic language weighting, subregion/global fallbacks), not a country tier.
+Every supported country is a first-class product citizen: no coverage tiers (deep/standard/core/fallback/preferred) are exposed anywhere. Per-country registry values exist internally where justified, but the API, responses and docs never present visible product tiers. The only documented geographic limitation is that city-language affinity tuning covers a small set of known metros; everywhere else a generic dominant-language weighting applies.
 
 `app/rules.py` returns structured validation violations and a coherence score derived from those checks. It verifies lifecycle, finance, country/currency, language, payment, transport, and food constraints before a profile is returned.
 
@@ -95,7 +95,7 @@ Supported filters: `age_min`/`age_max`, `gender`, `country` (single value or lis
 
 ## Population comparison
 
-`POST /compare` accepts two or more labelled populations of any size and returns normalised distributions:
+`POST /compare` accepts **exactly two** labelled populations, each pinned to one explicitly selected country, and returns normalised distributions. `0`, `1` or `3+` populations, missing countries and duplicate countries are rejected with `422`:
 
 ```json
 {"populations": [{"label": "India", "generation": {"count": 5000, "seed": 7, "country": "India"}},
