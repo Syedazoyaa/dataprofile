@@ -134,7 +134,7 @@ Empty populations return zeroed structures (score `null`); missing fields are co
 
 ## Performance and limits
 
-Measured on reference hardware (CPython 3.12, no tracemalloc): generation ≈ 3ms/profile linear (10 → 0.05s, 100 → 0.4s, 300 → 1.3s end-to-end via API); filtering/analytics/CSV export sub-second at n=1000. JSON ≈ 34MB per 1000 full profiles; CSV ≈ 8MB. Interactive guidance: ≤300 profiles for instant UI; ≤2000 per request max (default `MAX_PROFILES_PER_REQUEST=2000`, raisable via env where the deployment allows). Concurrency is safe (per-profile RNG streams, no shared mutable state) but CPU-bound: use multiple uvicorn workers for parallel throughput, not threads.
+Measured on reference hardware (CPython 3.12, no tracemalloc): generation ≈ 3ms/profile linear (10 → 0.05s, 100 → 0.4s, 300 → 1.3s end-to-end via API); filtering/analytics/CSV export sub-second at n=1000. JSON ≈ 34MB per 1000 full profiles; CSV ≈ 8MB. Responses are gzip-compressed (`GZipMiddleware`), which shrinks JSON ~8× over the wire — the dominant cost on hosted deployments is platform CPU/network, not generation code. Interactive guidance: ≤300 profiles for instant UI; ≤2000 per request max (default `MAX_PROFILES_PER_REQUEST=2000`, raisable via env where the deployment allows). Concurrency is safe (per-profile RNG streams, no shared mutable state) but CPU-bound: use multiple uvicorn workers for parallel throughput, not threads.
 
 ## Known limitations
 

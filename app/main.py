@@ -3,6 +3,7 @@ import logging
 import time
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.middleware.gzip import GZipMiddleware
 from fastapi.responses import Response
 from .config import get_settings
 from .analytics import compute_analytics
@@ -19,6 +20,7 @@ settings = get_settings()
 logging.basicConfig(level=settings.log_level, format="%(asctime)s %(levelname)s %(message)s")
 logger = logging.getLogger(__name__)
 app = FastAPI(title="DataProfile API", version=PROFILE_SCHEMA_VERSION)
+app.add_middleware(GZipMiddleware, minimum_size=1000)
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_credentials=False, allow_methods=["*"], allow_headers=["*"])
 
 @app.get("/")

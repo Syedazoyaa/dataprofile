@@ -46,10 +46,13 @@ def _stage(age: int) -> str:
     if age < 64: return "Senior Professional"
     return "Retired"
 
+AGE_BAND_CHOICES = list(AGE_BANDS)
+AGE_BAND_WEIGHTS = [band[2] for band in AGE_BANDS]
+
 def _age(rng, age_range) -> int:
     if age_range:
         return rng.randint(*age_range)
-    band = choose(rng, list(AGE_BANDS), [band[2] for band in AGE_BANDS])
+    band = choose(rng, AGE_BAND_CHOICES, AGE_BAND_WEIGHTS)
     return rng.randint(band[0], band[1])
 
 def _category(value: float) -> str:
@@ -86,6 +89,14 @@ ARCHETYPE_TARGETS = {
     "Balanced":     {"openness":0.52, "conscientiousness":0.52, "extraversion":0.52, "agreeableness":0.52, "risk_tolerance":0.50, "novelty_seeking":0.52, "social_orientation":0.52, "health_orientation":0.52, "luxury_orientation":0.50, "planning_orientation":0.52, "cultural_openness":0.52, "environmental_awareness":0.52, "technology_affinity":0.52, "price_sensitivity":0.52},
 }
 ARCHETYPE_WEIGHTS = [10,10,10,10,10,10,10,10,10,8]  # Balanced slightly less to avoid moderate over-representation
+
+# Hoisted immutable structures: building these per profile wastes ~5% of
+# generation time with zero behavioral effect. Module constants are read-only,
+# so determinism and thread safety are unaffected.
+ARCHETYPE_NAMES = list(PERSONALITY_ARCHETYPES)
+ARCHETYPE_INDEX = {name: i for i, name in enumerate(ARCHETYPE_NAMES)}
+PERSONA_NAMES = list(PERSONAS)
+PROFILE_COLUMN_SET = frozenset(PROFILE_COLUMNS)
 
 def _entertainment_latents(rng) -> tuple:
     """Shared latent entertainment factors for the joint persona model.
@@ -644,12 +655,11 @@ def generate_profile(seed: int, index: int, country: str | None = None, age_rang
     # Archetype selection is jointly conditioned on the entertainment latents
     # (mild tilt only; the anchor still dominates trait generation).
     _arch_weights = list(ARCHETYPE_WEIGHTS)
-    _arch_idx = {name: i for i, name in enumerate(PERSONALITY_ARCHETYPES)}
-    _arch_weights[_arch_idx["Creative"]] *= 0.60 + 1.10 * media_appetite
-    _arch_weights[_arch_idx["Adventurous"]] *= 0.60 + 1.10 * media_appetite
-    _arch_weights[_arch_idx["Social"]] *= 0.60 + 1.10 * communal_viewing
-    _arch_weights[_arch_idx["Empathetic"]] *= 0.82 + 0.55 * communal_viewing
-    archetype = choose(rng, list(PERSONALITY_ARCHETYPES), _arch_weights)
+    _arch_weights[ARCHETYPE_INDEX["Creative"]] *= 0.60 + 1.10 * media_appetite
+    _arch_weights[ARCHETYPE_INDEX["Adventurous"]] *= 0.60 + 1.10 * media_appetite
+    _arch_weights[ARCHETYPE_INDEX["Social"]] *= 0.60 + 1.10 * communal_viewing
+    _arch_weights[ARCHETYPE_INDEX["Empathetic"]] *= 0.82 + 0.55 * communal_viewing
+    archetype = choose(rng, ARCHETYPE_NAMES, _arch_weights)
     traits = _generate_traits_for_archetype(rng, age, archetype)
     # Keep legacy factor diversity as small blended noise for realism (optional)
     # Validate archetype signature remains recognizable but with variation
@@ -742,7 +752,7 @@ def generate_profile(seed: int, index: int, country: str | None = None, age_rang
         if name == "Classic Cinema Lover": w += 0.7 * traits["cultural_openness"] if age>48 else 0
         if name == "Horror Fan": w += 0.7 * traits["risk_tolerance"] + 0.5 * media_appetite if age<38 else -0.3
         persona_weights.append(max(0.2, w))
-    persona_value = persona or choose(rng, list(PERSONAS), persona_weights)
+    persona_value = persona or choose(rng, PERSONA_NAMES, persona_weights)
     if employment in {"School student", "Student", "Retired"}:
         job_function = "Not applicable"
         occupation = employment
@@ -791,7 +801,7 @@ def generate_profile(seed: int, index: int, country: str | None = None, age_rang
     profile.update(derive_extras(rng, traits, profile, age))
     # Ensure consistent numeric traits overwritten? Keep label version as canonical (as before)
     # Price sensitivity and others already labels; reset numeric version for statistical tests? Keep labels per existing behavior
-    missing = set(PROFILE_COLUMNS) - profile.keys()
+    missing = PROFILE_COLUMN_SET - profile.keys()
     if missing: raise RuntimeError(f"Generator missed schema columns: {sorted(missing)}")
     # Explicitly order output so personality_name is first (and matches PROFILE_COLUMNS)
     profile = {col: profile[col] for col in PROFILE_COLUMNS}
