@@ -60,7 +60,7 @@ def test_behavioural_and_segment_analytics_reuse_segmentation():
     from app.segmentation import summarize_segments
     pros = generate_profiles(200, 8005)
     analytics = compute_analytics(pros)
-    assert set(analytics["behavioural"]) >= {"research_before_purchase",
+    assert set(analytics["behavioural"]) >= {"research_intensity",
                                              "price_sensitivity", "purchase_intent",
                                              "brand_loyalty", "decision_speed"}
     assert analytics["behavioural"]["purchase_intent"]
@@ -95,6 +95,7 @@ def test_expense_ratio_bins_cover_all_eligible():
             "primary_language": "Hindi", "preferred_language": "Hindi",
             "life_stage": "Established Professional", "income_band": "Modest",
             "currency": "INR", "research_before_purchase": "Moderate",
+            "research_intensity": "Moderate",
             "comparison_behavior": "Moderate", "price_sensitivity": "Price conscious",
             "brand_loyalty": "Moderate", "decision_speed": "Moderate",
             "planning_behavior": "Moderate", "impulse_buying": "Moderate",

@@ -15,6 +15,7 @@ Detailed overrides for the original 6 countries preserve exact legacy behavior.
 from dataclasses import dataclass
 from typing import Tuple
 from .geography_world import COUNTRIES_WORLD
+from .metadata import approved_value
 from .utils import choose
 
 # Re-export world as COUNTRIES for backward compatibility
@@ -105,6 +106,14 @@ def resolve_country_name(value: str) -> str:
                 or item["alpha3"].lower() == lowered):
             return name
     raise ValueError(f"Unsupported country: {value!r}")
+
+
+def resolve_country_code(value: str) -> str:
+    """Return the ISO 3166-1 alpha-2 code for a country name, alpha-2 or
+    alpha-3 code (case-insensitive). Used to look up country metadata from a
+    profile's country name or code."""
+    name = resolve_country_name(value)
+    return COUNTRIES[name]["code"]
 
 def country_summary(country: str) -> dict:
     """Frontend-ready registry record for one country (dropdowns, analytics)."""
@@ -215,12 +224,12 @@ def get_context(rng, country_mode: str = "global", country: str | None = None, r
         foods=item["foods"],
         religions=item["religions"],
         urban_rural=urban_rural,
-        digital_access=item["digital"],
+        digital_access=approved_value(item["code"], "internet_use_share", item["digital"]),
         cost_factor=item["cost"],
         income_cv=item["income_cv"],
         housing_types=item["housing"],
         shopping_ecosystems=item["shopping"],
         city_tier=city_tier,
         climate=item["climate"],
-        urban_share=item["urban_share"],
+        urban_share=approved_value(item["code"], "urban_population_share", item["urban_share"]),
     )

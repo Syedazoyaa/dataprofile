@@ -35,7 +35,7 @@ FILTER_REGISTRY = {
     "employment_status": ("employment_status", _EMPLOYMENT_VALUES, None),
     "career_level": ("career_level", _CAREER_VALUES, None),
     "income_band": ("income_band", _INCOME_VALUES, None),
-    "research_intensity": ("research_before_purchase", _LEVEL_VALUES, None),
+    "research_intensity": ("research_intensity", _LEVEL_VALUES, None),
     "comparison_behaviour": ("comparison_behavior", _LEVEL_VALUES, None),
     "purchase_intent": (None, _INTENT_VALUES, aggregate_purchase_intent),
     "price_sensitivity": ("price_sensitivity", _PRICE_VALUES, None),

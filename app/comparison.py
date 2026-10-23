@@ -60,7 +60,7 @@ def _dimension_values(profile, dimension):
     if dimension == "income_band":
         return profile.get("income_band")
     if dimension == "research_intensity":
-        return profile.get("research_before_purchase")
+        return profile.get("research_intensity")
     if dimension == "comparison_behaviour":
         return profile.get("comparison_behavior")
     if dimension == "purchase_intent":

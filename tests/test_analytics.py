@@ -38,7 +38,7 @@ def test_segment_assignment_is_scoring_not_random():
                    if classify_profile(p)["segment_id"] == "deliberate_researcher"]
     assert researchers
     # Deliberate researchers should skew toward High research behaviour.
-    high = sum(1 for p in researchers if p["research_before_purchase"] == "High")
+    high = sum(1 for p in researchers if p["research_intensity"] == "High")
     assert high / len(researchers) > 0.4
 
 

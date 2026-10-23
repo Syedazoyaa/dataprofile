@@ -1,0 +1,3492 @@
+{
+  "schema_version": "1.0",
+  "purpose": "Evidence-backed country indicators consumed by Raven's generator as reference context. Legacy geography_world.py values remain the default; only records with approved_for_generation=true override a legacy context value.",
+  "records": [
+    {
+      "country_code": "IN",
+      "indicator_id": "urban_population_share",
+      "value_type": "number",
+      "value": 0.3569,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/IN/indicator/SP.URB.TOTL.IN.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), SP.URB.TOTL.IN.ZS Urban population (% of total population), most recent value 35.689...% for 2025, divided by 100 to proportion_0_1. ITU/World Bank boundary definition, not an individual urban_rural assignment.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National urban share is a boundary definition, not an individual's urban_rural assignment."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "US",
+      "indicator_id": "urban_population_share",
+      "value_type": "number",
+      "value": 0.8019,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/US/indicator/SP.URB.TOTL.IN.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), SP.URB.TOTL.IN.ZS Urban population (% of total population), most recent value 80.192...% for 2025, divided by 100 to proportion_0_1.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National urban share is a boundary definition, not an individual's urban_rural assignment."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "GB",
+      "indicator_id": "urban_population_share",
+      "value_type": "number",
+      "value": 0.8332,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/GB/indicator/SP.URB.TOTL.IN.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), SP.URB.TOTL.IN.ZS Urban population (% of total population), most recent value 83.323...% for 2025, divided by 100 to proportion_0_1.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National urban share is a boundary definition, not an individual's urban_rural assignment."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "JP",
+      "indicator_id": "urban_population_share",
+      "value_type": "number",
+      "value": 0.923,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/JP/indicator/SP.URB.TOTL.IN.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), SP.URB.TOTL.IN.ZS Urban population (% of total population), most recent value 92.300...% for 2025, divided by 100 to proportion_0_1.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National urban share is a boundary definition, not an individual's urban_rural assignment."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "SA",
+      "indicator_id": "urban_population_share",
+      "value_type": "number",
+      "value": 0.8461,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/SA/indicator/SP.URB.TOTL.IN.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), SP.URB.TOTL.IN.ZS Urban population (% of total population), most recent value 84.612...% for 2025, divided by 100 to proportion_0_1.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National urban share is a boundary definition, not an individual's urban_rural assignment."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "BR",
+      "indicator_id": "urban_population_share",
+      "value_type": "number",
+      "value": 0.8818,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/BR/indicator/SP.URB.TOTL.IN.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), SP.URB.TOTL.IN.ZS Urban population (% of total population), most recent value 88.177...% for 2025, divided by 100 to proportion_0_1.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National urban share is a boundary definition, not an individual's urban_rural assignment."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "NG",
+      "indicator_id": "urban_population_share",
+      "value_type": "number",
+      "value": 0.6378,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/NG/indicator/SP.URB.TOTL.IN.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), SP.URB.TOTL.IN.ZS Urban population (% of total population), most recent value 63.775...% for 2025, divided by 100 to proportion_0_1.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National urban share is a boundary definition, not an individual's urban_rural assignment."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "IN",
+      "indicator_id": "internet_use_share",
+      "value_type": "number",
+      "value": 0.7,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/IN/indicator/IT.NET.USER.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI / ITU (source 2), IT.NET.USER.ZS Individuals using the Internet (% of population), most recent value 70 for 2025, divided by 100 to proportion_0_1.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National connectivity rate does not directly describe an individual's device, platform or digital skill (per starter-kit source registry)."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "US",
+      "indicator_id": "internet_use_share",
+      "value_type": "number",
+      "value": 0.9469,
+      "unit": "proportion_0_1",
+      "reference_year": 2024,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/US/indicator/IT.NET.USER.ZS?format=json&per_page=50&page=1&date=2020:2024",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI / ITU (source 2), IT.NET.USER.ZS Individuals using the Internet (% of population), most recent value 94.693...% for 2024, divided by 100 to proportion_0_1.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National connectivity rate does not directly describe an individual's device, platform or digital skill (per starter-kit source registry)."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "GB",
+      "indicator_id": "internet_use_share",
+      "value_type": "number",
+      "value": 0.9547,
+      "unit": "proportion_0_1",
+      "reference_year": 2024,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/GB/indicator/IT.NET.USER.ZS?format=json&per_page=50&page=1&date=2020:2024",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI / ITU (source 2), IT.NET.USER.ZS Individuals using the Internet (% of population), most recent value 95.472...% for 2024, divided by 100 to proportion_0_1.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National connectivity rate does not directly describe an individual's device, platform or digital skill (per starter-kit source registry)."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "JP",
+      "indicator_id": "internet_use_share",
+      "value_type": "number",
+      "value": 0.8554,
+      "unit": "proportion_0_1",
+      "reference_year": 2024,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/JP/indicator/IT.NET.USER.ZS?format=json&per_page=50&page=1&date=2020:2024",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI / ITU (source 2), IT.NET.USER.ZS Individuals using the Internet (% of population), most recent value 85.541...% for 2024, divided by 100 to proportion_0_1.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National connectivity rate does not directly describe an individual's device, platform or digital skill (per starter-kit source registry)."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "SA",
+      "indicator_id": "internet_use_share",
+      "value_type": "number",
+      "value": 1.0,
+      "unit": "proportion_0_1",
+      "reference_year": 2024,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/SA/indicator/IT.NET.USER.ZS?format=json&per_page=50&page=1&date=2020:2024",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI / ITU (source 2), IT.NET.USER.ZS Individuals using the Internet (% of population), value 100 for 2020-2024 (ITU caps the series at 100), divided by 100 to proportion_0_1.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "B",
+      "limitations": [
+        "Value is capped at 100 by the source series; true individual digital adoption is lower."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "BR",
+      "indicator_id": "internet_use_share",
+      "value_type": "number",
+      "value": 0.8446,
+      "unit": "proportion_0_1",
+      "reference_year": 2024,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/BR/indicator/IT.NET.USER.ZS?format=json&per_page=50&page=1&date=2020:2024",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI / ITU (source 2), IT.NET.USER.ZS Individuals using the Internet (% of population), most recent value 84.463...% for 2024, divided by 100 to proportion_0_1.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National connectivity rate does not directly describe an individual's device, platform or digital skill (per starter-kit source registry)."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "NG",
+      "indicator_id": "internet_use_share",
+      "value_type": "number",
+      "value": 0.4121,
+      "unit": "proportion_0_1",
+      "reference_year": 2024,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/NG/indicator/IT.NET.USER.ZS?format=json&per_page=50&page=1&date=2020:2024",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI / ITU (source 2), IT.NET.USER.ZS Individuals using the Internet (% of population), most recent value 41.211...% for 2024, divided by 100 to proportion_0_1.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National connectivity rate does not directly describe an individual's device, platform or digital skill (per starter-kit source registry)."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "BR",
+      "indicator_id": "income_inequality_gini",
+      "value_type": "number",
+      "value": 50.3,
+      "unit": "index_0_100",
+      "reference_year": 2024,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/BR/indicator/SI.POV.GINI?format=json&per_page=50&page=1&date=2020:2024",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), SI.POV.GINI Gini index, most recent value 50.3 for 2024. Measures income inequality (0=perfect equality, 100=perfect inequality), not an income distribution.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "Gini index is a scalar inequality measure, not a full income distribution; does not directly parameterize income sampling."
+      ],
+      "approved_for_generation": false
+    },
+    {
+      "country_code": "US",
+      "indicator_id": "income_inequality_gini",
+      "value_type": "number",
+      "value": 41.8,
+      "unit": "index_0_100",
+      "reference_year": 2024,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/US/indicator/SI.POV.GINI?format=json&per_page=50&page=1&date=2020:2024",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), SI.POV.GINI Gini index, most recent value 41.8 for 2024.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "Gini index is a scalar inequality measure, not a full income distribution; does not directly parameterize income sampling."
+      ],
+      "approved_for_generation": false
+    },
+    {
+      "country_code": "GB",
+      "indicator_id": "income_inequality_gini",
+      "value_type": "number",
+      "value": 32.4,
+      "unit": "index_0_100",
+      "reference_year": 2021,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/GB/indicator/SI.POV.GINI?format=json&per_page=50&page=1&date=2020:2024",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), SI.POV.GINI Gini index, most recent non-null value 32.4 for 2021 (no 2020-2024 value later than 2021).",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "Reference year 2021 is not the most recent in the window; Gini index is a scalar inequality measure, not a full income distribution."
+      ],
+      "approved_for_generation": false
+    },
+    {
+      "country_code": "IN",
+      "indicator_id": "income_inequality_gini",
+      "value_type": "number",
+      "value": 23.0,
+      "unit": "index_0_100",
+      "reference_year": 2023,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/IN/indicator/SI.POV.GINI?format=json&per_page=50&page=1&date=2020:2024",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), SI.POV.GINI Gini index, most recent non-null value 23.0 for 2023.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "Reference year 2023; Gini index is a scalar inequality measure, not a full income distribution."
+      ],
+      "approved_for_generation": false
+    },
+    {
+      "country_code": "NG",
+      "indicator_id": "income_inequality_gini",
+      "value_type": "number",
+      "value": 33.9,
+      "unit": "index_0_100",
+      "reference_year": 2022,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/NG/indicator/SI.POV.GINI?format=json&per_page=50&page=1&date=2020:2024",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), SI.POV.GINI Gini index, most recent non-null value 33.9 for 2022.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "Reference year 2022; Gini index is a scalar inequality measure, not a full income distribution."
+      ],
+      "approved_for_generation": false
+    },
+    {
+      "country_code": "JP",
+      "indicator_id": "income_inequality_gini",
+      "value_type": "number",
+      "value": 32.3,
+      "unit": "index_0_100",
+      "reference_year": 2020,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/JP/indicator/SI.POV.GINI?format=json&per_page=50&page=1&date=2020:2024",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), SI.POV.GINI Gini index, most recent non-null value 32.3 for 2020 (no 2021-2024 values).",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "Reference year 2020 is the oldest in the window; Gini index is a scalar inequality measure, not a full income distribution."
+      ],
+      "approved_for_generation": false
+    },
+    {
+      "country_code": "BR",
+      "indicator_id": "gdp_per_capita_usd",
+      "value_type": "number",
+      "value": 10713.29,
+      "unit": "usd",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/BR/indicator/NY.GDP.PCAP.CD?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), NY.GDP.PCAP.CD GDP per capita (current US$), value 10713.29 for 2025. Macro average, not median income; denominated in US$ not local currency.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "GDP per capita is a macro average, not a distribution or median income; US$ denomination does not map to Raven's local-currency income_scale without PPP conversion."
+      ],
+      "approved_for_generation": false
+    },
+    {
+      "country_code": "US",
+      "indicator_id": "gdp_per_capita_usd",
+      "value_type": "number",
+      "value": 90026.52,
+      "unit": "usd",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/US/indicator/NY.GDP.PCAP.CD?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), NY.GDP.PCAP.CD GDP per capita (current US$), value 90026.52 for 2025.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "GDP per capita is a macro average, not a distribution or median income; US$ denomination does not map to Raven's local-currency income_scale without PPP conversion."
+      ],
+      "approved_for_generation": false
+    },
+    {
+      "country_code": "GB",
+      "indicator_id": "gdp_per_capita_usd",
+      "value_type": "number",
+      "value": 57601.96,
+      "unit": "usd",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/GB/indicator/NY.GDP.PCAP.CD?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), NY.GDP.PCAP.CD GDP per capita (current US$), value 57601.96 for 2025.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "GDP per capita is a macro average, not a distribution or median income; US$ denomination does not map to Raven's local-currency income_scale without PPP conversion."
+      ],
+      "approved_for_generation": false
+    },
+    {
+      "country_code": "JP",
+      "indicator_id": "gdp_per_capita_usd",
+      "value_type": "number",
+      "value": 35951.04,
+      "unit": "usd",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/JP/indicator/NY.GDP.PCAP.CD?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), NY.GDP.PCAP.CD GDP per capita (current US$), value 35951.04 for 2025.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "GDP per capita is a macro average, not a distribution or median income; US$ denomination does not map to Raven's local-currency income_scale without PPP conversion."
+      ],
+      "approved_for_generation": false
+    },
+    {
+      "country_code": "SA",
+      "indicator_id": "gdp_per_capita_usd",
+      "value_type": "number",
+      "value": 34536.66,
+      "unit": "usd",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/SA/indicator/NY.GDP.PCAP.CD?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), NY.GDP.PCAP.CD GDP per capita (current US$), value 34536.66 for 2025.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "GDP per capita is a macro average, not a distribution or median income; US$ denomination does not map to Raven's local-currency income_scale without PPP conversion."
+      ],
+      "approved_for_generation": false
+    },
+    {
+      "country_code": "IN",
+      "indicator_id": "gdp_per_capita_usd",
+      "value_type": "number",
+      "value": 2702.48,
+      "unit": "usd",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/IN/indicator/NY.GDP.PCAP.CD?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), NY.GDP.PCAP.CD GDP per capita (current US$), value 2702.48 for 2025.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "GDP per capita is a macro average, not a distribution or median income; US$ denomination does not map to Raven's local-currency income_scale without PPP conversion."
+      ],
+      "approved_for_generation": false
+    },
+    {
+      "country_code": "NG",
+      "indicator_id": "gdp_per_capita_usd",
+      "value_type": "number",
+      "value": 1224.25,
+      "unit": "usd",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/NG/indicator/NY.GDP.PCAP.CD?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), NY.GDP.PCAP.CD GDP per capita (current US$), value 1224.25 for 2025.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "GDP per capita is a macro average, not a distribution or median income; US$ denomination does not map to Raven's local-currency income_scale without PPP conversion."
+      ],
+      "approved_for_generation": false
+    },
+    {
+      "country_code": "AF",
+      "indicator_id": "urban_population_share",
+      "value_type": "number",
+      "value": 0.2594,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/AF/indicator/SP.URB.TOTL.IN.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), SP.URB.TOTL.IN.ZS Urban population (% of total population), most recent value for 2025, divided by 100 to proportion_0_1. National urban share is a boundary definition, not an individual urban_rural assignment.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National urban share is a boundary definition, not an individuals urban_rural assignment."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "AG",
+      "indicator_id": "urban_population_share",
+      "value_type": "number",
+      "value": 0.7146,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/AG/indicator/SP.URB.TOTL.IN.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), SP.URB.TOTL.IN.ZS Urban population (% of total population), most recent value for 2025, divided by 100 to proportion_0_1. National urban share is a boundary definition, not an individual urban_rural assignment.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National urban share is a boundary definition, not an individuals urban_rural assignment."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "AL",
+      "indicator_id": "urban_population_share",
+      "value_type": "number",
+      "value": 0.5887,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/AL/indicator/SP.URB.TOTL.IN.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), SP.URB.TOTL.IN.ZS Urban population (% of total population), most recent value for 2025, divided by 100 to proportion_0_1. National urban share is a boundary definition, not an individual urban_rural assignment.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National urban share is a boundary definition, not an individuals urban_rural assignment."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "AR",
+      "indicator_id": "urban_population_share",
+      "value_type": "number",
+      "value": 0.8596,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/AR/indicator/SP.URB.TOTL.IN.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), SP.URB.TOTL.IN.ZS Urban population (% of total population), most recent value for 2025, divided by 100 to proportion_0_1. National urban share is a boundary definition, not an individual urban_rural assignment.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National urban share is a boundary definition, not an individuals urban_rural assignment."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "AT",
+      "indicator_id": "urban_population_share",
+      "value_type": "number",
+      "value": 0.6972,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/AT/indicator/SP.URB.TOTL.IN.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), SP.URB.TOTL.IN.ZS Urban population (% of total population), most recent value 69.715...% for 2025, divided by 100 to proportion_0_1. National urban share is a boundary definition, not an individual urban_rural assignment. Previous value 0.2433 was incorrect; corrected from World Bank WDI API.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National urban share is a boundary definition, not an individual's urban_rural assignment.",
+        "Value corrected from incorrect 0.2433 to verified World Bank WDI value 0.6972."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "AU",
+      "indicator_id": "urban_population_share",
+      "value_type": "number",
+      "value": 0.6972,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/AU/indicator/SP.URB.TOTL.IN.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), SP.URB.TOTL.IN.ZS Urban population (% of total population), most recent value for 2025, divided by 100 to proportion_0_1. National urban share is a boundary definition, not an individual urban_rural assignment.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National urban share is a boundary definition, not an individuals urban_rural assignment."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "AZ",
+      "indicator_id": "urban_population_share",
+      "value_type": "number",
+      "value": 0.5864,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/AZ/indicator/SP.URB.TOTL.IN.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), SP.URB.TOTL.IN.ZS Urban population (% of total population), most recent value for 2025, divided by 100 to proportion_0_1. National urban share is a boundary definition, not an individual urban_rural assignment.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National urban share is a boundary definition, not an individuals urban_rural assignment."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "BD",
+      "indicator_id": "urban_population_share",
+      "value_type": "number",
+      "value": 0.2569,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/BD/indicator/SP.URB.TOTL.IN.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), SP.URB.TOTL.IN.ZS Urban population (% of total population), most recent value for 2025, divided by 100 to proportion_0_1. National urban share is a boundary definition, not an individual urban_rural assignment.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National urban share is a boundary definition, not an individuals urban_rural assignment."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "BE",
+      "indicator_id": "urban_population_share",
+      "value_type": "number",
+      "value": 0.5336,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/BE/indicator/SP.URB.TOTL.IN.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), SP.URB.TOTL.IN.ZS Urban population (% of total population), most recent value for 2025, divided by 100 to proportion_0_1. National urban share is a boundary definition, not an individual urban_rural assignment.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National urban share is a boundary definition, not an individuals urban_rural assignment."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "BF",
+      "indicator_id": "urban_population_share",
+      "value_type": "number",
+      "value": 0.2892,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/BF/indicator/SP.URB.TOTL.IN.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), SP.URB.TOTL.IN.ZS Urban population (% of total population), most recent value for 2025, divided by 100 to proportion_0_1. National urban share is a boundary definition, not an individual urban_rural assignment.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National urban share is a boundary definition, not an individuals urban_rural assignment."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "BG",
+      "indicator_id": "urban_population_share",
+      "value_type": "number",
+      "value": 0.7417,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/BG/indicator/SP.URB.TOTL.IN.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), SP.URB.TOTL.IN.ZS Urban population (% of total population), most recent value for 2025, divided by 100 to proportion_0_1. National urban share is a boundary definition, not an individual urban_rural assignment.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National urban share is a boundary definition, not an individuals urban_rural assignment."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "BH",
+      "indicator_id": "urban_population_share",
+      "value_type": "number",
+      "value": 1.0,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/BH/indicator/SP.URB.TOTL.IN.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), SP.URB.TOTL.IN.ZS Urban population (% of total population), most recent value for 2025, divided by 100 to proportion_0_1. National urban share is a boundary definition, not an individual urban_rural assignment.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National urban share is a boundary definition, not an individuals urban_rural assignment."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "BI",
+      "indicator_id": "urban_population_share",
+      "value_type": "number",
+      "value": 0.5269,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/BI/indicator/SP.URB.TOTL.IN.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), SP.URB.TOTL.IN.ZS Urban population (% of total population), most recent value for 2025, divided by 100 to proportion_0_1. National urban share is a boundary definition, not an individual urban_rural assignment.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National urban share is a boundary definition, not an individuals urban_rural assignment."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "BO",
+      "indicator_id": "urban_population_share",
+      "value_type": "number",
+      "value": 0.7156,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/BO/indicator/SP.URB.TOTL.IN.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), SP.URB.TOTL.IN.ZS Urban population (% of total population), most recent value for 2025, divided by 100 to proportion_0_1. National urban share is a boundary definition, not an individual urban_rural assignment.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National urban share is a boundary definition, not an individuals urban_rural assignment."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "BT",
+      "indicator_id": "urban_population_share",
+      "value_type": "number",
+      "value": 0.4343,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/BT/indicator/SP.URB.TOTL.IN.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), SP.URB.TOTL.IN.ZS Urban population (% of total population), most recent value for 2025, divided by 100 to proportion_0_1. National urban share is a boundary definition, not an individual urban_rural assignment.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National urban share is a boundary definition, not an individuals urban_rural assignment."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "BW",
+      "indicator_id": "urban_population_share",
+      "value_type": "number",
+      "value": 0.6796,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/BW/indicator/SP.URB.TOTL.IN.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), SP.URB.TOTL.IN.ZS Urban population (% of total population), most recent value for 2025, divided by 100 to proportion_0_1. National urban share is a boundary definition, not an individual urban_rural assignment.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National urban share is a boundary definition, not an individuals urban_rural assignment."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "CA",
+      "indicator_id": "urban_population_share",
+      "value_type": "number",
+      "value": 0.8288,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/CA/indicator/SP.URB.TOTL.IN.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), SP.URB.TOTL.IN.ZS Urban population (% of total population), most recent value 82.876...% for 2025, divided by 100 to proportion_0_1. National urban share is a boundary definition, not an individual urban_rural assignment. Previous value 0.4455 was incorrect; corrected from World Bank WDI API.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National urban share is a boundary definition, not an individual's urban_rural assignment.",
+        "Value corrected from incorrect 0.4455 to verified World Bank WDI value 0.8288."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "CH",
+      "indicator_id": "urban_population_share",
+      "value_type": "number",
+      "value": 0.8573,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/CH/indicator/SP.URB.TOTL.IN.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), SP.URB.TOTL.IN.ZS Urban population (% of total population), most recent value for 2025, divided by 100 to proportion_0_1. National urban share is a boundary definition, not an individual urban_rural assignment.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National urban share is a boundary definition, not an individuals urban_rural assignment."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "CM",
+      "indicator_id": "urban_population_share",
+      "value_type": "number",
+      "value": 0.5567,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/CM/indicator/SP.URB.TOTL.IN.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), SP.URB.TOTL.IN.ZS Urban population (% of total population), most recent value for 2025, divided by 100 to proportion_0_1. National urban share is a boundary definition, not an individual urban_rural assignment.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National urban share is a boundary definition, not an individuals urban_rural assignment."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "CO",
+      "indicator_id": "urban_population_share",
+      "value_type": "number",
+      "value": 0.6412,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/CO/indicator/SP.URB.TOTL.IN.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), SP.URB.TOTL.IN.ZS Urban population (% of total population), most recent value for 2025, divided by 100 to proportion_0_1. National urban share is a boundary definition, not an individual urban_rural assignment.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National urban share is a boundary definition, not an individuals urban_rural assignment."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "CR",
+      "indicator_id": "urban_population_share",
+      "value_type": "number",
+      "value": 0.7973,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/CR/indicator/SP.URB.TOTL.IN.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), SP.URB.TOTL.IN.ZS Urban population (% of total population), most recent value for 2025, divided by 100 to proportion_0_1. National urban share is a boundary definition, not an individual urban_rural assignment.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National urban share is a boundary definition, not an individuals urban_rural assignment."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "CU",
+      "indicator_id": "urban_population_share",
+      "value_type": "number",
+      "value": 0.9147,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/CU/indicator/SP.URB.TOTL.IN.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), SP.URB.TOTL.IN.ZS Urban population (% of total population), most recent value for 2025, divided by 100 to proportion_0_1. National urban share is a boundary definition, not an individual urban_rural assignment.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National urban share is a boundary definition, not an individuals urban_rural assignment."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "CY",
+      "indicator_id": "urban_population_share",
+      "value_type": "number",
+      "value": 0.667,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/CY/indicator/SP.URB.TOTL.IN.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), SP.URB.TOTL.IN.ZS Urban population (% of total population), most recent value for 2025, divided by 100 to proportion_0_1. National urban share is a boundary definition, not an individual urban_rural assignment.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National urban share is a boundary definition, not an individuals urban_rural assignment."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "CZ",
+      "indicator_id": "urban_population_share",
+      "value_type": "number",
+      "value": 0.7288,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/CZ/indicator/SP.URB.TOTL.IN.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), SP.URB.TOTL.IN.ZS Urban population (% of total population), most recent value for 2025, divided by 100 to proportion_0_1. National urban share is a boundary definition, not an individual urban_rural assignment.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National urban share is a boundary definition, not an individuals urban_rural assignment."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "DE",
+      "indicator_id": "urban_population_share",
+      "value_type": "number",
+      "value": 0.8214,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/DE/indicator/SP.URB.TOTL.IN.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), SP.URB.TOTL.IN.ZS Urban population (% of total population), most recent value for 2025, divided by 100 to proportion_0_1. National urban share is a boundary definition, not an individual urban_rural assignment.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National urban share is a boundary definition, not an individuals urban_rural assignment."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "DJ",
+      "indicator_id": "urban_population_share",
+      "value_type": "number",
+      "value": 0.7298,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/DJ/indicator/SP.URB.TOTL.IN.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), SP.URB.TOTL.IN.ZS Urban population (% of total population), most recent value for 2025, divided by 100 to proportion_0_1. National urban share is a boundary definition, not an individual urban_rural assignment.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National urban share is a boundary definition, not an individuals urban_rural assignment."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "DM",
+      "indicator_id": "urban_population_share",
+      "value_type": "number",
+      "value": 0.7399,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/DM/indicator/SP.URB.TOTL.IN.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), SP.URB.TOTL.IN.ZS Urban population (% of total population), most recent value for 2025, divided by 100 to proportion_0_1. National urban share is a boundary definition, not an individual urban_rural assignment.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National urban share is a boundary definition, not an individuals urban_rural assignment."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "DO",
+      "indicator_id": "urban_population_share",
+      "value_type": "number",
+      "value": 0.7252,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/DO/indicator/SP.URB.TOTL.IN.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), SP.URB.TOTL.IN.ZS Urban population (% of total population), most recent value for 2025, divided by 100 to proportion_0_1. National urban share is a boundary definition, not an individual urban_rural assignment.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National urban share is a boundary definition, not an individuals urban_rural assignment."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "DZ",
+      "indicator_id": "urban_population_share",
+      "value_type": "number",
+      "value": 0.7582,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/DZ/indicator/SP.URB.TOTL.IN.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), SP.URB.TOTL.IN.ZS Urban population (% of total population), most recent value for 2025, divided by 100 to proportion_0_1. National urban share is a boundary definition, not an individual urban_rural assignment.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National urban share is a boundary definition, not an individuals urban_rural assignment."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "EC",
+      "indicator_id": "urban_population_share",
+      "value_type": "number",
+      "value": 0.6339,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/EC/indicator/SP.URB.TOTL.IN.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), SP.URB.TOTL.IN.ZS Urban population (% of total population), most recent value for 2025, divided by 100 to proportion_0_1. National urban share is a boundary definition, not an individual urban_rural assignment.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National urban share is a boundary definition, not an individuals urban_rural assignment."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "EG",
+      "indicator_id": "urban_population_share",
+      "value_type": "number",
+      "value": 0.429,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/EG/indicator/SP.URB.TOTL.IN.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), SP.URB.TOTL.IN.ZS Urban population (% of total population), most recent value for 2025, divided by 100 to proportion_0_1. National urban share is a boundary definition, not an individual urban_rural assignment.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National urban share is a boundary definition, not an individuals urban_rural assignment."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "ER",
+      "indicator_id": "urban_population_share",
+      "value_type": "number",
+      "value": 0.3454,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/ER/indicator/SP.URB.TOTL.IN.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), SP.URB.TOTL.IN.ZS Urban population (% of total population), most recent value for 2025, divided by 100 to proportion_0_1. National urban share is a boundary definition, not an individual urban_rural assignment.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National urban share is a boundary definition, not an individuals urban_rural assignment."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "ES",
+      "indicator_id": "urban_population_share",
+      "value_type": "number",
+      "value": 0.8051,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/ES/indicator/SP.URB.TOTL.IN.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), SP.URB.TOTL.IN.ZS Urban population (% of total population), most recent value for 2025, divided by 100 to proportion_0_1. National urban share is a boundary definition, not an individual urban_rural assignment.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National urban share is a boundary definition, not an individuals urban_rural assignment."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "ET",
+      "indicator_id": "urban_population_share",
+      "value_type": "number",
+      "value": 0.2411,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/ET/indicator/SP.URB.TOTL.IN.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), SP.URB.TOTL.IN.ZS Urban population (% of total population), most recent value for 2025, divided by 100 to proportion_0_1. National urban share is a boundary definition, not an individual urban_rural assignment.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National urban share is a boundary definition, not an individuals urban_rural assignment."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "FI",
+      "indicator_id": "urban_population_share",
+      "value_type": "number",
+      "value": 0.7452,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/FI/indicator/SP.URB.TOTL.IN.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), SP.URB.TOTL.IN.ZS Urban population (% of total population), most recent value for 2025, divided by 100 to proportion_0_1. National urban share is a boundary definition, not an individual urban_rural assignment.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National urban share is a boundary definition, not an individuals urban_rural assignment."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "FJ",
+      "indicator_id": "urban_population_share",
+      "value_type": "number",
+      "value": 0.5954,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/FJ/indicator/SP.URB.TOTL.IN.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), SP.URB.TOTL.IN.ZS Urban population (% of total population), most recent value for 2025, divided by 100 to proportion_0_1. National urban share is a boundary definition, not an individual urban_rural assignment.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National urban share is a boundary definition, not an individuals urban_rural assignment."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "FR",
+      "indicator_id": "urban_population_share",
+      "value_type": "number",
+      "value": 0.7884,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/FR/indicator/SP.URB.TOTL.IN.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), SP.URB.TOTL.IN.ZS Urban population (% of total population), most recent value for 2025, divided by 100 to proportion_0_1. National urban share is a boundary definition, not an individual urban_rural assignment.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National urban share is a boundary definition, not an individuals urban_rural assignment."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "GA",
+      "indicator_id": "urban_population_share",
+      "value_type": "number",
+      "value": 0.9209,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/GA/indicator/SP.URB.TOTL.IN.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), SP.URB.TOTL.IN.ZS Urban population (% of total population), most recent value for 2025, divided by 100 to proportion_0_1. National urban share is a boundary definition, not an individual urban_rural assignment.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National urban share is a boundary definition, not an individuals urban_rural assignment."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "GE",
+      "indicator_id": "urban_population_share",
+      "value_type": "number",
+      "value": 0.6118,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/GE/indicator/SP.URB.TOTL.IN.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), SP.URB.TOTL.IN.ZS Urban population (% of total population), most recent value for 2025, divided by 100 to proportion_0_1. National urban share is a boundary definition, not an individual urban_rural assignment.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National urban share is a boundary definition, not an individuals urban_rural assignment."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "GH",
+      "indicator_id": "urban_population_share",
+      "value_type": "number",
+      "value": 0.5892,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/GH/indicator/SP.URB.TOTL.IN.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), SP.URB.TOTL.IN.ZS Urban population (% of total population), most recent value for 2025, divided by 100 to proportion_0_1. National urban share is a boundary definition, not an individual urban_rural assignment.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National urban share is a boundary definition, not an individuals urban_rural assignment."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "GM",
+      "indicator_id": "urban_population_share",
+      "value_type": "number",
+      "value": 0.6499,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/GM/indicator/SP.URB.TOTL.IN.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), SP.URB.TOTL.IN.ZS Urban population (% of total population), most recent value for 2025, divided by 100 to proportion_0_1. National urban share is a boundary definition, not an individual urban_rural assignment.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National urban share is a boundary definition, not an individuals urban_rural assignment."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "GN",
+      "indicator_id": "urban_population_share",
+      "value_type": "number",
+      "value": 0.4665,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/GN/indicator/SP.URB.TOTL.IN.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), SP.URB.TOTL.IN.ZS Urban population (% of total population), most recent value for 2025, divided by 100 to proportion_0_1. National urban share is a boundary definition, not an individual urban_rural assignment.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National urban share is a boundary definition, not an individuals urban_rural assignment."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "GR",
+      "indicator_id": "urban_population_share",
+      "value_type": "number",
+      "value": 0.7922,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/GR/indicator/SP.URB.TOTL.IN.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), SP.URB.TOTL.IN.ZS Urban population (% of total population), most recent value 79.225...% for 2025, divided by 100 to proportion_0_1. National urban share is a boundary definition, not an individual urban_rural assignment. Previous value 0.3667 was incorrect; corrected from World Bank WDI API.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National urban share is a boundary definition, not an individual's urban_rural assignment.",
+        "Value corrected from incorrect 0.3667 to verified World Bank WDI value 0.7922."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "GT",
+      "indicator_id": "urban_population_share",
+      "value_type": "number",
+      "value": 0.563,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/GT/indicator/SP.URB.TOTL.IN.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), SP.URB.TOTL.IN.ZS Urban population (% of total population), most recent value for 2025, divided by 100 to proportion_0_1. National urban share is a boundary definition, not an individual urban_rural assignment.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National urban share is a boundary definition, not an individuals urban_rural assignment."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "HN",
+      "indicator_id": "urban_population_share",
+      "value_type": "number",
+      "value": 0.5925,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/HN/indicator/SP.URB.TOTL.IN.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), SP.URB.TOTL.IN.ZS Urban population (% of total population), most recent value for 2025, divided by 100 to proportion_0_1. National urban share is a boundary definition, not an individual urban_rural assignment.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National urban share is a boundary definition, not an individuals urban_rural assignment."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "HR",
+      "indicator_id": "urban_population_share",
+      "value_type": "number",
+      "value": 0.5781,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/HR/indicator/SP.URB.TOTL.IN.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), SP.URB.TOTL.IN.ZS Urban population (% of total population), most recent value for 2025, divided by 100 to proportion_0_1. National urban share is a boundary definition, not an individual urban_rural assignment.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National urban share is a boundary definition, not an individuals urban_rural assignment."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "HT",
+      "indicator_id": "urban_population_share",
+      "value_type": "number",
+      "value": 0.5561,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/HT/indicator/SP.URB.TOTL.IN.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), SP.URB.TOTL.IN.ZS Urban population (% of total population), most recent value for 2025, divided by 100 to proportion_0_1. National urban share is a boundary definition, not an individual urban_rural assignment.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National urban share is a boundary definition, not an individuals urban_rural assignment."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "HU",
+      "indicator_id": "urban_population_share",
+      "value_type": "number",
+      "value": 0.7069,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/HU/indicator/SP.URB.TOTL.IN.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), SP.URB.TOTL.IN.ZS Urban population (% of total population), most recent value for 2025, divided by 100 to proportion_0_1. National urban share is a boundary definition, not an individual urban_rural assignment.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National urban share is a boundary definition, not an individuals urban_rural assignment."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "ID",
+      "indicator_id": "urban_population_share",
+      "value_type": "number",
+      "value": 0.5939,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/ID/indicator/SP.URB.TOTL.IN.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), SP.URB.TOTL.IN.ZS Urban population (% of total population), most recent value for 2025, divided by 100 to proportion_0_1. National urban share is a boundary definition, not an individual urban_rural assignment.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National urban share is a boundary definition, not an individuals urban_rural assignment."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "IR",
+      "indicator_id": "urban_population_share",
+      "value_type": "number",
+      "value": 0.6459,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/IR/indicator/SP.URB.TOTL.IN.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), SP.URB.TOTL.IN.ZS Urban population (% of total population), most recent value for 2025, divided by 100 to proportion_0_1. National urban share is a boundary definition, not an individual urban_rural assignment.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National urban share is a boundary definition, not an individuals urban_rural assignment."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "IS",
+      "indicator_id": "urban_population_share",
+      "value_type": "number",
+      "value": 0.9158,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/IS/indicator/SP.URB.TOTL.IN.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), SP.URB.TOTL.IN.ZS Urban population (% of total population), most recent value for 2025, divided by 100 to proportion_0_1. National urban share is a boundary definition, not an individual urban_rural assignment.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National urban share is a boundary definition, not an individuals urban_rural assignment."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "IT",
+      "indicator_id": "urban_population_share",
+      "value_type": "number",
+      "value": 0.6968,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/IT/indicator/SP.URB.TOTL.IN.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), SP.URB.TOTL.IN.ZS Urban population (% of total population), most recent value for 2025, divided by 100 to proportion_0_1. National urban share is a boundary definition, not an individual urban_rural assignment.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National urban share is a boundary definition, not an individuals urban_rural assignment."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "JO",
+      "indicator_id": "urban_population_share",
+      "value_type": "number",
+      "value": 0.9321,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/JO/indicator/SP.URB.TOTL.IN.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), SP.URB.TOTL.IN.ZS Urban population (% of total population), most recent value for 2025, divided by 100 to proportion_0_1. National urban share is a boundary definition, not an individual urban_rural assignment.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National urban share is a boundary definition, not an individuals urban_rural assignment."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "KE",
+      "indicator_id": "urban_population_share",
+      "value_type": "number",
+      "value": 0.3221,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/KE/indicator/SP.URB.TOTL.IN.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), SP.URB.TOTL.IN.ZS Urban population (% of total population), most recent value for 2025, divided by 100 to proportion_0_1. National urban share is a boundary definition, not an individual urban_rural assignment.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National urban share is a boundary definition, not an individuals urban_rural assignment."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "KG",
+      "indicator_id": "urban_population_share",
+      "value_type": "number",
+      "value": 0.3475,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/KG/indicator/SP.URB.TOTL.IN.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), SP.URB.TOTL.IN.ZS Urban population (% of total population), most recent value for 2025, divided by 100 to proportion_0_1. National urban share is a boundary definition, not an individual urban_rural assignment.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National urban share is a boundary definition, not an individuals urban_rural assignment."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "KH",
+      "indicator_id": "urban_population_share",
+      "value_type": "number",
+      "value": 0.4111,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/KH/indicator/SP.URB.TOTL.IN.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), SP.URB.TOTL.IN.ZS Urban population (% of total population), most recent value for 2025, divided by 100 to proportion_0_1. National urban share is a boundary definition, not an individual urban_rural assignment.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National urban share is a boundary definition, not an individuals urban_rural assignment."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "KI",
+      "indicator_id": "urban_population_share",
+      "value_type": "number",
+      "value": 0.6339,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/KI/indicator/SP.URB.TOTL.IN.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), SP.URB.TOTL.IN.ZS Urban population (% of total population), most recent value for 2025, divided by 100 to proportion_0_1. National urban share is a boundary definition, not an individual urban_rural assignment.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National urban share is a boundary definition, not an individuals urban_rural assignment."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "KN",
+      "indicator_id": "urban_population_share",
+      "value_type": "number",
+      "value": 0.319,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/KN/indicator/SP.URB.TOTL.IN.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), SP.URB.TOTL.IN.ZS Urban population (% of total population), most recent value for 2025, divided by 100 to proportion_0_1. National urban share is a boundary definition, not an individual urban_rural assignment.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National urban share is a boundary definition, not an individuals urban_rural assignment."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "KW",
+      "indicator_id": "urban_population_share",
+      "value_type": "number",
+      "value": 1.0,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/KW/indicator/SP.URB.TOTL.IN.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), SP.URB.TOTL.IN.ZS Urban population (% of total population), most recent value for 2025, divided by 100 to proportion_0_1. National urban share is a boundary definition, not an individual urban_rural assignment.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National urban share is a boundary definition, not an individuals urban_rural assignment."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "LA",
+      "indicator_id": "urban_population_share",
+      "value_type": "number",
+      "value": 0.4031,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/LA/indicator/SP.URB.TOTL.IN.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), SP.URB.TOTL.IN.ZS Urban population (% of total population), most recent value for 2025, divided by 100 to proportion_0_1. National urban share is a boundary definition, not an individual urban_rural assignment.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National urban share is a boundary definition, not an individuals urban_rural assignment."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "LB",
+      "indicator_id": "urban_population_share",
+      "value_type": "number",
+      "value": 0.8791,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/LB/indicator/SP.URB.TOTL.IN.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), SP.URB.TOTL.IN.ZS Urban population (% of total population), most recent value for 2025, divided by 100 to proportion_0_1. National urban share is a boundary definition, not an individual urban_rural assignment.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National urban share is a boundary definition, not an individuals urban_rural assignment."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "LC",
+      "indicator_id": "urban_population_share",
+      "value_type": "number",
+      "value": 0.291,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/LC/indicator/SP.URB.TOTL.IN.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), SP.URB.TOTL.IN.ZS Urban population (% of total population), most recent value for 2025, divided by 100 to proportion_0_1. National urban share is a boundary definition, not an individual urban_rural assignment.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National urban share is a boundary definition, not an individuals urban_rural assignment."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "LI",
+      "indicator_id": "urban_population_share",
+      "value_type": "number",
+      "value": 0.1463,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/LI/indicator/SP.URB.TOTL.IN.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), SP.URB.TOTL.IN.ZS Urban population (% of total population), most recent value for 2025, divided by 100 to proportion_0_1. National urban share is a boundary definition, not an individual urban_rural assignment.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National urban share is a boundary definition, not an individuals urban_rural assignment."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "LK",
+      "indicator_id": "urban_population_share",
+      "value_type": "number",
+      "value": 0.2045,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/LK/indicator/SP.URB.TOTL.IN.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), SP.URB.TOTL.IN.ZS Urban population (% of total population), most recent value for 2025, divided by 100 to proportion_0_1. National urban share is a boundary definition, not an individual urban_rural assignment.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National urban share is a boundary definition, not an individuals urban_rural assignment."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "LS",
+      "indicator_id": "urban_population_share",
+      "value_type": "number",
+      "value": 0.4467,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/LS/indicator/SP.URB.TOTL.IN.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), SP.URB.TOTL.IN.ZS Urban population (% of total population), most recent value for 2025, divided by 100 to proportion_0_1. National urban share is a boundary definition, not an individual urban_rural assignment.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National urban share is a boundary definition, not an individuals urban_rural assignment."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "LT",
+      "indicator_id": "urban_population_share",
+      "value_type": "number",
+      "value": 0.6908,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/LT/indicator/SP.URB.TOTL.IN.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), SP.URB.TOTL.IN.ZS Urban population (% of total population), most recent value for 2025, divided by 100 to proportion_0_1. National urban share is a boundary definition, not an individual urban_rural assignment.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National urban share is a boundary definition, not an individuals urban_rural assignment."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "LU",
+      "indicator_id": "urban_population_share",
+      "value_type": "number",
+      "value": 0.9488,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/LU/indicator/SP.URB.TOTL.IN.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), SP.URB.TOTL.IN.ZS Urban population (% of total population), most recent value for 2025, divided by 100 to proportion_0_1. National urban share is a boundary definition, not an individual urban_rural assignment.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National urban share is a boundary definition, not an individuals urban_rural assignment."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "LV",
+      "indicator_id": "urban_population_share",
+      "value_type": "number",
+      "value": 0.6863,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/LV/indicator/SP.URB.TOTL.IN.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), SP.URB.TOTL.IN.ZS Urban population (% of total population), most recent value for 2025, divided by 100 to proportion_0_1. National urban share is a boundary definition, not an individual urban_rural assignment.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National urban share is a boundary definition, not an individuals urban_rural assignment."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "MA",
+      "indicator_id": "urban_population_share",
+      "value_type": "number",
+      "value": 0.6313,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/MA/indicator/SP.URB.TOTL.IN.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), SP.URB.TOTL.IN.ZS Urban population (% of total population), most recent value 63.128...% for 2025, divided by 100 to proportion_0_1. National urban share is a boundary definition, not an individual urban_rural assignment. Previous value 1.0 was an incorrect cap; corrected from World Bank WDI API.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National urban share is a boundary definition, not an individual's urban_rural assignment.",
+        "Previous value 1.0 was an incorrect cap; corrected to verified World Bank WDI value 0.6313."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "MC",
+      "indicator_id": "urban_population_share",
+      "value_type": "number",
+      "value": 1.0,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/MC/indicator/SP.URB.TOTL.IN.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), SP.URB.TOTL.IN.ZS Urban population (% of total population), most recent value for 2025, divided by 100 to proportion_0_1. National urban share is a boundary definition, not an individual urban_rural assignment.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National urban share is a boundary definition, not an individuals urban_rural assignment."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "MD",
+      "indicator_id": "urban_population_share",
+      "value_type": "number",
+      "value": 0.4373,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/MD/indicator/SP.URB.TOTL.IN.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), SP.URB.TOTL.IN.ZS Urban population (% of total population), most recent value for 2025, divided by 100 to proportion_0_1. National urban share is a boundary definition, not an individual urban_rural assignment.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National urban share is a boundary definition, not an individuals urban_rural assignment."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "ME",
+      "indicator_id": "urban_population_share",
+      "value_type": "number",
+      "value": 0.8004,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/ME/indicator/SP.URB.TOTL.IN.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), SP.URB.TOTL.IN.ZS Urban population (% of total population), most recent value for 2025, divided by 100 to proportion_0_1. National urban share is a boundary definition, not an individual urban_rural assignment.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National urban share is a boundary definition, not an individuals urban_rural assignment."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "MH",
+      "indicator_id": "urban_population_share",
+      "value_type": "number",
+      "value": 0.7911,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/MH/indicator/SP.URB.TOTL.IN.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), SP.URB.TOTL.IN.ZS Urban population (% of total population), most recent value for 2025, divided by 100 to proportion_0_1. National urban share is a boundary definition, not an individual urban_rural assignment.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National urban share is a boundary definition, not an individuals urban_rural assignment."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "MK",
+      "indicator_id": "urban_population_share",
+      "value_type": "number",
+      "value": 0.6289,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/MK/indicator/SP.URB.TOTL.IN.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), SP.URB.TOTL.IN.ZS Urban population (% of total population), most recent value for 2025, divided by 100 to proportion_0_1. National urban share is a boundary definition, not an individual urban_rural assignment.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National urban share is a boundary definition, not an individuals urban_rural assignment."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "ML",
+      "indicator_id": "urban_population_share",
+      "value_type": "number",
+      "value": 0.3221,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/ML/indicator/SP.URB.TOTL.IN.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), SP.URB.TOTL.IN.ZS Urban population (% of total population), most recent value 32.213...% for 2025, divided by 100 to proportion_0_1. National urban share is a boundary definition, not an individual urban_rural assignment. Previous value 0.9568 was incorrect; corrected from World Bank WDI API.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National urban share is a boundary definition, not an individual's urban_rural assignment.",
+        "Value corrected from incorrect 0.9568 to verified World Bank WDI value 0.3221."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "MM",
+      "indicator_id": "urban_population_share",
+      "value_type": "number",
+      "value": 0.3058,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/MM/indicator/SP.URB.TOTL.IN.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), SP.URB.TOTL.IN.ZS Urban population (% of total population), most recent value for 2025, divided by 100 to proportion_0_1. National urban share is a boundary definition, not an individual urban_rural assignment.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National urban share is a boundary definition, not an individuals urban_rural assignment."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "MN",
+      "indicator_id": "urban_population_share",
+      "value_type": "number",
+      "value": 0.9218,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/MN/indicator/SP.URB.TOTL.IN.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), SP.URB.TOTL.IN.ZS Urban population (% of total population), most recent value for 2025, divided by 100 to proportion_0_1. National urban share is a boundary definition, not an individual urban_rural assignment.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National urban share is a boundary definition, not an individuals urban_rural assignment."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "MR",
+      "indicator_id": "urban_population_share",
+      "value_type": "number",
+      "value": 0.6149,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/MR/indicator/SP.URB.TOTL.IN.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), SP.URB.TOTL.IN.ZS Urban population (% of total population), most recent value for 2025, divided by 100 to proportion_0_1. National urban share is a boundary definition, not an individual urban_rural assignment.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National urban share is a boundary definition, not an individuals urban_rural assignment."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "MU",
+      "indicator_id": "urban_population_share",
+      "value_type": "number",
+      "value": 0.3904,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/MU/indicator/SP.URB.TOTL.IN.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), SP.URB.TOTL.IN.ZS Urban population (% of total population), most recent value for 2025, divided by 100 to proportion_0_1. National urban share is a boundary definition, not an individual urban_rural assignment.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National urban share is a boundary definition, not an individuals urban_rural assignment."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "MW",
+      "indicator_id": "urban_population_share",
+      "value_type": "number",
+      "value": 0.1759,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/MW/indicator/SP.URB.TOTL.IN.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), SP.URB.TOTL.IN.ZS Urban population (% of total population), most recent value for 2025, divided by 100 to proportion_0_1. National urban share is a boundary definition, not an individual urban_rural assignment.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National urban share is a boundary definition, not an individuals urban_rural assignment."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "MY",
+      "indicator_id": "urban_population_share",
+      "value_type": "number",
+      "value": 0.7739,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/MY/indicator/SP.URB.TOTL.IN.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), SP.URB.TOTL.IN.ZS Urban population (% of total population), most recent value for 2025, divided by 100 to proportion_0_1. National urban share is a boundary definition, not an individual urban_rural assignment.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National urban share is a boundary definition, not an individuals urban_rural assignment."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "NA",
+      "indicator_id": "urban_population_share",
+      "value_type": "number",
+      "value": 0.5087,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/NA/indicator/SP.URB.TOTL.IN.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), SP.URB.TOTL.IN.ZS Urban population (% of total population), most recent value for 2025, divided by 100 to proportion_0_1. National urban share is a boundary definition, not an individual urban_rural assignment.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National urban share is a boundary definition, not an individuals urban_rural assignment."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "NE",
+      "indicator_id": "urban_population_share",
+      "value_type": "number",
+      "value": 0.1837,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/NE/indicator/SP.URB.TOTL.IN.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), SP.URB.TOTL.IN.ZS Urban population (% of total population), most recent value for 2025, divided by 100 to proportion_0_1. National urban share is a boundary definition, not an individual urban_rural assignment.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National urban share is a boundary definition, not an individuals urban_rural assignment."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "NI",
+      "indicator_id": "urban_population_share",
+      "value_type": "number",
+      "value": 0.5944,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/NI/indicator/SP.URB.TOTL.IN.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), SP.URB.TOTL.IN.ZS Urban population (% of total population), most recent value for 2025, divided by 100 to proportion_0_1. National urban share is a boundary definition, not an individual urban_rural assignment.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National urban share is a boundary definition, not an individuals urban_rural assignment."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "NL",
+      "indicator_id": "urban_population_share",
+      "value_type": "number",
+      "value": 0.9594,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/NL/indicator/SP.URB.TOTL.IN.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), SP.URB.TOTL.IN.ZS Urban population (% of total population), most recent value for 2025, divided by 100 to proportion_0_1. National urban share is a boundary definition, not an individual urban_rural assignment.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National urban share is a boundary definition, not an individuals urban_rural assignment."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "NO",
+      "indicator_id": "urban_population_share",
+      "value_type": "number",
+      "value": 0.8357,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/NO/indicator/SP.URB.TOTL.IN.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), SP.URB.TOTL.IN.ZS Urban population (% of total population), most recent value for 2025, divided by 100 to proportion_0_1. National urban share is a boundary definition, not an individual urban_rural assignment.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National urban share is a boundary definition, not an individuals urban_rural assignment."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "NP",
+      "indicator_id": "urban_population_share",
+      "value_type": "number",
+      "value": 0.67,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/NP/indicator/SP.URB.TOTL.IN.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), SP.URB.TOTL.IN.ZS Urban population (% of total population), most recent value for 2025, divided by 100 to proportion_0_1. National urban share is a boundary definition, not an individual urban_rural assignment.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National urban share is a boundary definition, not an individuals urban_rural assignment."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "NR",
+      "indicator_id": "urban_population_share",
+      "value_type": "number",
+      "value": 1.0,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/NR/indicator/SP.URB.TOTL.IN.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), SP.URB.TOTL.IN.ZS Urban population (% of total population), most recent value for 2025, divided by 100 to proportion_0_1. National urban share is a boundary definition, not an individual urban_rural assignment.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National urban share is a boundary definition, not an individuals urban_rural assignment."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "NZ",
+      "indicator_id": "urban_population_share",
+      "value_type": "number",
+      "value": 0.84,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/NZ/indicator/SP.URB.TOTL.IN.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), SP.URB.TOTL.IN.ZS Urban population (% of total population), most recent value for 2025, divided by 100 to proportion_0_1. National urban share is a boundary definition, not an individual urban_rural assignment.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National urban share is a boundary definition, not an individuals urban_rural assignment."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "OM",
+      "indicator_id": "urban_population_share",
+      "value_type": "number",
+      "value": 0.7948,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/OM/indicator/SP.URB.TOTL.IN.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), SP.URB.TOTL.IN.ZS Urban population (% of total population), most recent value for 2025, divided by 100 to proportion_0_1. National urban share is a boundary definition, not an individual urban_rural assignment.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National urban share is a boundary definition, not an individuals urban_rural assignment."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "PA",
+      "indicator_id": "urban_population_share",
+      "value_type": "number",
+      "value": 0.6615,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/PA/indicator/SP.URB.TOTL.IN.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), SP.URB.TOTL.IN.ZS Urban population (% of total population), most recent value for 2025, divided by 100 to proportion_0_1. National urban share is a boundary definition, not an individual urban_rural assignment.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National urban share is a boundary definition, not an individuals urban_rural assignment."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "PE",
+      "indicator_id": "urban_population_share",
+      "value_type": "number",
+      "value": 0.856,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/PE/indicator/SP.URB.TOTL.IN.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), SP.URB.TOTL.IN.ZS Urban population (% of total population), most recent value for 2025, divided by 100 to proportion_0_1. National urban share is a boundary definition, not an individual urban_rural assignment.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National urban share is a boundary definition, not an individuals urban_rural assignment."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "PH",
+      "indicator_id": "urban_population_share",
+      "value_type": "number",
+      "value": 0.5577,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/PH/indicator/SP.URB.TOTL.IN.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), SP.URB.TOTL.IN.ZS Urban population (% of total population), most recent value for 2025, divided by 100 to proportion_0_1. National urban share is a boundary definition, not an individual urban_rural assignment.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National urban share is a boundary definition, not an individuals urban_rural assignment."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "PL",
+      "indicator_id": "urban_population_share",
+      "value_type": "number",
+      "value": 0.7928,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/PL/indicator/SP.URB.TOTL.IN.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), SP.URB.TOTL.IN.ZS Urban population (% of total population), most recent value for 2025, divided by 100 to proportion_0_1. National urban share is a boundary definition, not an individual urban_rural assignment.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National urban share is a boundary definition, not an individuals urban_rural assignment."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "PS",
+      "indicator_id": "urban_population_share",
+      "value_type": "number",
+      "value": 0.8738,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/PS/indicator/SP.URB.TOTL.IN.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), SP.URB.TOTL.IN.ZS Urban population (% of total population), most recent value for 2025, divided by 100 to proportion_0_1. National urban share is a boundary definition, not an individual urban_rural assignment.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National urban share is a boundary definition, not an individuals urban_rural assignment."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "PY",
+      "indicator_id": "urban_population_share",
+      "value_type": "number",
+      "value": 0.6176,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/PY/indicator/SP.URB.TOTL.IN.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), SP.URB.TOTL.IN.ZS Urban population (% of total population), most recent value for 2025, divided by 100 to proportion_0_1. National urban share is a boundary definition, not an individual urban_rural assignment.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National urban share is a boundary definition, not an individuals urban_rural assignment."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "QA",
+      "indicator_id": "urban_population_share",
+      "value_type": "number",
+      "value": 0.9936,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/QA/indicator/SP.URB.TOTL.IN.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), SP.URB.TOTL.IN.ZS Urban population (% of total population), most recent value for 2025, divided by 100 to proportion_0_1. National urban share is a boundary definition, not an individual urban_rural assignment.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National urban share is a boundary definition, not an individuals urban_rural assignment."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "RO",
+      "indicator_id": "urban_population_share",
+      "value_type": "number",
+      "value": 0.5217,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/RO/indicator/SP.URB.TOTL.IN.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), SP.URB.TOTL.IN.ZS Urban population (% of total population), most recent value for 2025, divided by 100 to proportion_0_1. National urban share is a boundary definition, not an individual urban_rural assignment.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National urban share is a boundary definition, not an individuals urban_rural assignment."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "RU",
+      "indicator_id": "urban_population_share",
+      "value_type": "number",
+      "value": 0.7525,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/RU/indicator/SP.URB.TOTL.IN.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), SP.URB.TOTL.IN.ZS Urban population (% of total population), most recent value for 2025, divided by 100 to proportion_0_1. National urban share is a boundary definition, not an individual urban_rural assignment.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National urban share is a boundary definition, not an individuals urban_rural assignment."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "RW",
+      "indicator_id": "urban_population_share",
+      "value_type": "number",
+      "value": 0.3091,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/RW/indicator/SP.URB.TOTL.IN.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), SP.URB.TOTL.IN.ZS Urban population (% of total population), most recent value for 2025, divided by 100 to proportion_0_1. National urban share is a boundary definition, not an individual urban_rural assignment.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National urban share is a boundary definition, not an individuals urban_rural assignment."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "SD",
+      "indicator_id": "urban_population_share",
+      "value_type": "number",
+      "value": 0.3493,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/SD/indicator/SP.URB.TOTL.IN.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), SP.URB.TOTL.IN.ZS Urban population (% of total population), most recent value for 2025, divided by 100 to proportion_0_1. National urban share is a boundary definition, not an individual urban_rural assignment.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National urban share is a boundary definition, not an individuals urban_rural assignment."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "SE",
+      "indicator_id": "urban_population_share",
+      "value_type": "number",
+      "value": 0.5577,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/SE/indicator/SP.URB.TOTL.IN.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), SP.URB.TOTL.IN.ZS Urban population (% of total population), most recent value for 2025, divided by 100 to proportion_0_1. National urban share is a boundary definition, not an individual urban_rural assignment.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National urban share is a boundary definition, not an individuals urban_rural assignment."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "SG",
+      "indicator_id": "urban_population_share",
+      "value_type": "number",
+      "value": 1.0,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/SG/indicator/SP.URB.TOTL.IN.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), SP.URB.TOTL.IN.ZS Urban population (% of total population), most recent value for 2025, divided by 100 to proportion_0_1. National urban share is a boundary definition, not an individual urban_rural assignment.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National urban share is a boundary definition, not an individuals urban_rural assignment."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "SL",
+      "indicator_id": "urban_population_share",
+      "value_type": "number",
+      "value": 0.3131,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/SL/indicator/SP.URB.TOTL.IN.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), SP.URB.TOTL.IN.ZS Urban population (% of total population), most recent value for 2025, divided by 100 to proportion_0_1. National urban share is a boundary definition, not an individual urban_rural assignment.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National urban share is a boundary definition, not an individuals urban_rural assignment."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "SM",
+      "indicator_id": "urban_population_share",
+      "value_type": "number",
+      "value": 0.9719,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/SM/indicator/SP.URB.TOTL.IN.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), SP.URB.TOTL.IN.ZS Urban population (% of total population), most recent value for 2025, divided by 100 to proportion_0_1. National urban share is a boundary definition, not an individual urban_rural assignment.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National urban share is a boundary definition, not an individuals urban_rural assignment."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "SO",
+      "indicator_id": "urban_population_share",
+      "value_type": "number",
+      "value": 0.5514,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/SO/indicator/SP.URB.TOTL.IN.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), SP.URB.TOTL.IN.ZS Urban population (% of total population), most recent value for 2025, divided by 100 to proportion_0_1. National urban share is a boundary definition, not an individual urban_rural assignment.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National urban share is a boundary definition, not an individuals urban_rural assignment."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "SR",
+      "indicator_id": "urban_population_share",
+      "value_type": "number",
+      "value": 0.6264,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/SR/indicator/SP.URB.TOTL.IN.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), SP.URB.TOTL.IN.ZS Urban population (% of total population), most recent value for 2025, divided by 100 to proportion_0_1. National urban share is a boundary definition, not an individual urban_rural assignment.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National urban share is a boundary definition, not an individuals urban_rural assignment."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "SS",
+      "indicator_id": "urban_population_share",
+      "value_type": "number",
+      "value": 0.2168,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/SS/indicator/SP.URB.TOTL.IN.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), SP.URB.TOTL.IN.ZS Urban population (% of total population), most recent value for 2025, divided by 100 to proportion_0_1. National urban share is a boundary definition, not an individual urban_rural assignment.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National urban share is a boundary definition, not an individuals urban_rural assignment."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "ST",
+      "indicator_id": "urban_population_share",
+      "value_type": "number",
+      "value": 0.6917,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/ST/indicator/SP.URB.TOTL.IN.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), SP.URB.TOTL.IN.ZS Urban population (% of total population), most recent value for 2025, divided by 100 to proportion_0_1. National urban share is a boundary definition, not an individual urban_rural assignment.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National urban share is a boundary definition, not an individuals urban_rural assignment."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "SV",
+      "indicator_id": "urban_population_share",
+      "value_type": "number",
+      "value": 0.5599,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/SV/indicator/SP.URB.TOTL.IN.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), SP.URB.TOTL.IN.ZS Urban population (% of total population), most recent value for 2025, divided by 100 to proportion_0_1. National urban share is a boundary definition, not an individual urban_rural assignment.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National urban share is a boundary definition, not an individuals urban_rural assignment."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "SY",
+      "indicator_id": "urban_population_share",
+      "value_type": "number",
+      "value": 0.7208,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/SY/indicator/SP.URB.TOTL.IN.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), SP.URB.TOTL.IN.ZS Urban population (% of total population), most recent value for 2025, divided by 100 to proportion_0_1. National urban share is a boundary definition, not an individual urban_rural assignment.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National urban share is a boundary definition, not an individuals urban_rural assignment."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "TG",
+      "indicator_id": "urban_population_share",
+      "value_type": "number",
+      "value": 0.4439,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/TG/indicator/SP.URB.TOTL.IN.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), SP.URB.TOTL.IN.ZS Urban population (% of total population), most recent value for 2025, divided by 100 to proportion_0_1. National urban share is a boundary definition, not an individual urban_rural assignment.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National urban share is a boundary definition, not an individuals urban_rural assignment."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "TH",
+      "indicator_id": "urban_population_share",
+      "value_type": "number",
+      "value": 0.628,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/TH/indicator/SP.URB.TOTL.IN.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), SP.URB.TOTL.IN.ZS Urban population (% of total population), most recent value for 2025, divided by 100 to proportion_0_1. National urban share is a boundary definition, not an individual urban_rural assignment.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National urban share is a boundary definition, not an individuals urban_rural assignment."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "TJ",
+      "indicator_id": "urban_population_share",
+      "value_type": "number",
+      "value": 0.2616,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/TJ/indicator/SP.URB.TOTL.IN.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), SP.URB.TOTL.IN.ZS Urban population (% of total population), most recent value for 2025, divided by 100 to proportion_0_1. National urban share is a boundary definition, not an individual urban_rural assignment.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National urban share is a boundary definition, not an individuals urban_rural assignment."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "TL",
+      "indicator_id": "urban_population_share",
+      "value_type": "number",
+      "value": 0.2879,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/TL/indicator/SP.URB.TOTL.IN.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), SP.URB.TOTL.IN.ZS Urban population (% of total population), most recent value for 2025, divided by 100 to proportion_0_1. National urban share is a boundary definition, not an individual urban_rural assignment.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National urban share is a boundary definition, not an individuals urban_rural assignment."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "TM",
+      "indicator_id": "urban_population_share",
+      "value_type": "number",
+      "value": 0.5261,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/TM/indicator/SP.URB.TOTL.IN.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), SP.URB.TOTL.IN.ZS Urban population (% of total population), most recent value for 2025, divided by 100 to proportion_0_1. National urban share is a boundary definition, not an individual urban_rural assignment.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National urban share is a boundary definition, not an individuals urban_rural assignment."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "TO",
+      "indicator_id": "urban_population_share",
+      "value_type": "number",
+      "value": 0.2116,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/TO/indicator/SP.URB.TOTL.IN.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), SP.URB.TOTL.IN.ZS Urban population (% of total population), most recent value for 2025, divided by 100 to proportion_0_1. National urban share is a boundary definition, not an individual urban_rural assignment.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National urban share is a boundary definition, not an individuals urban_rural assignment."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "TT",
+      "indicator_id": "urban_population_share",
+      "value_type": "number",
+      "value": 0.5397,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/TT/indicator/SP.URB.TOTL.IN.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), SP.URB.TOTL.IN.ZS Urban population (% of total population), most recent value for 2025, divided by 100 to proportion_0_1. National urban share is a boundary definition, not an individual urban_rural assignment.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National urban share is a boundary definition, not an individuals urban_rural assignment."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "TZ",
+      "indicator_id": "urban_population_share",
+      "value_type": "number",
+      "value": 0.3688,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/TZ/indicator/SP.URB.TOTL.IN.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), SP.URB.TOTL.IN.ZS Urban population (% of total population), most recent value for 2025, divided by 100 to proportion_0_1. National urban share is a boundary definition, not an individual urban_rural assignment.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National urban share is a boundary definition, not an individuals urban_rural assignment."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "UG",
+      "indicator_id": "urban_population_share",
+      "value_type": "number",
+      "value": 0.3194,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/UG/indicator/SP.URB.TOTL.IN.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), SP.URB.TOTL.IN.ZS Urban population (% of total population), most recent value for 2025, divided by 100 to proportion_0_1. National urban share is a boundary definition, not an individual urban_rural assignment.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National urban share is a boundary definition, not an individuals urban_rural assignment."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "UZ",
+      "indicator_id": "urban_population_share",
+      "value_type": "number",
+      "value": 0.5102,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/UZ/indicator/SP.URB.TOTL.IN.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), SP.URB.TOTL.IN.ZS Urban population (% of total population), most recent value for 2025, divided by 100 to proportion_0_1. National urban share is a boundary definition, not an individual urban_rural assignment.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National urban share is a boundary definition, not an individuals urban_rural assignment."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "VC",
+      "indicator_id": "urban_population_share",
+      "value_type": "number",
+      "value": 0.4798,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/VC/indicator/SP.URB.TOTL.IN.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), SP.URB.TOTL.IN.ZS Urban population (% of total population), most recent value for 2025, divided by 100 to proportion_0_1. National urban share is a boundary definition, not an individual urban_rural assignment.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National urban share is a boundary definition, not an individuals urban_rural assignment."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "VE",
+      "indicator_id": "urban_population_share",
+      "value_type": "number",
+      "value": 0.8932,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/VE/indicator/SP.URB.TOTL.IN.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), SP.URB.TOTL.IN.ZS Urban population (% of total population), most recent value for 2025, divided by 100 to proportion_0_1. National urban share is a boundary definition, not an individual urban_rural assignment.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National urban share is a boundary definition, not an individuals urban_rural assignment."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "VN",
+      "indicator_id": "urban_population_share",
+      "value_type": "number",
+      "value": 0.3883,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/VN/indicator/SP.URB.TOTL.IN.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), SP.URB.TOTL.IN.ZS Urban population (% of total population), most recent value for 2025, divided by 100 to proportion_0_1. National urban share is a boundary definition, not an individual urban_rural assignment.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National urban share is a boundary definition, not an individuals urban_rural assignment."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "VU",
+      "indicator_id": "urban_population_share",
+      "value_type": "number",
+      "value": 0.2232,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/VU/indicator/SP.URB.TOTL.IN.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), SP.URB.TOTL.IN.ZS Urban population (% of total population), most recent value for 2025, divided by 100 to proportion_0_1. National urban share is a boundary definition, not an individual urban_rural assignment.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National urban share is a boundary definition, not an individuals urban_rural assignment."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "WS",
+      "indicator_id": "urban_population_share",
+      "value_type": "number",
+      "value": 0.1751,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/WS/indicator/SP.URB.TOTL.IN.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), SP.URB.TOTL.IN.ZS Urban population (% of total population), most recent value for 2025, divided by 100 to proportion_0_1. National urban share is a boundary definition, not an individual urban_rural assignment.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National urban share is a boundary definition, not an individuals urban_rural assignment."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "YE",
+      "indicator_id": "urban_population_share",
+      "value_type": "number",
+      "value": 0.3703,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/YE/indicator/SP.URB.TOTL.IN.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), SP.URB.TOTL.IN.ZS Urban population (% of total population), most recent value for 2025, divided by 100 to proportion_0_1. National urban share is a boundary definition, not an individual urban_rural assignment.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National urban share is a boundary definition, not an individuals urban_rural assignment."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "ZA",
+      "indicator_id": "urban_population_share",
+      "value_type": "number",
+      "value": 0.6382,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/ZA/indicator/SP.URB.TOTL.IN.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), SP.URB.TOTL.IN.ZS Urban population (% of total population), most recent value for 2025, divided by 100 to proportion_0_1. National urban share is a boundary definition, not an individual urban_rural assignment.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National urban share is a boundary definition, not an individuals urban_rural assignment."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "ZM",
+      "indicator_id": "urban_population_share",
+      "value_type": "number",
+      "value": 0.4592,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/ZM/indicator/SP.URB.TOTL.IN.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), SP.URB.TOTL.IN.ZS Urban population (% of total population), most recent value for 2025, divided by 100 to proportion_0_1. National urban share is a boundary definition, not an individual urban_rural assignment.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National urban share is a boundary definition, not an individuals urban_rural assignment."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "ZW",
+      "indicator_id": "urban_population_share",
+      "value_type": "number",
+      "value": 0.405,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/ZW/indicator/SP.URB.TOTL.IN.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI (source 2), SP.URB.TOTL.IN.ZS Urban population (% of total population), most recent value for 2025, divided by 100 to proportion_0_1. National urban share is a boundary definition, not an individual urban_rural assignment.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National urban share is a boundary definition, not an individuals urban_rural assignment."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "AF",
+      "indicator_id": "internet_use_share",
+      "value_type": "number",
+      "value": 0.424,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/AF/indicator/IT.NET.USER.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI / ITU (source 2), IT.NET.USER.ZS Individuals using the Internet (% of population), most recent value for 2025, divided by 100 to proportion_0_1.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National connectivity rate does not directly describe an individuals device, platform or digital skill (per starter-kit source registry)."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "AU",
+      "indicator_id": "internet_use_share",
+      "value_type": "number",
+      "value": 0.9193,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/AU/indicator/IT.NET.USER.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI / ITU (source 2), IT.NET.USER.ZS Individuals using the Internet (% of population), most recent value for 2025, divided by 100 to proportion_0_1.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National connectivity rate does not directly describe an individuals device, platform or digital skill (per starter-kit source registry)."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "AZ",
+      "indicator_id": "internet_use_share",
+      "value_type": "number",
+      "value": 0.908,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/AZ/indicator/IT.NET.USER.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI / ITU (source 2), IT.NET.USER.ZS Individuals using the Internet (% of population), most recent value for 2025, divided by 100 to proportion_0_1.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National connectivity rate does not directly describe an individuals device, platform or digital skill (per starter-kit source registry)."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "CH",
+      "indicator_id": "internet_use_share",
+      "value_type": "number",
+      "value": 0.9732,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/CH/indicator/IT.NET.USER.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI / ITU (source 2), IT.NET.USER.ZS Individuals using the Internet (% of population), most recent value for 2025, divided by 100 to proportion_0_1.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National connectivity rate does not directly describe an individuals device, platform or digital skill (per starter-kit source registry)."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "EC",
+      "indicator_id": "internet_use_share",
+      "value_type": "number",
+      "value": 0.875,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/EC/indicator/IT.NET.USER.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI / ITU (source 2), IT.NET.USER.ZS Individuals using the Internet (% of population), most recent value for 2025, divided by 100 to proportion_0_1.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National connectivity rate does not directly describe an individuals device, platform or digital skill (per starter-kit source registry)."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "ID",
+      "indicator_id": "internet_use_share",
+      "value_type": "number",
+      "value": 0.389,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/ID/indicator/IT.NET.USER.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI / ITU (source 2), IT.NET.USER.ZS Individuals using the Internet (% of population), most recent value for 2025, divided by 100 to proportion_0_1.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National connectivity rate does not directly describe an individuals device, platform or digital skill (per starter-kit source registry)."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "KW",
+      "indicator_id": "internet_use_share",
+      "value_type": "number",
+      "value": 1.0,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/KW/indicator/IT.NET.USER.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI / ITU (source 2), IT.NET.USER.ZS Individuals using the Internet (% of population), most recent value for 2025, divided by 100 to proportion_0_1.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "B",
+      "limitations": [
+        "National connectivity rate does not directly describe an individuals device, platform or digital skill (per starter-kit source registry).",
+        "Value is capped at 100 by the source series; true individual digital adoption is lower."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "LA",
+      "indicator_id": "internet_use_share",
+      "value_type": "number",
+      "value": 0.836,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/LA/indicator/IT.NET.USER.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI / ITU (source 2), IT.NET.USER.ZS Individuals using the Internet (% of population), most recent value for 2025, divided by 100 to proportion_0_1.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National connectivity rate does not directly describe an individuals device, platform or digital skill (per starter-kit source registry)."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "LC",
+      "indicator_id": "internet_use_share",
+      "value_type": "number",
+      "value": 0.837,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/LC/indicator/IT.NET.USER.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI / ITU (source 2), IT.NET.USER.ZS Individuals using the Internet (% of population), most recent value for 2025, divided by 100 to proportion_0_1.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National connectivity rate does not directly describe an individuals device, platform or digital skill (per starter-kit source registry)."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "LU",
+      "indicator_id": "internet_use_share",
+      "value_type": "number",
+      "value": 0.9913,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/LU/indicator/IT.NET.USER.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI / ITU (source 2), IT.NET.USER.ZS Individuals using the Internet (% of population), most recent value for 2025, divided by 100 to proportion_0_1.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National connectivity rate does not directly describe an individuals device, platform or digital skill (per starter-kit source registry)."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "ME",
+      "indicator_id": "internet_use_share",
+      "value_type": "number",
+      "value": 0.637,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/ME/indicator/IT.NET.USER.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI / ITU (source 2), IT.NET.USER.ZS Individuals using the Internet (% of population), most recent value for 2025, divided by 100 to proportion_0_1.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National connectivity rate does not directly describe an individuals device, platform or digital skill (per starter-kit source registry)."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "MK",
+      "indicator_id": "internet_use_share",
+      "value_type": "number",
+      "value": 0.931,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/MK/indicator/IT.NET.USER.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI / ITU (source 2), IT.NET.USER.ZS Individuals using the Internet (% of population), most recent value for 2025, divided by 100 to proportion_0_1.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National connectivity rate does not directly describe an individuals device, platform or digital skill (per starter-kit source registry)."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "MN",
+      "indicator_id": "internet_use_share",
+      "value_type": "number",
+      "value": 0.0,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/MN/indicator/IT.NET.USER.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI / ITU (source 2), IT.NET.USER.ZS Individuals using the Internet (% of population), most recent value for 2025, divided by 100 to proportion_0_1.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National connectivity rate does not directly describe an individuals device, platform or digital skill (per starter-kit source registry)."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "NA",
+      "indicator_id": "internet_use_share",
+      "value_type": "number",
+      "value": 0.956,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/NA/indicator/IT.NET.USER.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI / ITU (source 2), IT.NET.USER.ZS Individuals using the Internet (% of population), most recent value for 2025, divided by 100 to proportion_0_1.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National connectivity rate does not directly describe an individuals device, platform or digital skill (per starter-kit source registry)."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "SS",
+      "indicator_id": "internet_use_share",
+      "value_type": "number",
+      "value": 0.365,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/SS/indicator/IT.NET.USER.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI / ITU (source 2), IT.NET.USER.ZS Individuals using the Internet (% of population), most recent value for 2025, divided by 100 to proportion_0_1.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National connectivity rate does not directly describe an individuals device, platform or digital skill (per starter-kit source registry)."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "TL",
+      "indicator_id": "internet_use_share",
+      "value_type": "number",
+      "value": 0.839,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/TL/indicator/IT.NET.USER.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI / ITU (source 2), IT.NET.USER.ZS Individuals using the Internet (% of population), most recent value for 2025, divided by 100 to proportion_0_1.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National connectivity rate does not directly describe an individuals device, platform or digital skill (per starter-kit source registry)."
+      ],
+      "approved_for_generation": true
+    },
+    {
+      "country_code": "TM",
+      "indicator_id": "internet_use_share",
+      "value_type": "number",
+      "value": 0.602,
+      "unit": "proportion_0_1",
+      "reference_year": 2025,
+      "source_ids": [
+        "world_bank_indicators"
+      ],
+      "source_url": "https://api.worldbank.org/v2/country/TM/indicator/IT.NET.USER.ZS?format=json&per_page=50&page=1&mrv=1",
+      "retrieved_at": "2026-10-22",
+      "methodology_note": "World Bank WDI / ITU (source 2), IT.NET.USER.ZS Individuals using the Internet (% of population), most recent value for 2025, divided by 100 to proportion_0_1.",
+      "evidence_status": "evidence_backed",
+      "quality_grade": "A",
+      "limitations": [
+        "National connectivity rate does not directly describe an individuals device, platform or digital skill (per starter-kit source registry)."
+      ],
+      "approved_for_generation": true
+    }
+  ]
+}

@@ -130,7 +130,7 @@ def profile_summary(profile: dict) -> str:
                   "Moderate": "Moderately digital",
                   "Low": "Occasionally online",
                   "Very low": "Rarely online"}.get(digital, "Moderately digital"))
-    research = profile.get("research_before_purchase", "Moderate")
+    research = profile.get("research_intensity", "Moderate")
     parts.append({"High": "research-oriented", "Moderate": "balanced researcher",
                   "Low": "quick-deciding"}.get(research, "balanced researcher"))
     employment = profile.get("employment_status", "")

@@ -15,6 +15,8 @@ from statistics import mean, median
 from collections import Counter
 
 from .comparison import AGE_BINS
+from .geography import resolve_country_code
+from .metadata import CATALOG_INDICATORS, STATUS_APPROVED, coverage_for_country
 from .segmentation import SEGMENT_DEFINITIONS, aggregate_purchase_intent, classify_profile
 
 SYNTHETIC_NOTE = ("Figures describe the model-generated synthetic population, "
@@ -34,7 +36,7 @@ VALID_CATEGORIES = {
 }
 
 _BEHAVIOUR_KEYS = (
-    "research_before_purchase",
+    "research_intensity",
     "comparison_behavior",
     "price_sensitivity",
     "brand_loyalty",
@@ -144,9 +146,7 @@ def _grouped_mean(profiles, group_key, rank_fn):
 
 
 def _research_rank(profile):
-    # Core research_before_purchase is a Low/Moderate/High level (five-level
-    # research labels live only on per-topic research_intensity_score fields).
-    return _LEVEL_RANK.get(profile.get("research_before_purchase"))
+    return _LEVEL_RANK.get(profile.get("research_intensity"))
 
 
 def _intent_rank(profile):
@@ -258,7 +258,7 @@ def _relationships(profiles, intent_ranks=None):
     if intent_ranks is None:
         intent_ranks = [_intent_rank(p) for p in profiles]
     # Per-profile rank lists: each derived value is scanned exactly once.
-    research_ranks = [_LEVEL_RANK.get(p.get("research_before_purchase")) for p in profiles]
+    research_ranks = [_LEVEL_RANK.get(p.get("research_intensity")) for p in profiles]
     price_ranks = [_PRICE_RANK.get(p.get("price_sensitivity")) for p in profiles]
     brand_ranks = [_LEVEL_RANK.get(p.get("brand_loyalty")) for p in profiles]
     comparison_ranks = [_LEVEL_RANK.get(p.get("comparison_behavior")) for p in profiles]
@@ -390,6 +390,50 @@ def _segments(profiles):
     return summarize_segments(profiles)
 
 
+def _metadata_coverage(profiles: list[dict]) -> dict:
+    """Committed reference-evidence coverage for countries present in the
+    population. Separate from `data_quality` (which audits the generated
+    sample's consistency) and from any claim that the sample matches real
+    distributions.
+    """
+    country_counts: dict[str, int] = {}
+    for p in profiles:
+        code = p.get("country_code")
+        if code is None:
+            name = p.get("country")
+            if name is None:
+                continue
+            try:
+                code = resolve_country_code(name)
+            except ValueError:
+                continue
+        country_counts[str(code)] = country_counts.get(str(code), 0) + 1
+    per_country: dict[str, dict] = {}
+    total_cells = 0
+    total_approved = 0
+    for country in sorted(country_counts):
+        cov = coverage_for_country(country)
+        per_country[country] = {
+            "profiles": country_counts[country],
+            "indicators": cov,
+        }
+        for info in cov.values():
+            total_cells += 1
+            if info["status"] == STATUS_APPROVED:
+                total_approved += 1
+    coverage_pct = round(total_approved / total_cells * 100, 2) if total_cells else None
+    return {
+        "countries": per_country,
+        "catalog_indicators": list(CATALOG_INDICATORS),
+        "approved_indicators": total_approved,
+        "total_country_indicator_cells": total_cells,
+        "coverage_percent": coverage_pct,
+        "note": ("Metadata coverage describes committed reference evidence for the "
+                 "countries present in the population, separate from the generated "
+                 "sample's completeness or distribution."),
+    }
+
+
 def compute_analytics(profiles: list[dict]) -> dict:
     """Single-pass-friendly aggregation over an in-memory population list.
 
@@ -439,5 +483,6 @@ def compute_analytics(profiles: list[dict]) -> dict:
         "segments": _segments(profiles),
         "relationships": _relationships(profiles, intent_ranks),
         "data_quality": _data_quality(profiles, seg_ids),
+        "metadata_coverage": _metadata_coverage(profiles),
         "note": SYNTHETIC_NOTE,
     }

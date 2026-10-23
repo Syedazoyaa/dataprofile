@@ -39,7 +39,9 @@ Profiles use a profile-specific hash-derived random stream, so the same seed, re
 
 ## Geographic model and validation
 
-`app/geography_world.py` is the canonical registry of 193 countries (ISO 3166-1 alpha-2/alpha-3/numeric, continent, subregion, nationality, currency, languages, places, industries, payments, transport, foods, religions, weights). `app/geography.py` exposes it via `country_registry()`, `resolve_country_name()` (one shared name/code resolver for generation, filtering, analytics and validation) and `get_context()`, which conditions city, currency, language pool, income scale, industries and ecosystems **before** traits and income are derived — a selected country shapes the profile; it never overwrites a global one. Generators contain no country-specific branches. `GET /countries` serves the registry for frontend dropdowns.
+`app/geography_world.py` is the canonical registry of 193 countries (ISO 3166-1 alpha-2/alpha-3/numeric, continent, subregion, nationality, currency, languages, places, industries, payments, transport, foods, religions, weights). `app/geography.py` exposes it via `country_registry()`, `resolve_country_name()` / `resolve_country_code()` (one shared name/code resolver for generation, filtering, analytics and validation) and `get_context()`, which conditions city, currency, language pool, income scale, industries and ecosystems **before** traits and income are derived — a selected country shapes the profile; it never overwrites a global one. `GET /countries` serves the registry for frontend dropdowns.
+
+Country-conditioned generation is context-driven, not a set of hard country branches: `get_context()` selects per-country currency, language pool, payment/transport/food options, industries, platforms and housing from the registry. Two numeric context values (`urban_share`, `digital_access`) are overridden by sourced reference metadata where a committed record has `approved_for_generation=true` (see `app/metadata.py` and `data/metadata/country_indicator_records.json`); all other context values remain the legacy modeled assumptions. All country-specific payment, food, and vegetarian heuristics have been removed — payment preferences are driven by digital adoption and income, not country-specific hardcoding. No country is ever selected implicitly.
 
 Every supported country is a first-class product citizen: no coverage tiers (deep/standard/core/fallback/preferred) are exposed anywhere. Per-country registry values exist internally where justified, but the API, responses and docs never present visible product tiers. The only documented geographic limitation is that city-language affinity tuning covers a small set of known metros; everywhere else a generic dominant-language weighting applies.
 
@@ -129,8 +131,10 @@ Empty populations return zeroed structures (score `null`); missing fields are co
 ## Synthetic assumptions (explicit)
 
 - Region/places, language lists, currency, income scales, digital access and ecosystem lists are **synthetic modelling assumptions** for behavioural simulation, not sourced official statistics — except ISO 3166-1 codes/names, which follow the standard.
-- Income scales are relative simulation anchors (e.g. India 900000 INR vs USA 68000 USD); do not read them as real median incomes and do not convert between them.
-- No external data was scraped for this task; calibration to public statistics remains future work.
+- Income scales are relative simulation anchors (e.g. India 900000 INR vs USA 68000 USD); do not read them as real median incomes and do not convert between them. Each country is normalized to its own `income_scale` — no country is privileged as the income reference.
+- Two context values are now sourced reference metadata with provenance and a reference year, committed in `data/metadata/country_indicator_records.json` (validated with the starter-kit `validate_metadata.py`): `urban_population_share` (maps to `urban_share`) and `internet_use_share` (maps to `digital_access`). These are approved for generation for 137 countries from World Bank WDI/ITU; the remaining 56 countries use legacy `geography_world.py` values as documented fallbacks. Only `approved_for_generation=true` records override the legacy context value; unapproved records are reference-only. All other context values remain legacy modeled assumptions (`legacy_unverified`), not calibrated statistics.
+- No external data is read at generation or startup time. Firecrawl was used only for one-time development research. Production generation reads the committed metadata snapshot and makes no network calls. Calibration of the remaining catalog indicators (age, education, household structure, payments, transport, media) remains future work.
+- Income modeling was changed in v1.2 to normalize each country to its own `income_scale` rather than to India's scale (900000 INR). Career base values are now relative multipliers of each country's scale. This removes the India-centric reference divisor and ensures global parity.
 
 ## Performance and limits
 
@@ -142,3 +146,17 @@ Measured on reference hardware (CPython 3.12, no tracemalloc): generation ≈ 3m
 - No user-controlled distribution enforcement (e.g. exact age-band percentages) and no causal scenario simulation (e.g. price-change response) are implemented; new services are isolated so these can be added later without rewriting the generator.
 - City-language affinities are modelled for a small set of known cities; elsewhere a generic dominant-language weighting applies.
 - Same-seed outputs changed between schema `1.0` and `1.1` where coherence required new draws; determinism within `1.1` (same seed + config → same profiles) is preserved and tested.
+- Income model changed in v1.2: same-seed outputs differ from v1.1 because each country is now normalized to its own `income_scale` rather than to India's scale.
+
+## Global country parity
+
+Every registered country (193, ISO 3166-1) receives equal technical support:
+
+- Every country can be selected individually, in global mode, in multi-country mode, and in comparisons.
+- Every country uses the same profile schema (625 columns), generation pipeline, validation standards, and analytics capabilities.
+- Every country has a valid baseline context built from `geography_world.py` registry values (currency, language, payments, transport, food, housing, etc.).
+- 137 of 193 countries have evidence-backed `urban_population_share` and/or `internet_use_share` from World Bank WDI/ITU. The remaining 56 countries use documented legacy fallback values — no country is excluded or assigned fabricated statistics.
+- Metadata coverage is tracked separately from generated-sample quality in the `/analytics` `metadata_coverage` section.
+- Country-specific payment/food/vegetarian heuristics have been removed; behavior is driven by context values and traits, not country name conditionals.
+- Parity is enforced by `tests/test_global_parity.py` (228 tests iterating through all 193 countries), verifying resolution, context, generation, validation, comparison, determinism, and analytics for every country.
+

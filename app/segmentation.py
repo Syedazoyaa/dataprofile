@@ -25,7 +25,7 @@ SEGMENT_DEFINITIONS = (
         "segment_name": "Deliberate Researcher",
         "description": "Researches extensively, compares options carefully and decides slowly.",
         "defining_characteristics": [
-            "research_before_purchase is High",
+            "research_intensity is High",
             "comparison_behavior is High",
             "analytical_orientation is High",
             "decision_speed is Low",
@@ -62,7 +62,7 @@ SEGMENT_DEFINITIONS = (
             "impulse_buying is High",
             "decision_speed is High",
             "planning_behavior is Low",
-            "research_before_purchase is Low",
+            "research_intensity is Low",
         ],
     },
     {
@@ -105,7 +105,7 @@ def aggregate_purchase_intent(profile):
 
 def segment_scores(profile):
     """Deterministic 0-1 fit score per segment for one profile."""
-    research = _norm(_level(profile.get("research_before_purchase")), 1, 3)
+    research = _norm(_level(profile.get("research_intensity")), 1, 3)
     comparison = _norm(_level(profile.get("comparison_behavior")), 1, 3)
     analytical = _norm(_level(profile.get("analytical_orientation")), 1, 3)
     info = _norm(_level(profile.get("information_seeking")), 1, 3)
@@ -134,7 +134,7 @@ def segment_scores(profile):
                    + (1.0 - research) * 0.14 + (1.0 - comparison) * 0.08
                    + (1.0 - discount) * 0.06)
     # Balanced: high when key behaviours sit near the middle.
-    mids = [profile.get("research_before_purchase"), profile.get("comparison_behavior"),
+    mids = [profile.get("research_intensity"), profile.get("comparison_behavior"),
             profile.get("brand_loyalty"), profile.get("impulse_buying"),
             profile.get("decision_speed"), profile.get("planning_behavior")]
     balanced = sum(1.0 if v == "Moderate" else 0.45 if v is not None else 0.0 for v in mids) / len(mids)
