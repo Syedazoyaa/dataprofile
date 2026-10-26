@@ -33,7 +33,7 @@ For local development use `uvicorn app.main:app --reload`.
 
 ## Schema and realism
 
-Schema version `1.1` defines the canonical attribute registry (`PROFILE_COLUMNS` in `app/schemas.py`; core vs full via `CORE_PROFILE_FIELDS`). Canonical count is currently **625**: 611 original + `professional_training` + `financial_support_source` (v1.1) + 12 derived experience attributes (`profile_summary`, `social_disposition`, `review_influence`, interactive/social/ad engagement, 7 social-media-personality attributes). Counts are asserted by `tests/test_profile_completeness.py` (missing = unexpected = duplicates = 0); any legitimate change must update the registry, never pad it.
+Schema version `1.2` defines the canonical attribute registry (`PROFILE_COLUMNS` in `app/schemas.py`; core vs full via `CORE_PROFILE_FIELDS`). The audited canonical count is currently **510** fields, including `generation_reference_date`. Counts are derived from the registry and asserted by `tests/test_profile_completeness.py`; any legitimate change must update the registry, never pad it.
 
 Profiles use a profile-specific hash-derived random stream, so the same seed, request configuration, profile index, and generator version always produce the same record. Latent traits (technology affinity, price sensitivity, health orientation, cultural openness, planning orientation, and others) combine with age, career, income, family, and location to produce correlated observables. Personality and entertainment taste are jointly conditioned on shared latent factors (`media_appetite`, `communal_viewing` in `app/generator.py`): the same latents tilt both the personality-anchor selection and the entertainment-persona selection, so movie/series preferences participate in persona construction feedforward — never as user inputs and never circularly. Behavioral propensities are returned as clear five-level strings—not opaque floats—such as `Not interested` through `Highly interested`, or `Never` through `Very frequently`. Only genuinely continuous quantities (screen time, streaming hours, and savings rate) remain floats.
 
@@ -55,7 +55,7 @@ These country distributions and income scales are explicit modeled assumptions f
 pytest -q
 ```
 
-## Profile coherence (schema 1.1)
+## Profile coherence (schema 1.2)
 
 Relationships are probabilistic plausibility models, never rigid rules. Unusual but realistic profiles remain possible.
 
@@ -64,6 +64,9 @@ Relationships are probabilistic plausibility models, never rigid rules. Unusual 
 - **Occupation specificity**: `job_function` now holds a specific function within the industry (e.g. `Healthcare administration`, `Clinical care`, `Medical research`) tilted — not dictated — by field of study; `occupation` keeps the `CareerLevel Industry Title` form (e.g. `Senior Healthcare Administrator`) for backward compatibility.
 - **Language geography**: `choose_language` boosts locally dominant languages where known (Hyderabad, Bengaluru, Mumbai affinities) with a generic dominant-first fallback for all other countries, plus an 8% migration draw so combinations such as `Mumbai + Tamil` stay valid. A validation guard ensures gender values can never appear in language fields.
 - **Finance**: new `financial_support_source` column (`Family support`, `Scholarship/stipend`, `Self-funded`, `Pension/savings`, `None`). Zero personal income no longer implies zero spending: supported students usually show scaled non-zero expenses with zero savings; validation accepts this combination.
+- **Date of birth**: `generation_reference_date` is recorded in every profile. DOBs are calendar-aware samples that produce the stated completed age on that date, including leap-day handling. Set `GENERATION_REFERENCE_DATE=YYYY-MM-DD` to reproduce a historical run.
+- **Housing tenure**: `living_arrangement` describes the residence; `home_ownership` describes personal tenure. Family-home residents are `Not owner`, avoiding a false owner/renter claim.
+- **Trait representation**: behavioural traits are intentionally five-level categorical labels (for example `Technology leading` and `Price sensitive`), not numeric API scores. The schema now declares them truthfully as categories.
 
 ## Behavioural segmentation
 
@@ -138,22 +141,24 @@ Empty populations return zeroed structures (score `null`); missing fields are co
 
 ## Performance and limits
 
-Measured on reference hardware (CPython 3.12, no tracemalloc): generation ≈ 3ms/profile linear (10 → 0.05s, 100 → 0.4s, 300 → 1.3s end-to-end via API); filtering/analytics/CSV export sub-second at n=1000. JSON ≈ 34MB per 1000 full profiles; CSV ≈ 8MB. Responses are gzip-compressed (`GZipMiddleware`), which shrinks JSON ~8× over the wire — the dominant cost on hosted deployments is platform CPU/network, not generation code. Interactive guidance: ≤300 profiles for instant UI; ≤2000 per request max (default `MAX_PROFILES_PER_REQUEST=2000`, raisable via env where the deployment allows). Concurrency is safe (per-profile RNG streams, no shared mutable state) but CPU-bound: use multiple uvicorn workers for parallel throughput, not threads.
+Run `python scripts/benchmark.py` on the target host before setting a deployment budget; it reports separate generation, analytics, JSON/CSV export, response-size, and peak-memory figures. A local Windows/CPython 3.12 run (three fixed-seed trials, without tracing in the timing loop) measured median generation at 0.563s for 100 profiles, 5.486s for 500, and 14.587s for 2,000; the 2,000-profile JSON/CSV payloads were about 52.0MB/12.1MB before gzip. Interactive guidance: ≤300 profiles for instant UI; ≤2,000 per request by default (`MAX_PROFILES_PER_REQUEST`, raisable deliberately where the deployment allows). Concurrency is safe (per-profile RNG streams, no shared mutable state) but CPU-bound: use multiple uvicorn workers for parallel throughput, not threads.
+
+Exact duplicate detection uses a hash set over the behavioural signature. Near-duplicate checking is deterministic and runs at every supported batch size against the preceding 80 signatures, with O(N × 80 × D) time and O(80 × D) additional memory for D signature fields. It is a bounded local diagnostic, not an all-pairs similarity claim.
 
 ## Known limitations
 
 - Behavioural segments and synthetic comparisons describe **model-generated synthetic populations**, not empirical claims about real populations.
 - No user-controlled distribution enforcement (e.g. exact age-band percentages) and no causal scenario simulation (e.g. price-change response) are implemented; new services are isolated so these can be added later without rewriting the generator.
 - City-language affinities are modelled for a small set of known cities; elsewhere a generic dominant-language weighting applies.
-- Same-seed outputs changed between schema `1.0` and `1.1` where coherence required new draws; determinism within `1.1` (same seed + config → same profiles) is preserved and tested.
-- Income model changed in v1.2: same-seed outputs differ from v1.1 because each country is now normalized to its own `income_scale` rather than to India's scale.
+- Same-seed outputs changed between schema `1.0` and `1.1` where coherence required new draws; determinism within each schema version (same seed + configuration, including reference date) is preserved and tested.
+- Schema `1.2` adds `generation_reference_date` and corrects metadata for categorical trait labels; clients that validate profile columns strictly must accept this added field and `Not owner` for `home_ownership`.
 
 ## Global country parity
 
 Every registered country (193, ISO 3166-1) receives equal technical support:
 
 - Every country can be selected individually, in global mode, in multi-country mode, and in comparisons.
-- Every country uses the same profile schema (625 columns), generation pipeline, validation standards, and analytics capabilities.
+- Every country uses the same profile schema (510 columns), generation pipeline, validation standards, and analytics capabilities.
 - Every country has a valid baseline context built from `geography_world.py` registry values (currency, language, payments, transport, food, housing, etc.).
 - 137 of 193 countries have evidence-backed `urban_population_share` and/or `internet_use_share` from World Bank WDI/ITU. The remaining 56 countries use documented legacy fallback values — no country is excluded or assigned fabricated statistics.
 - Metadata coverage is tracked separately from generated-sample quality in the `/analytics` `metadata_coverage` section.

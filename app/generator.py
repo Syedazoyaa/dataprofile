@@ -1,3 +1,4 @@
+from collections import deque
 from datetime import date, timedelta
 
 from .personas import PERSONAS
@@ -11,6 +12,7 @@ from .coherence import (
     resolve_life_stage,
     supported_student_expenses,
 )
+from .config import get_settings
 from .geography import get_context, supported_languages
 from .rules import validate_profile
 from .schemas import DOMAIN_TOPICS, MEASURES, PERSONALITY_ARCHETYPES, PROFILE_COLUMNS, PROFILE_SCHEMA_VERSION
@@ -65,6 +67,32 @@ def _five_level(value: float, measure: str) -> str:
         "purchase_intent_score": ("Very unlikely", "Unlikely", "Considering", "Likely", "Very likely"),
     }
     return labels[measure][min(4, int(_clip(value) * 5))]
+
+
+def age_on(date_of_birth: date, reference_date: date) -> int:
+    """Return completed calendar years at ``reference_date``."""
+    return reference_date.year - date_of_birth.year - (
+        (reference_date.month, reference_date.day) < (date_of_birth.month, date_of_birth.day)
+    )
+
+
+def _anniversary(year: int, month: int, day: int) -> date:
+    """Return a birthday anniversary, using 28 February for non-leap years."""
+    try:
+        return date(year, month, day)
+    except ValueError:
+        return date(year, 2, 28)
+
+
+def _date_of_birth_for_age(rng, age: int, reference_date: date) -> date:
+    """Sample a DOB uniformly from dates that produce exactly ``age``.
+
+    This is calendar-aware (including leap-day births), unlike the historical
+    age-times-365 approximation.
+    """
+    latest = _anniversary(reference_date.year - age, reference_date.month, reference_date.day)
+    earliest = _anniversary(reference_date.year - age - 1, reference_date.month, reference_date.day) + timedelta(days=1)
+    return earliest + timedelta(days=rng.randint(0, (latest - earliest).days))
 
 def _trait_label(name: str, value: float) -> str:
     descriptions = {
@@ -646,6 +674,7 @@ def generate_profile(seed: int, index: int, country: str | None = None, age_rang
     if preferred_language and preferred_language not in LANGUAGES: raise ValueError("Unsupported preferred_language")
     if persona and persona not in PERSONAS: raise ValueError("Unsupported persona")
     rng = profile_rng(seed, index)
+    reference_date = get_settings().generation_reference_date
     age = _age(rng, age_range); stage = _stage(age)
     # Shared latent persona factors (joint model): these shape both the
     # personality anchor below and entertainment/media choice later.
@@ -768,7 +797,7 @@ def generate_profile(seed: int, index: int, country: str | None = None, age_rang
     preferred_ott_platform = _conditional_platform(rng, context, language, traits)
 
     profile = {
-        "personality_name": personality_name, "profile_id": "", "profile_schema_version": PROFILE_SCHEMA_VERSION, "age": age, "age_band": next(f"{a}-{b}" for a,b,_ in AGE_BANDS if a <= age <= b), "date_of_birth": str(date(2026, 8, 20) - timedelta(days=age * 365 + rng.randint(0, 364))), "gender": choose(rng, ["Female", "Male", "Non-binary"], [48, 48, 4]), "country": context.country, "country_code": context.country_code, "state": context.state, "city": context.city, "region": context.region, "urban_rural": context.urban_rural, "nationality": context.nationality, "primary_language": language, "preferred_language": language if traits["cultural_openness"] < .65 else choose_language(rng, list(context.languages), context.state, context.city), "population_segment": "Working professional" if employment.startswith("Employed") else life_stage, "life_stage": life_stage,
+        "personality_name": personality_name, "profile_id": "", "profile_schema_version": PROFILE_SCHEMA_VERSION, "generation_reference_date": reference_date.isoformat(), "age": age, "age_band": next(f"{a}-{b}" for a,b,_ in AGE_BANDS if a <= age <= b), "date_of_birth": _date_of_birth_for_age(rng, age, reference_date).isoformat(), "gender": choose(rng, ["Female", "Male", "Non-binary"], [48, 48, 4]), "country": context.country, "country_code": context.country_code, "state": context.state, "city": context.city, "region": context.region, "urban_rural": context.urban_rural, "nationality": context.nationality, "primary_language": language, "preferred_language": language if traits["cultural_openness"] < .65 else choose_language(rng, list(context.languages), context.state, context.city), "population_segment": "Working professional" if employment.startswith("Employed") else life_stage, "life_stage": life_stage,
         "marital_status": marital, "relationship_status": "Married" if marital == "Married" else marital, "number_of_children": children, "dependents_count": dependents, "household_size": household_size, "family_type": family_type, "living_arrangement": living_arrangement, "parents_in_household": parents_in_house, "siblings_count": siblings,
         "education_level": education, "highest_degree": education, "field_of_study": field_of_study, "institution_type": institution_type, "graduation_status": graduation_status, "years_of_education": degree_years, "academic_orientation": _category((traits["openness"] + traits["conscientiousness"]) / 2), "education_quality": _category(.35 + income_factor * .28 + traits["conscientiousness"] * .22 + edu_score*0.15),
         "employment_status": employment, "occupation": occupation, "industry": industry, "job_function": job_function, "professional_training": professional_training, "career_level": career, "years_of_experience": experience, "employer_type": employer_type, "work_mode": work_mode, "weekly_work_hours": weekly_hours, "leadership_status": leadership_status, "job_stability": job_stability, "career_growth_orientation": growth_orientation,
@@ -776,11 +805,11 @@ def generate_profile(seed: int, index: int, country: str | None = None, age_rang
         "shopping_frequency": _category(_clip(0.42*income_factor + 0.32*traits["digital_adoption"] + 0.16*ses + 0.10*traits["social_orientation"])), "online_shopping_frequency": _category(_clip(0.65*traits["digital_adoption"]+0.20*income_factor+0.15*ses)), "offline_shopping_frequency": _category(traits["social_orientation"] *0.7 + (0.3 if context.shopping_ecosystems else 0)), "preferred_marketplace": "Value marketplace" if traits["price_sensitivity"] > .58 else "Brand marketplace" if traits["luxury_orientation"]>0.58 else choose(rng, ["Value marketplace","Brand marketplace","Balanced marketplace"], [32,28,40]), "preferred_category": "Home and family" if children else "Electronics" if traits["technology_affinity"] > .62 else "Fashion" if traits["luxury_orientation"]>0.56 else choose(rng, ["Home and family","Electronics","Fashion","Groceries"], [22,28,24,26]), "average_order_value": int(520 + income_factor * 5200 + traits["luxury_orientation"] * 2400 + ses*1200 + rng.randint(-280,420)), "discount_sensitivity": _category(traits["price_sensitivity"]), "brand_loyalty": _category(_clip(0.45*traits["conscientiousness"] + 0.25*(1-traits["price_sensitivity"]) + 0.20*income_factor +0.10*ses)), "impulse_buying": _category(1 - traits["planning_orientation"]*0.75 - traits["conscientiousness"]*0.15 + traits["risk_tolerance"]*0.10),         "research_before_purchase": _category((traits["openness"] + traits["planning_orientation"]) / 2), "research_intensity": _category((traits["openness"] + traits["planning_orientation"]) / 2), "premium_preference": _category(_clip(0.42*income_factor + 0.36*traits["luxury_orientation"] +0.22*ses)), "cart_abandonment_tendency": _category(_clip(0.55*traits["price_sensitivity"]+0.25*(1-traits["planning_orientation"])+0.20*(1-income_factor))),
         "technology_affinity": traits["technology_affinity"], "digital_adoption": traits["digital_adoption"], "daily_screen_time_hours": round(max(0.8, 1.2 + traits["digital_adoption"] * 6.2 - max(age-50,0)*.038 + (0.6 if employment in {"Student","School student"} else 0) + rng.gauss(0,0.45)), 1), "device_preference": "Smartphone-first" if traits["technology_affinity"] < .60 else "Multi-device", "ai_interest": _category((traits["technology_affinity"] + traits["openness"]) / 2), "social_media_activity": _category((traits["social_orientation"] + traits["digital_adoption"]) / 2), "instagram_usage": _category((traits["social_orientation"] + (1 if age < 40 else .36)) / 2), "youtube_usage": _category(traits["digital_adoption"]), "facebook_usage": _category(.68 if age > 42 else .34), "linkedin_usage": _category(.74 if employment.startswith("Employed") else .28), "messaging_frequency": _category(traits["social_orientation"]), "content_creation": _category((traits["openness"] + traits["social_orientation"]) / 2), "influencer_following": _category(traits["novelty_seeking"]*0.7 + traits["social_orientation"]*0.3),
         "entertainment_persona": persona_value, "preferred_ott_platform": preferred_ott_platform, "preferred_movie_genres": PERSONAS[persona_value][:2], "streaming_hours_weekly": round(max(1.2, 1.8 + traits["digital_adoption"] * 13.5 + traits["openness"]*2.1 + rng.gauss(0,1.2)), 1), "gaming_frequency": _category(traits["technology_affinity"] * (1.05 if age < 40 else .62) + traits["novelty_seeking"]*0.12), "music_frequency": _category((traits["openness"] + traits["digital_adoption"]) / 2), "preferred_music_genre": choose(rng, ["Film music", "Pop", "Indie", "Regional", "Classical", "Hip-hop", "Electronic"], [18,24,14,18,8,10,8]), "regional_music_preference": _category(.48 + (.22 if language != "English" else 0) + traits["cultural_openness"]*0.18), "international_music_preference": _category(traits["cultural_openness"]*0.75 + traits["openness"]*0.25),
-        "dining_frequency": _category(_clip(0.42*income_factor + 0.32*traits["social_orientation"] + 0.14*ses +0.12*traits["openness"])), "vegetarian_preference": _vegetarian_choice(rng, context, traits["health_orientation"], age), "food_experimentation": _category(_clip(traits["openness"]*0.62 + traits["cultural_openness"]*0.28 + traits["novelty_seeking"]*0.10)), "travel_frequency": _category(_domain_base("travel", traits, income_factor, age, children, ses, context)), "preferred_destination_type": "Family and relaxation" if children else "Culture and cities" if traits["cultural_openness"] > .62 else "Nature and short breaks" if traits["environmental_awareness"]>0.60 else "Adventure" if traits["risk_tolerance"]>0.66 else choose(rng, ["Culture and cities","Nature and short breaks","Relaxation"], [34,32,34]), "travel_budget": _category(_clip(0.58*income_factor+0.22*ses+0.20*traits["luxury_orientation"])), "planning_behavior": _category(traits["planning_orientation"]), "booking_behavior": "Digital self-service" if traits["digital_adoption"] > .52 else "Assisted booking", "adventure_interest": _category((traits["risk_tolerance"] + traits["novelty_seeking"]) / 2), "home_ownership": "Owner" if (age > 36 and (income_factor > .42 or ses>0.52)) else "Renter", "housing_type": _housing_choice(rng, context, income_factor, household_size, ses), "neighborhood_type": "Urban residential" if context.urban_rural=="Urban" else "Rural/Semi-urban",
+        "dining_frequency": _category(_clip(0.42*income_factor + 0.32*traits["social_orientation"] + 0.14*ses +0.12*traits["openness"])), "vegetarian_preference": _vegetarian_choice(rng, context, traits["health_orientation"], age), "food_experimentation": _category(_clip(traits["openness"]*0.62 + traits["cultural_openness"]*0.28 + traits["novelty_seeking"]*0.10)), "travel_frequency": _category(_domain_base("travel", traits, income_factor, age, children, ses, context)), "preferred_destination_type": "Family and relaxation" if children else "Culture and cities" if traits["cultural_openness"] > .62 else "Nature and short breaks" if traits["environmental_awareness"]>0.60 else "Adventure" if traits["risk_tolerance"]>0.66 else choose(rng, ["Culture and cities","Nature and short breaks","Relaxation"], [34,32,34]), "travel_budget": _category(_clip(0.58*income_factor+0.22*ses+0.20*traits["luxury_orientation"])), "planning_behavior": _category(traits["planning_orientation"]), "booking_behavior": "Digital self-service" if traits["digital_adoption"] > .52 else "Assisted booking", "adventure_interest": _category((traits["risk_tolerance"] + traits["novelty_seeking"]) / 2), "home_ownership": _home_ownership_for(living_arrangement), "housing_type": _housing_choice(rng, context, income_factor, household_size, ses), "neighborhood_type": "Urban residential" if context.urban_rural=="Urban" else "Rural/Semi-urban",
         "currency": context.currency, "cultural_context": context.region, "religious_affiliation": choose(rng, list(context.religions)), "local_food_pattern": local_food_pattern, "available_payment_method": available_payment_method, "primary_transport_mode": primary_transport_mode, "transport_infrastructure": "High access" if context.digital_access > .80 else "Moderate access" if context.digital_access>0.65 else "Mixed access", 
         **{key: _trait_label(key, value) for key, value in traits.items()}, "decision_speed": _category(0.55*traits["risk_tolerance"]+0.30*(1-traits["planning_orientation"])+0.15*traits["extraversion"]), "comparison_behavior": _category(0.50*traits["planning_orientation"]+0.30*traits["openness"]+0.20*traits["conscientiousness"]), "analytical_orientation": _category((traits["openness"] + traits["planning_orientation"]) / 2), "recommendation_dependence": _category(traits["social_orientation"]*0.75 + traits["agreeableness"]*0.25), "brand_trust": _category(0.55*traits["conscientiousness"]+0.25*traits["agreeableness"]+0.20*income_factor), "information_seeking": _category(traits["openness"]*0.68 + traits["planning_orientation"]*0.32), "digital_payment_preference": _category(_clip(0.68*traits["digital_adoption"]+0.18*income_factor+0.14*ses)), "card_usage": _category(_clip(0.42*income_factor + 0.38*traits["digital_adoption"] + 0.20*ses)), "wallet_usage": _category(_clip(0.72*traits["digital_adoption"]+0.18*income_factor+0.10*ses)), "cash_usage": _category(_clip(0.65*(1-traits["digital_adoption"])+0.20*(1-income_factor)+0.15*(1-ses))), "recurring_payment_behavior": _category((traits["digital_adoption"] + traits["conscientiousness"]) / 2), "pet_ownership": "Yes" if rng.random() < (0.18 + (0.10 if household_size>2 and income_factor>0.35 else 0) + (0.06 if context.housing_types and "Independent house" in context.housing_types else 0)) else "No", "hobby_count": max(1, round(1 + (traits["openness"] + traits["social_orientation"]) * 2.8 + rng.gauss(0,0.45))), "reading_frequency": _category(0.68*traits["openness"]+0.32*traits["planning_orientation"]), "sports_interest": _category((traits["health_orientation"] + traits["social_orientation"]) / 2), "photography_interest": _category((traits["openness"] + traits["cultural_openness"]) / 2), "creative_interest": _category(traits["openness"]*0.78 + traits["novelty_seeking"]*0.22), "volunteering_interest": _category(0.62*traits["agreeableness"]+0.28*traits["environmental_awareness"]+0.10*traits["social_orientation"]),
     }
-    # Ensure housing consistency: home_ownership Owner implies housing_type not Shared housing
+    # Ensure housing consistency: a personal owner does not occupy shared housing.
     if profile["home_ownership"] == "Owner" and profile["housing_type"] == "Shared/compact home":
         profile["housing_type"] = choose(rng, list(context.housing_types))
     for domain, topics in DOMAIN_TOPICS.items():
@@ -846,6 +875,17 @@ def _housing_choice(rng, context, income_factor: float, household_size: int, ses
         return chosen if rng.random()<0.7 else ("Apartment" if income_factor>0.45 else "Shared/compact home" if income_factor<0.28 else "Independent house")
     return chosen
 
+
+def _home_ownership_for(living_arrangement: str) -> str:
+    """Keep residence arrangement distinct from personal property tenure."""
+    if living_arrangement == "Owned home":
+        return "Owner"
+    if living_arrangement in {"Rented home", "Shared housing"}:
+        return "Renter"
+    # A family home can be owned by another household member; claiming the
+    # synthetic person is a renter would be equally misleading.
+    return "Not owner"
+
 def _behavioral_vector(profile: dict) -> tuple:
     """Compact behavioral signature for duplicate/near-duplicate detection."""
     keys = (
@@ -866,7 +906,9 @@ def _is_excessive_moderate(profile: dict) -> bool:
 def generate_profiles(count: int, seed: int, country=None, age_range=None, preferred_language=None, persona=None, workers=1, country_mode=None, region=None, continent=None, countries=None) -> list[dict]:
     profiles = []
     seen = set()
-    recent = []
+    # A bounded deterministic window gives O(N) duplicate diagnostics at every
+    # supported batch size.  Earlier code disabled this check above 500 rows.
+    recent = deque(maxlen=80)
     for idx in range(count):
         attempts = 0
         while True:
@@ -879,15 +921,13 @@ def generate_profiles(count: int, seed: int, country=None, age_range=None, prefe
                 if attempts > 5:
                     break
                 continue
-            # Near-duplicate: only check recent 80 to keep O(n) not O(n^2) for large batches
+            # Near-duplicate: a fixed recent window keeps the cost O(N).
             is_near = False
-            # Skip near-duplicate check for very large batches to keep tests fast
-            if count <= 500:
-                for existing_vec in recent[-80:]:
-                    dist = sum(1 for a,b in zip(vec, existing_vec) if a != b)
-                    if dist < 3:
-                        is_near = True
-                        break
+            for existing_vec in recent:
+                dist = sum(1 for a,b in zip(vec, existing_vec) if a != b)
+                if dist < 3:
+                    is_near = True
+                    break
             if is_near:
                 attempts += 1
                 if attempts > 5:
@@ -901,9 +941,6 @@ def generate_profiles(count: int, seed: int, country=None, age_range=None, prefe
             break
         seen.add(vec)
         recent.append(vec)
-        # keep recent window bounded
-        if len(recent) > 120:
-            recent.pop(0)
         # Assign sequential profile ID after dedup/retry, so IDs are
         # contiguous within the batch and incorporate the seed for
         # cross-batch uniqueness.

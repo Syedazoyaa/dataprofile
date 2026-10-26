@@ -19,17 +19,23 @@ from .segmentation import SEGMENT_DEFINITIONS, classify_profile, summarize_segme
 settings = get_settings()
 logging.basicConfig(level=settings.log_level, format="%(asctime)s %(levelname)s %(message)s")
 logger = logging.getLogger(__name__)
-app = FastAPI(title="DataProfile API", version=PROFILE_SCHEMA_VERSION)
+app = FastAPI(
+    title="DataProfile API",
+    version=PROFILE_SCHEMA_VERSION,
+    description=("Country-aware synthetic consumer-profile generation. Monetary "
+                 "amounts are local-currency model outputs and must not be pooled "
+                 "across currencies without an explicit normalization method."),
+)
 app.add_middleware(GZipMiddleware, minimum_size=1000)
-app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_credentials=False, allow_methods=["*"], allow_headers=["*"])
+app.add_middleware(CORSMiddleware, allow_origins=list(settings.cors_origins), allow_credentials=False, allow_methods=["*"], allow_headers=["*"])
 
-@app.get("/")
+@app.get("/", summary="Service metadata")
 def root(): return {"service": "DataProfile API", "version": PROFILE_SCHEMA_VERSION, "docs": "/docs"}
 
-@app.get("/health")
+@app.get("/health", summary="Liveness check")
 def health(): return {"status": "ok", "environment": settings.app_env, "schema_version": PROFILE_SCHEMA_VERSION}
 
-@app.get("/personas")
+@app.get("/personas", summary="List available personas and geographic selectors")
 def personas(): return {"personas": [{"name": name, "typical_genres": genres} for name, genres in PERSONAS.items()], "supported_languages": sorted(LANGUAGES), "supported_countries": supported_countries(), "supported_continents": supported_continents(), "supported_subregions": supported_subregions()}
 
 def _generate_from_spec(spec) -> list[dict]:
@@ -60,16 +66,16 @@ def _generate_from_spec(spec) -> list[dict]:
     geo_region = spec.region or spec.subregion or spec.continent
     return generate_profiles(spec.count, spec.seed, spec_country, spec.age_range, spec.preferred_language, spec.persona, country_mode=mode, region=geo_region, continent=spec.continent, countries=countries)
 
-@app.get("/countries")
+@app.get("/countries", summary="List the canonical country registry")
 def countries():
     """Canonical country registry for frontend dropdowns, filters and analytics."""
     return {"count": len(country_registry()), "countries": country_registry()}
 
-@app.get("/segments/definitions")
+@app.get("/segments/definitions", summary="List behavioural segment definitions")
 def segment_definitions():
     return {"segments": list(SEGMENT_DEFINITIONS), "note": "Segments describe the generated synthetic population, not real-world customer segments."}
 
-@app.post("/segments")
+@app.post("/segments", summary="Generate and classify a synthetic population")
 def segments(request: SegmentsRequest):
     if request.generation.count > settings.max_profiles_per_request: raise HTTPException(422, "count exceeds configured request limit")
     try:
@@ -80,7 +86,7 @@ def segments(request: SegmentsRequest):
     classified = [{**p, "behavioural_segment": c["segment_id"], "behavioural_segment_name": c["segment_name"]} for p, c in ((p, classify_profile(p)) for p in profiles)]
     return {**summary, "profiles": classified, "note": "Segments describe the generated synthetic population, not real-world customer segments."}
 
-@app.post("/filter")
+@app.post("/filter", summary="Generate and filter a synthetic population")
 def filter_profiles(request: FilterRequest):
     if request.generation.count > settings.max_profiles_per_request: raise HTTPException(422, "count exceeds configured request limit")
     try:
@@ -94,7 +100,7 @@ def filter_profiles(request: FilterRequest):
     matched = apply_filters(profiles, request.filters)
     return {"total_generated": len(profiles), "matched_count": len(matched), "filters_applied": active_filters(request.filters), "profiles": matched}
 
-@app.post("/compare")
+@app.post("/compare", summary="Compare two explicitly selected countries")
 def compare(request: CompareRequest):
     for pop in request.populations:
         if pop.generation.count > settings.max_profiles_per_request: raise HTTPException(422, f"count exceeds configured request limit for population '{pop.label}'")
@@ -122,7 +128,7 @@ def compare(request: CompareRequest):
         raise HTTPException(422, str(exc)) from exc
     return compare_populations(generated)
 
-@app.post("/analytics")
+@app.post("/analytics", summary="Generate chart-ready analytics")
 def analytics(request: AnalyticsRequest):
     if request.generation.count > settings.max_profiles_per_request: raise HTTPException(422, "count exceeds configured request limit")
     try:
@@ -139,7 +145,7 @@ def analytics(request: AnalyticsRequest):
     result["filters_applied"] = active_filters(request.filters)
     return result
 
-@app.post("/generate")
+@app.post("/generate", summary="Generate profiles or download JSON/CSV")
 def generate(request: GenerateRequest):
     if request.count > settings.max_profiles_per_request: raise HTTPException(422, "count exceeds configured request limit")
     if request.persona and request.persona not in PERSONAS: raise HTTPException(422, "Unsupported persona")
@@ -180,7 +186,7 @@ def generate(request: GenerateRequest):
             # Trim only for inline JSON responses; file downloads re-select
             # columns in export_bytes, so no second copy is built for them.
             profiles = [{col: profile.get(col) for col in CORE_PROFILE_FIELDS} for profile in profiles]
-        metadata = {"count": len(profiles), "seed": request.seed, "profile_schema_version": PROFILE_SCHEMA_VERSION, "view": request.view, "scope": request.scope, "feature_count": len(profiles[0]) if profiles else 0, "canonical_feature_count": len(PROFILE_COLUMNS), "generation_seconds": round(duration, 4)}
+        metadata = {"count": len(profiles), "seed": request.seed, "profile_schema_version": PROFILE_SCHEMA_VERSION, "generation_reference_date": settings.generation_reference_date.isoformat(), "view": request.view, "scope": request.scope, "feature_count": len(profiles[0]) if profiles else 0, "canonical_feature_count": len(PROFILE_COLUMNS), "generation_seconds": round(duration, 4)}
         if request.format == "json" and individual_id is None: return {**metadata, "profiles": profiles}
         if individual_id is not None and request.format == "json":
             filename = f"raven_profile_{individual_id}.json"

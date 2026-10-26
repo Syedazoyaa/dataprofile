@@ -1,7 +1,10 @@
+from datetime import date
+
 from .geography import COUNTRIES
-from .schemas import PERSONALITY_ARCHETYPES
+from .schemas import PERSONALITY_ARCHETYPES, PROFILE_SCHEMA
 
 GLOBAL_INCOME_SCALE = sum(item["income"] for item in COUNTRIES.values()) / len(COUNTRIES)
+PROFILE_FIELD_NAMES = frozenset(field.name for field in PROFILE_SCHEMA)
 
 # Rank maps for behavioral coherence (ordinal 1-5)
 TRAIT_RANK = {
@@ -204,7 +207,38 @@ def assess_profile(profile: dict) -> dict:
     violations = []
     def check(condition, rule, message):
         if not condition: violations.append({"rule": rule, "severity": "error", "message": message})
+    # The canonical registry is the authoritative type contract.  A profile
+    # must not gain silently drifted fields or lose declared fields.
+    check(set(profile) == PROFILE_FIELD_NAMES, "schema_fields", "Profile fields do not match the canonical schema.")
+    for field in PROFILE_SCHEMA:
+        value = profile.get(field.name)
+        if field.value_type == "integer":
+            valid_type = isinstance(value, int) and not isinstance(value, bool)
+        elif field.value_type == "number":
+            valid_type = isinstance(value, (int, float)) and not isinstance(value, bool)
+        elif field.value_type == "array":
+            valid_type = isinstance(value, list)
+        elif field.value_type == "boolean":
+            valid_type = isinstance(value, bool)
+        elif field.value_type == "date":
+            try:
+                date.fromisoformat(value) if isinstance(value, str) else None
+                valid_type = isinstance(value, str)
+            except ValueError:
+                valid_type = False
+        else:
+            valid_type = isinstance(value, str)
+        check(valid_type, "schema_type", f"{field.name} does not match declared {field.value_type} type.")
     check(16 <= profile.get("age", 0) <= 78, "age_bounds", "Age is outside the supported range.")
+    try:
+        birth_date = date.fromisoformat(profile.get("date_of_birth", ""))
+        reference_date = date.fromisoformat(profile.get("generation_reference_date", ""))
+        derived_age = reference_date.year - birth_date.year - (
+            (reference_date.month, reference_date.day) < (birth_date.month, birth_date.day)
+        )
+        check(derived_age == profile.get("age"), "age_dob_consistency", "Age does not match date of birth at the generation reference date.")
+    except (TypeError, ValueError):
+        check(False, "age_dob_consistency", "Date of birth or generation reference date is invalid.")
     _income = profile.get("monthly_income", -1)
     _savings = profile.get("monthly_savings", -1)
     _support = profile.get("financial_support_source", "Self-funded")
@@ -216,11 +250,17 @@ def assess_profile(profile: dict) -> dict:
             check(_support not in (None, "", "None"), "finance_support_consistency", "Non-zero expenses with zero income require a financial support source.")
     else:
         check(_savings >= 0 and _savings <= _income, "finance_consistency", "Savings are inconsistent with monthly income.")
+        check(_savings + profile.get("monthly_expenses", -1) == _income, "finance_balance", "Monthly income must equal expenses plus savings.")
+    annual_income = profile.get("annual_income", -1)
+    check(_income == (annual_income // 12 if isinstance(annual_income, int) else -1), "annual_monthly_income_consistency", "Monthly income must equal annual income divided by 12.")
     check(profile.get("years_of_experience", 999) <= max(0, profile.get("age", 0) - 16), "career_age_consistency", "Experience exceeds plausible career duration.")
     check(not (profile.get("age", 0) < 20 and profile.get("number_of_children", 0) > 0), "family_age_consistency", "Child count is implausible for age.")
     check(not (profile.get("life_stage") == "University Student" and profile.get("career_level") != "None"), "student_career_consistency", "Student career level is inconsistent.")
     check(not (profile.get("life_stage") == "Retired" and profile.get("employment_status") != "Retired"), "retirement_consistency", "Retired life stage is inconsistent.")
     check(profile.get("household_size", 1) >= 1 and profile.get("household_size", 1) >= profile.get("number_of_children", 0) + (1 if profile.get("marital_status")=="Married" else 0) or profile.get("parents_in_household"), "household_consistency", "Household size inconsistent with family structure.")
+    living, tenure = profile.get("living_arrangement"), profile.get("home_ownership")
+    expected_tenure = {"Owned home": "Owner", "Rented home": "Renter", "Shared housing": "Renter", "Family home": "Not owner"}
+    check(tenure == expected_tenure.get(living), "housing_tenure_consistency", "Living arrangement and personal ownership are inconsistent.")
     country = COUNTRIES.get(profile.get("country"))
     check(country is not None and profile.get("currency") == country["currency"], "country_currency_consistency", "Currency does not match geographic context.")
     if country:
@@ -248,7 +288,7 @@ def assess_profile(profile: dict) -> dict:
     if edu == "School education":
         check(yoe == 10, "education_years_consistency", "Years of education inconsistent with school level.")
     # Income non-negative
-    check(profile.get("annual_income", -1) >= 0, "income_nonnegative", "Income negative.")
+    check(annual_income >= 0, "income_nonnegative", "Income negative.")
     check(profile.get("monthly_income", -1) >= 0, "monthly_income_nonnegative", "Monthly income negative.")
     # personality_name mandatory and behavior-derived
     pname = profile.get("personality_name")

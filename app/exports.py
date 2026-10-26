@@ -21,14 +21,17 @@ def export_bytes(profiles: list[dict], requested_format: str, view: str = "full"
     set (summary); filenames encode scope/view and the canonical full count.
     """
     columns = _columns(view)
-    rows = [{col: profile.get(col) for col in columns} for profile in profiles]
     filename = _filename(individual=individual, view=view, requested_format=requested_format, full_count=len(PROFILE_COLUMNS))
     if requested_format == "json":
+        # Full profiles already have canonical field order; do not create a
+        # second batch-sized list only to serialize it.
+        rows = profiles if view == "full" else [{col: profile.get(col) for col in columns} for profile in profiles]
         return json.dumps(rows, ensure_ascii=False).encode("utf-8"), "application/json", filename
     if requested_format == "csv":
         stream = io.StringIO(newline="")
         # Explicitly use registry order so personality_name remains first regardless of dict construction details
-        writer = csv.DictWriter(stream, fieldnames=columns)
-        writer.writeheader(); writer.writerows(rows)
+        writer = csv.DictWriter(stream, fieldnames=columns, extrasaction="ignore")
+        writer.writeheader()
+        writer.writerows(profiles)
         return stream.getvalue().encode("utf-8"), "text/csv", filename
     raise ValueError("Unsupported export format")
