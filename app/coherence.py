@@ -270,7 +270,8 @@ def financial_support_for(rng, employment_status, monthly_income):
 
 def supported_student_expenses(rng, income_scale):
     """Non-zero monthly expenses for a supported student, scaled to context."""
-    monthly_scale = max(income_scale, 12000) / 12.0
+    # income_scale is in local currency, so keep floors relative to it.
+    monthly_scale = income_scale / 12.0
     ratio = rng.uniform(0.10, 0.30)
     expenses = int(monthly_scale * ratio)
-    return max(expenses, 1500)
+    return max(expenses, int(monthly_scale * 0.08), 1)

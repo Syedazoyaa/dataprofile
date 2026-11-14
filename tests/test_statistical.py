@@ -24,6 +24,11 @@ def _rank_trait(val):
     if val in TRAIT_RANK_HEALTH: return TRAIT_RANK_HEALTH[val]
     return 3
 
+def _rel(p, key="annual_income"):
+    """Money in units of the profile's own country income scale, so pooled
+    multi-country samples never compare raw amounts across currencies."""
+    return p[key] / COUNTRIES[p["country"]]["income"]
+
 def test_age_drives_education():
     pros = generate_profiles(1800, 1001)
     young = [p for p in pros if 18 <= p["age"] <= 22]
@@ -43,7 +48,7 @@ def test_age_drives_career_and_income():
     assert senior and early
     assert statistics.mean(p["age"] for p in senior) > statistics.mean(p["age"] for p in early) + 5
     # income higher for senior
-    assert statistics.mean(p["annual_income"] for p in senior if p["annual_income"]>0) > statistics.mean(p["annual_income"] for p in early if p["annual_income"]>0)
+    assert statistics.mean(_rel(p) for p in senior if p["annual_income"]>0) > statistics.mean(_rel(p) for p in early if p["annual_income"]>0)
     # probabilistic: not all young are Early, not all old are Senior
     assert len({p["career_level"] for p in pros if 23 <= p["age"] <= 29}) >= 2
     assert len({p["career_level"] for p in pros if 40 <= p["age"] <= 52}) >= 2
@@ -55,7 +60,7 @@ def test_education_drives_income_and_occupation():
     school = [p for p in working if p["education_level"]=="School education"]
     post = [p for p in working if p["education_level"]=="Postgraduate"]
     assert school and post
-    assert statistics.mean(p["annual_income"] for p in post) > statistics.mean(p["annual_income"] for p in school)
+    assert statistics.mean(_rel(p) for p in post) > statistics.mean(_rel(p) for p in school)
     # education correlates with field plausibility (variation exists)
     assert len({p["field_of_study"] for p in post}) >= 3
     # Occupation contains career+industry, income varies by occupation seniority already tested
@@ -66,22 +71,22 @@ def test_experience_drives_income():
     low_exp = [p for p in working if p["years_of_experience"] <= 2]
     high_exp = [p for p in working if p["years_of_experience"] >= 12]
     assert low_exp and high_exp
-    assert statistics.mean(p["annual_income"] for p in high_exp) > statistics.mean(p["annual_income"] for p in low_exp)
+    assert statistics.mean(_rel(p) for p in high_exp) > statistics.mean(_rel(p) for p in low_exp)
 
 def test_occupation_and_industry_income():
     pros = generate_profiles(1600, 1005)
     working = [p for p in pros if p["career_level"] in {"Early","Mid-level","Senior","Leadership"}]
     early = [p for p in working if p["career_level"]=="Early"]
     senior = [p for p in working if p["career_level"] in {"Senior","Leadership"}]
-    assert statistics.mean(p["annual_income"] for p in senior) > statistics.mean(p["annual_income"] for p in early) * 1.4
+    assert statistics.mean(_rel(p) for p in senior) > statistics.mean(_rel(p) for p in early) * 1.4
 
 def test_income_drives_spending_savings_housing():
     pros = generate_profiles(1500, 1006)
     working = [p for p in pros if p["annual_income"]>0]
-    low = sorted(working, key=lambda x: x["annual_income"])[:200]
-    high = sorted(working, key=lambda x: x["annual_income"])[-200:]
-    assert statistics.mean(p["monthly_expenses"] for p in high) > statistics.mean(p["monthly_expenses"] for p in low)
-    assert statistics.mean(p["monthly_savings"] for p in high) > statistics.mean(p["monthly_savings"] for p in low)
+    low = sorted(working, key=_rel)[:200]
+    high = sorted(working, key=_rel)[-200:]
+    assert statistics.mean(_rel(p, "monthly_expenses") for p in high) > statistics.mean(_rel(p, "monthly_expenses") for p in low)
+    assert statistics.mean(_rel(p, "monthly_savings") for p in high) > statistics.mean(_rel(p, "monthly_savings") for p in low)
     # housing ownership higher for high income
     high_own = sum(1 for p in high if p["home_ownership"]=="Owner")/len(high)
     low_own = sum(1 for p in low if p["home_ownership"]=="Owner")/len(low)
