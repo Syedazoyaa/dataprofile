@@ -115,6 +115,10 @@ def resolve_life_stage(rng, age, years_of_experience, career_level, employment_s
             return _choose(rng,
                            ["Established Professional", "Early Career"],
                            [62, 38])
+        # Entry-level with under 3 years of experience is Early Career, never
+        # "Established".
+        if career_level in ("None", "Early") and years_of_experience < 3:
+            return "Early Career"
         return _choose(rng, ["Early Career", "Established Professional"], [88, 12])
     if base_stage == "Established Professional":
         if senior_career and experienced:

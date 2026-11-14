@@ -3,7 +3,6 @@ from datetime import date
 from .geography import COUNTRIES
 from .schemas import PERSONALITY_ARCHETYPES, PROFILE_SCHEMA
 
-GLOBAL_INCOME_SCALE = sum(item["income"] for item in COUNTRIES.values()) / len(COUNTRIES)
 PROFILE_FIELD_NAMES = frozenset(field.name for field in PROFILE_SCHEMA)
 
 # Rank maps for behavioral coherence (ordinal 1-5)
@@ -116,14 +115,16 @@ def _behavioral_coherence(profile: dict) -> dict:
     # Career / income alignment (income should roughly increase with career+experience+education)
     income = profile.get("annual_income",0)
     country = profile.get("country")
-    # Profiles normally always include a country.  For partial records used by
-    # analytics, fall back to a neutral global income scale rather than a
-    # country-specific assumption.
-    scale = COUNTRIES.get(country, {}).get("income", GLOBAL_INCOME_SCALE)
-    income_factor = income / (scale*2.8) if scale else 0
-    expected_factor = 0.15 + career_rank*0.14 + min(exp,20)/50*0.25  # heuristic expected
-    diff = abs(income_factor - expected_factor)
-    scores["career_income_alignment"] = max(0.45, 1 - diff*1.4)
+    # Income scales are in local currency, so there is no meaningful global
+    # fallback: a partial record without a known country scores neutral.
+    scale = COUNTRIES.get(country, {}).get("income")
+    if scale:
+        income_factor = income / (scale*2.8)
+        expected_factor = 0.15 + career_rank*0.14 + min(exp,20)/50*0.25  # heuristic expected
+        diff = abs(income_factor - expected_factor)
+        scores["career_income_alignment"] = max(0.45, 1 - diff*1.4)
+    else:
+        scores["career_income_alignment"] = 1.0
 
     # Financial alignment (expenses <= income, savings rate plausible with planning)
     savings_rate = profile.get("savings_rate",0)
@@ -202,7 +203,7 @@ def _behavioral_coherence(profile: dict) -> dict:
             scores[k] = round(scores[k], 3)
     return scores
 
-def assess_profile(profile: dict) -> dict:
+def assess_profile(profile: dict, include_behavioral: bool = True) -> dict:
     """Return structured constraints and scores derived from their outcomes."""
     violations = []
     def check(condition, rule, message):
@@ -228,7 +229,8 @@ def assess_profile(profile: dict) -> dict:
                 valid_type = False
         else:
             valid_type = isinstance(value, str)
-        check(valid_type, "schema_type", f"{field.name} does not match declared {field.value_type} type.")
+        if not valid_type:
+            check(False, "schema_type", f"{field.name} does not match declared {field.value_type} type.")
     check(16 <= profile.get("age", 0) <= 78, "age_bounds", "Age is outside the supported range.")
     try:
         birth_date = date.fromisoformat(profile.get("date_of_birth", ""))
@@ -354,10 +356,14 @@ def assess_profile(profile: dict) -> dict:
         check(pname == expected, "personality_name_consistency", f"personality_name '{pname}' inconsistent (expected '{expected}').")
 
     coherence_score = round(max(0.0, 1 - len(violations) * .15), 2)
+    if not include_behavioral:
+        return {"valid": not violations, "violations": violations, "coherence_score": coherence_score}
     behavioral = _behavioral_coherence(profile)
     return {"valid": not violations, "violations": violations, "coherence_score": coherence_score, "behavioral_coherence": behavioral, "behavioral_coherence_score": behavioral["overall_behavioral_coherence"]}
 
 def validate_profile(profile: dict) -> dict:
-    result = assess_profile(profile)
+    # Hard constraints only: the soft behavioral scores are not needed to
+    # accept or reject a profile, so they are skipped on the generation path.
+    result = assess_profile(profile, include_behavioral=False)
     if not result["valid"]: raise ValueError(result["violations"][0]["message"])
     return result
