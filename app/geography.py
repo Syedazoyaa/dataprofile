@@ -15,11 +15,20 @@ Detailed overrides for the original 6 countries preserve exact legacy behavior.
 from dataclasses import dataclass
 from typing import Tuple
 from .geography_world import COUNTRIES_WORLD
-from .metadata import approved_value
+from .reference_data import elderly_adult_share, income_noise_sigma, reference_prior
 from .utils import choose
 
 # Re-export world as COUNTRIES for backward compatibility
 COUNTRIES = COUNTRIES_WORLD
+
+# Documented metro list: cities treated as unconditionally Urban (their metro
+# area is effectively fully urban), independent of the national urban share.
+METRO_CITIES = {
+    "Hyderabad", "Bengaluru", "Mumbai", "Los Angeles", "New York City", "London",
+    "Tokyo", "Riyadh", "Sao Paulo", "Lagos", "Berlin", "Paris", "Toronto",
+    "Sydney", "Moscow", "Beijing", "Delhi", "Shanghai", "Mexico City", "Cairo",
+    "Nairobi", "Johannesburg", "Bangkok", "Seoul", "Jakarta", "Istanbul", "Dubai",
+}
 
 # For weighted global selection, use original weights where defined, else 3
 # Keep original 6 weights (18,14,5,7,4,8,10) and 3 for others.
@@ -62,6 +71,9 @@ class GeographicContext:
     city_tier: str
     climate: str
     urban_share: float
+    # Evidence-backed priors from data/reference (None = documented legacy model)
+    elderly_share: float | None = None
+    income_noise_sigma: float | None = None
 
 def supported_countries() -> Tuple[str, ...]:
     return tuple(sorted(COUNTRIES.keys()))
@@ -188,10 +200,16 @@ def get_context(rng, country_mode: str = "global", country: str | None = None, r
     # Choose state/city/region
     # places is tuple of (admin, city, macro_region)
     state, city, geo_region = choose(rng, list(places))
-    # Urban/rural weighted by urban_share
-    urban_rural = "Urban" if rng.random() < item["urban_share"] else "Rural"
+    # Urban/rural: documented metro cities are always Urban; elsewhere draw
+    # against the evidence-backed urban_population_share prior (World Bank
+    # 2025) when available, falling back to the registry's documented scale.
+    urban_share = reference_prior(item["code"], "urban_population_share", item["urban_share"])
+    if city in METRO_CITIES:
+        urban_rural = "Urban"
+    else:
+        urban_rural = "Urban" if rng.random() < urban_share else "Rural"
     # City tier: Metro if major city of original 6 or capital-like, else Tier 1/2
-    metro_cities = {"Hyderabad","Bengaluru","Mumbai","Los Angeles","New York City","London","Tokyo","Riyadh","Sao Paulo","Lagos","Berlin","Paris","Toronto","Sydney","Moscow","Beijing","Mumbai","Delhi","Shanghai","Mexico City","Cairo","Nairobi","Johannesburg","Bangkok","Seoul","Jakarta","Istanbul","Dubai"}
+    metro_cities = METRO_CITIES
     if city in metro_cities or "City 1" not in city:  # original detailed cities are meaningful
         # For templated "X City 1" treat as Tier 1
         if "City 1" in city:
@@ -224,12 +242,14 @@ def get_context(rng, country_mode: str = "global", country: str | None = None, r
         foods=item["foods"],
         religions=item["religions"],
         urban_rural=urban_rural,
-        digital_access=approved_value(item["code"], "internet_use_share", item["digital"]),
+        digital_access=reference_prior(item["code"], "internet_use_share", item["digital"]),
         cost_factor=item["cost"],
         income_cv=item["income_cv"],
         housing_types=item["housing"],
         shopping_ecosystems=item["shopping"],
         city_tier=city_tier,
         climate=item["climate"],
-        urban_share=approved_value(item["code"], "urban_population_share", item["urban_share"]),
+        urban_share=urban_share,
+        elderly_share=elderly_adult_share(item["code"]),
+        income_noise_sigma=income_noise_sigma(item["code"]),
     )

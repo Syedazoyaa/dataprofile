@@ -2,9 +2,14 @@ import hashlib
 import random
 
 
-def profile_rng(seed: int, index: int) -> random.Random:
-    """Stable independent stream: worker order can never change a record."""
-    digest = hashlib.sha256(f"{seed}:profile:{index}".encode()).digest()
+def profile_rng(seed: int, index: int, salt: str = "") -> random.Random:
+    """Stable independent stream: worker order can never change a record.
+
+    The optional salt yields further independent streams (e.g. "age" for the
+    evidence-backed age draw, "geo" for geography) so country-specific priors
+    never shift the shared personality stream.
+    """
+    digest = hashlib.sha256(f"{seed}:profile:{index}:{salt}".encode()).digest()
     return random.Random(int.from_bytes(digest[:8], "big"))
 
 

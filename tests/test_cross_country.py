@@ -34,9 +34,11 @@ def test_comparable_archetype_retains_traits_across_countries():
         # novelty etc
         novelty_ranks = [_rank(p["novelty_seeking"]) for p in group]
         assert max(novelty_ranks) - min(novelty_ranks) <= 2
-        # Age should be identical (archetype age before geo)
+        # Age is drawn from each country's evidence-backed demographic
+        # structure (WDI age bands), so the same seed/index may legitimately
+        # yield different ages across countries; every age stays valid.
         ages = [p["age"] for p in group]
-        assert len(set(ages)) == 1, f"age should be identical for same seed/index across countries, got {ages}"
+        assert all(16 <= a <= 78 for a in ages), f"ages out of the supported range: {ages}"
         # Income currency must differ and be locally plausible
         currencies = {p["currency"] for p in group}
         assert len(currencies) == len(countries), "each country should have distinct currency"

@@ -14,6 +14,12 @@ from .coherence import (
 )
 from .config import get_settings
 from .geography import get_context, supported_languages
+from .reference_data import (
+    education_postgrad_scale,
+    employment_gap_probability,
+    gender_weights,
+    industry_sector_weights,
+)
 from .rules import validate_profile
 from .schemas import DOMAIN_TOPICS, PERSONALITY_ARCHETYPES, PROFILE_COLUMNS, PROFILE_SCHEMA_VERSION
 from .utils import choose, level, profile_rng
@@ -51,11 +57,41 @@ def _stage(age: int) -> str:
 AGE_BAND_CHOICES = list(AGE_BANDS)
 AGE_BAND_WEIGHTS = [band[2] for band in AGE_BANDS]
 
-def _age(rng, age_range) -> int:
+def _age(rng, age_range, context=None) -> int:
     if age_range:
         return rng.randint(*age_range)
+    # Evidence-backed age prior: context.elderly_share is the renormalised
+    # P(65+ | 15+) computed from verified World Bank age bands (documented
+    # model, not a single-year census). Senior draws land in the senior
+    # bands; non-senior draws keep the legacy band weights renormalised.
+    # Falls back to the legacy weights when no evidence exists.
+    elderly = getattr(context, "elderly_share", None) if context else None
+    if elderly is not None:
+        adult_bands = [b for b in AGE_BANDS if b[1] >= 65]
+        young_bands = [b for b in AGE_BANDS if b[1] < 65]
+        p_senior = min(0.95, max(0.0, elderly))
+        if rng.random() < p_senior:
+            band = choose(rng, list(adult_bands), [b[2] for b in adult_bands])
+            return rng.randint(max(65, band[0]), band[1])
+        band = choose(rng, list(young_bands), [b[2] for b in young_bands])
+        return rng.randint(band[0], band[1])
     band = choose(rng, AGE_BAND_CHOICES, AGE_BAND_WEIGHTS)
     return rng.randint(band[0], band[1])
+
+def _gender_draw(rng, context) -> str:
+    """Gender draw from the evidence-backed female share (verified WDI).
+
+    Documented model: the country's female population share sets the
+    Female/Male weights (allocated proportionally) and Non-binary is capped
+    at 4% (the source does not measure it). Falls back to the legacy
+    48/48/4 weights when no evidence exists.
+    """
+    gw = gender_weights(context.country_code, default=(0.48, 0.48, 0.04))
+    return choose(
+        rng,
+        ["Female", "Male", "Non-binary"],
+        [gw["Female"], gw["Male"], gw["Non-binary"]],
+    )
 
 def _category(value: float) -> str:
     return level(value)
@@ -284,7 +320,12 @@ def _education_for_stage(rng, stage: str, age: int, traits: dict, context) -> tu
         return edu, min(DEGREE_YEARS[edu] - 1, 12 + max(0, age - 18)), grad
     if stage == "Retired":
         # older cohort slightly lower postgrad rates, include all
-        edu = choose(rng, ["School education", "Undergraduate", "Postgraduate", "Professional diploma"], [28, 38, 20, 14])
+        _retired_weights = [28, 38, 20, 14]
+        # Evidence-backed tilt: gross tertiary enrollment scales the
+        # postgraduate weight (documented model, 0.4-1.3 multiplier).
+        _pg_scale = education_postgrad_scale(context.country_code)
+        _retired_weights[2] = max(2, int(round(_retired_weights[2] * _pg_scale)))
+        edu = choose(rng, ["School education", "Undergraduate", "Postgraduate", "Professional diploma"], _retired_weights)
         return edu, DEGREE_YEARS[edu], "Completed"
     # Working ages: probability conditioned on traits/SES proxy (conscientiousness/openness) and age cohort
     # Base weights evolve with age: younger higher undergrad share
@@ -304,6 +345,10 @@ def _education_for_stage(rng, stage: str, age: int, traits: dict, context) -> tu
     elif adj < 0.35:
         base_weights[0] += 6
         base_weights[2] -= 4
+    # Evidence-backed tilt: gross tertiary enrollment (World Bank/UIS, verified)
+    # scales the postgraduate weight; documented model, clamped multiplier.
+    _pg_scale = education_postgrad_scale(context.country_code)
+    base_weights[2] = max(2, int(round(base_weights[2] * _pg_scale)))
     # normalize positive
     base_weights = [max(2, w) for w in base_weights]
     edu = choose(rng, ["School education", "Undergraduate", "Postgraduate", "Professional diploma"], base_weights)
@@ -335,11 +380,19 @@ def _industry_for_field(rng, field: str, context) -> str:
     # Intersect with context industries: weight context industries by field relevance + fallback uniform
     candidates = list(context.industries)
     weights = []
-    for ind in candidates:
+    # Evidence-backed sector weights from ILO employment shares (verified):
+    # Agriculture/Manufacturing/Services registry entries are weighted by their
+    # measured sector share; unmapped industries get a blended mid weight.
+    sector_weights = industry_sector_weights(context.country_code, candidates)
+    for i, ind in enumerate(candidates):
         base = field_weights.get(ind, 1.0)
         # small random jitter for probabilistic not deterministic
         jitter = rng.uniform(0.85, 1.15)
-        weights.append(base * jitter)
+        if sector_weights is not None:
+            base *= (0.35 + 1.65 * sector_weights[i]) * jitter
+        else:
+            base *= jitter
+        weights.append(base)
     return choose(rng, candidates, weights)
 
 def _family_generation(rng, age: int, stage: str, context, traits: dict, ses: float):
@@ -442,8 +495,11 @@ def _career_chain(rng, age: int, stage: str, education: str, field: str, traits:
         return "Retired", industry, "Former professional", exp, "Retired", "Not applicable", 0, "Not applicable", "High", "Low"
     # Working adults
     # Employment status conditioned on SES, children, gender placeholder not used, industry
-    # Keep within legacy values but allow variation
-    if rng.random() < 0.04:  # small unemployed/homemaker gap -> map to part-time/self
+    # Keep within legacy values but allow variation. The gap probability is
+    # evidence-backed: it rises with the country's verified ILO unemployment
+    # rate (documented model, clamped [0.03, 0.38]); legacy 0.04 otherwise.
+    _gap_prob = employment_gap_probability(context.country_code)
+    if rng.random() < _gap_prob:  # unemployed/homemaker gap -> map to part-time/self
         employment = choose(rng, ["Employed part-time","Self-employed"], [60,40])
     else:
         employment = choose(rng, ["Employed full-time","Self-employed","Employed part-time"], [74,16,10])
@@ -525,8 +581,11 @@ def _income_model(rng, context, education: str, field: str, industry: str, caree
     # Part-time pay is pro-rated by actual weekly hours rather than a flat cut.
     emp_factor = min(hours_ratio, 1.0) if employment == "Employed part-time" else {"Employed full-time":1.0, "Self-employed":0.96}.get(employment, 1.0)
     ambition_factor = 0.88 + traits["conscientiousness"]*0.10 + traits["luxury_orientation"]*0.10 + traits["planning_orientation"]*0.07
-    # Lognormal-like noise
-    noise = rng.lognormvariate(0, 0.28) if hasattr(rng, 'lognormvariate') else rng.gauss(1.0, 0.28)
+    # Lognormal-like noise. The spread is evidence-backed: the damped
+    # lognormal sigma derived from the country's verified Gini coefficient
+    # (documented model); legacy fixed sigma 0.28 when no evidence exists.
+    _noise_sigma = context.income_noise_sigma if context.income_noise_sigma is not None else 0.28
+    noise = rng.lognormvariate(0, _noise_sigma) if hasattr(rng, 'lognormvariate') else rng.gauss(1.0, _noise_sigma)
     # Guard lognorm deviate extreme
     noise = max(0.55, min(1.85, noise))
     # Context scaling: each country normalized to its own income_scale (no India-centric divisor)
@@ -631,7 +690,18 @@ def generate_profile(seed: int, index: int, country: str | None = None, age_rang
     if persona and persona not in PERSONAS: raise ValueError("Unsupported persona")
     rng = profile_rng(seed, index)
     reference_date = get_settings().generation_reference_date
-    age = _age(rng, age_range); stage = _stage(age)
+    # Direct library callers may omit geography; that means global, while an
+    # explicitly supplied country remains a specific-country request.
+    if country_mode is None:
+        country_mode = "specific" if country else "global"
+    # Geography and age use dedicated independent streams so country-specific
+    # evidence priors (urban share, age bands, gender, sector weights) never
+    # shift the shared personality stream: the same seed/index keeps the same
+    # archetype in every country.
+    geo_rng = profile_rng(seed, index, "geo")
+    age_rng = profile_rng(seed, index, "age")
+    context = get_context(geo_rng, country_mode, country, region, continent, countries)
+    age = _age(age_rng, age_range, context); stage = _stage(age)
     # Shared latent persona factors (joint model): these shape both the
     # personality anchor below and entertainment/media choice later.
     # Drawn before geography so they never depend on country.
@@ -649,11 +719,6 @@ def generate_profile(seed: int, index: int, country: str | None = None, age_rang
     # Keep legacy factor diversity as small blended noise for realism (optional)
     # Validate archetype signature remains recognizable but with variation
 
-    # Direct library callers may omit geography; that means global, while an
-    # explicitly supplied country remains a specific-country request.
-    if country_mode is None:
-        country_mode = "specific" if country else "global"
-    context = get_context(rng, country_mode, country, region, continent, countries)
     _refine_digital_adoption(rng, traits, context, age)
     # Personality name is the anchor archetype (ensures archetype → traits → behavior)
     personality_name = archetype
@@ -763,7 +828,7 @@ def generate_profile(seed: int, index: int, country: str | None = None, age_rang
     preferred_ott_platform = _conditional_platform(rng, context, language, traits)
 
     profile = {
-        "personality_name": personality_name, "profile_id": "", "profile_schema_version": PROFILE_SCHEMA_VERSION, "generation_reference_date": reference_date.isoformat(), "age": age, "age_band": next(f"{a}-{b}" for a,b,_ in AGE_BANDS if a <= age <= b), "date_of_birth": _date_of_birth_for_age(rng, age, reference_date).isoformat(), "gender": choose(rng, ["Female", "Male", "Non-binary"], [48, 48, 4]), "country": context.country, "country_code": context.country_code, "state": context.state, "city": context.city, "region": context.region, "urban_rural": context.urban_rural, "nationality": context.nationality, "primary_language": language, "preferred_language": language if traits["cultural_openness"] < .65 else choose_language(rng, list(context.languages), context.state, context.city), "population_segment": "Working professional" if employment.startswith("Employed") and career != "None" else life_stage, "life_stage": life_stage,
+        "personality_name": personality_name, "profile_id": "", "profile_schema_version": PROFILE_SCHEMA_VERSION, "generation_reference_date": reference_date.isoformat(), "age": age, "age_band": next(f"{a}-{b}" for a,b,_ in AGE_BANDS if a <= age <= b), "date_of_birth": _date_of_birth_for_age(rng, age, reference_date).isoformat(), "gender": _gender_draw(rng, context), "country": context.country, "country_code": context.country_code, "state": context.state, "city": context.city, "region": context.region, "urban_rural": context.urban_rural, "nationality": context.nationality, "primary_language": language, "preferred_language": language if traits["cultural_openness"] < .65 else choose_language(rng, list(context.languages), context.state, context.city), "population_segment": "Working professional" if employment.startswith("Employed") and career != "None" else life_stage, "life_stage": life_stage,
         "marital_status": marital, "relationship_status": "Married" if marital == "Married" else marital, "number_of_children": children, "dependents_count": dependents, "household_size": household_size, "family_type": family_type, "living_arrangement": living_arrangement, "parents_in_household": parents_in_house, "siblings_count": siblings,
         "education_level": education, "highest_degree": education, "field_of_study": field_of_study, "institution_type": institution_type, "graduation_status": graduation_status, "years_of_education": degree_years, "academic_orientation": _category((traits["openness"] + traits["conscientiousness"]) / 2), "education_quality": _category(.35 + income_factor * .28 + traits["conscientiousness"] * .22 + edu_score*0.15),
         "employment_status": employment, "occupation": occupation, "industry": industry, "job_function": job_function, "professional_training": professional_training, "career_level": career, "years_of_experience": experience, "employer_type": employer_type, "work_mode": work_mode, "weekly_work_hours": weekly_hours, "leadership_status": leadership_status, "job_stability": job_stability, "career_growth_orientation": growth_orientation,

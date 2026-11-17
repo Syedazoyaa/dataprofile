@@ -323,9 +323,10 @@ def test_reference_only_records_do_not_override_generation():
 
 def test_metadata_country_isolation():
     """Metadata for one country must not override another country's context.
-    Each country's approved_value lookup is keyed by (country_code, indicator_id)."""
+    Each country's reference lookup is keyed by (country_code, indicator_id)."""
     indicators = load_indicators()
-    # Pick two countries with approved urban_population_share
+    # Reference snapshot (World Bank WDI) drives the priors now; the legacy
+    # metadata records must still exist and be approved for their countries.
     at_record = indicators.get(("AT", "urban_population_share"))
     ca_record = indicators.get(("CA", "urban_population_share"))
     assert at_record is not None and at_record.get("approved_for_generation") is True
@@ -341,12 +342,17 @@ def test_metadata_country_isolation():
     # so the actual urban_rural values will differ stochastically. But we can
     # verify the context was built correctly by checking get_context directly.
     from app.geography import get_context
+    from app.reference_data import country_record
     from app.utils import profile_rng
     rng = profile_rng(1, 1)
     at_ctx = get_context(rng, country_mode="specific", country="Austria")
     ca_ctx = get_context(rng, country_mode="specific", country="Canada")
-    assert at_ctx.urban_share == at_record["value"], f"AT urban_share mismatch: {at_ctx.urban_share} != {at_record['value']}"
-    assert ca_ctx.urban_share == ca_record["value"], f"CA urban_share mismatch: {ca_ctx.urban_share} != {ca_record['value']}"
+    # Each country uses its own verified WDI value (snapshot stores proportions).
+    at_ref = country_record("AT", "urban_population_share")["value"]
+    ca_ref = country_record("CA", "urban_population_share")["value"]
+    assert abs(at_ctx.urban_share - at_ref) < 1e-9, f"AT urban_share mismatch: {at_ctx.urban_share} != {at_ref}"
+    assert abs(ca_ctx.urban_share - ca_ref) < 1e-9, f"CA urban_share mismatch: {ca_ctx.urban_share} != {ca_ref}"
+    assert abs(at_ctx.urban_share - ca_ctx.urban_share) > 0.05, "AT and CA urban shares should stay distinct"
 
 
 def test_metadata_value_range_validation():
