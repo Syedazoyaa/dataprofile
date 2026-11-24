@@ -56,6 +56,9 @@ INDICATORS = {
     "IT.NET.BBND.P2":     ("fixed_broadband_per100", "per 100 people", "wdi_batch3.csv"),
     "NY.GDP.PCAP.CD":     ("gdp_per_capita_usd_nominal", "current US$", "wdi_batch3.csv"),
     "NY.GDP.PCAP.PP.CD":  ("gdp_per_capita_ppp_intld", "current international $", "wdi_batch3.csv"),
+    # Current-local-currency national-income anchor used to refresh the
+    # generator's local annual-income scales.
+    "NY.GNP.PCAP.CN":     ("gni_per_capita_lcu", "current LCU", "wdi_income_scale.csv"),
     "SI.POV.GINI":        ("income_inequality_gini", "0-100", "wdi_batch4.csv"),
     "SL.UEM.TOTL.ZS":     ("unemployment_rate", "% of labour force", "wdi_batch4.csv"),
     "SL.TLF.CACT.ZS":     ("labour_force_participation", "% of pop 15+", "wdi_batch4.csv"),

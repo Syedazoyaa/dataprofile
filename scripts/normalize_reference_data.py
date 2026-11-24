@@ -66,6 +66,10 @@ SOURCES = [
     ("wdi_batch3.csv", "NY.GDP.PCAP.PP.CD", "gdp_per_capita_ppp_intld", "current_intl_usd",
      "World Bank", "World Development Indicators", "CC BY 4.0", False, "verified",
      ["GDP per capita is not personal income; used only to rank and sanity-check income scales."]),
+    ("wdi_income_scale.csv", "NY.GNP.PCAP.CN", "gni_per_capita_lcu", "current_lcu",
+     "World Bank", "World Development Indicators", "CC BY 4.0", False, "reference_only",
+     ["Gross national income per capita in current local currency. It is a national-income "
+      "anchor, not a wage or median-salary estimate; used to refresh the model's local income scale."]),
     ("wdi_batch4.csv", "SI.POV.GINI", "income_inequality_gini", "gini_0_100",
      "World Bank", "World Development Indicators (PIP)", "CC BY 4.0", True, "verified",
      ["Survey-based; reference years vary; converted to a damped lognormal spread (documented model)."]),

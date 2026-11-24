@@ -47,7 +47,7 @@ Every supported country is a first-class product citizen: no coverage tiers (dee
 
 `app/rules.py` returns structured validation violations and a coherence score derived from those checks. It verifies lifecycle, finance, country/currency, language, payment, transport, and food constraints before a profile is returned.
 
-These country distributions and income scales are explicit modeled assumptions for behavioral simulation, not claims of empirical representativeness. No external network calls occur at generation time; future calibration can replace context values with sourced public statistics.
+Country distributions are explicit modeled assumptions for behavioral simulation. Income scales are refreshed from the latest available World Bank GNI-per-capita observations in current local currency; this provides a consistent country-specific national-income anchor, not a wage or median-salary claim. No external network calls occur at generation time.
 
 ## Evidence-backed reference data (Raven layer)
 
@@ -143,11 +143,11 @@ Empty populations return zeroed structures (score `null`); missing fields are co
 
 ## Synthetic assumptions (explicit)
 
-- Region/places, language lists, currency, income scales, digital access and ecosystem lists are **synthetic modelling assumptions** for behavioural simulation, not sourced official statistics — except ISO 3166-1 codes/names, which follow the standard.
-- Income scales are relative simulation anchors (e.g. India 900000 INR vs USA 68000 USD); do not read them as real median incomes and do not convert between them. Each country is normalized to its own `income_scale` — no country is privileged as the income reference.
+- Region/places, language lists, currency, digital access and ecosystem lists are **synthetic modelling assumptions** for behavioural simulation, not sourced official statistics — except ISO 3166-1 codes/names, which follow the standard.
+- Income scales use the latest available World Bank **GNI per capita (current local currency)** as a consistent national-income anchor. They are still relative simulation anchors—not median wages—and must not be converted or pooled across currencies. Each country is normalized to its own `income_scale`; no country is privileged as the income reference.
 - Demographic, settlement, digital, employment and income-spread priors now come from the committed World Bank WDI snapshot (`data/reference/country_reference.json`, 2025 retrieval, CC BY 4.0) with per-record provenance and explicit evidence statuses — see the *Evidence-backed reference data* section above. Verified coverage spans 192 of 193 countries for the core priors (Vatican City is explicitly `missing`); reference-only records (literacy, nominal GDP, fixed broadband) never act as generation priors. The legacy registry context values remain the documented fallback where evidence is absent (`legacy_unverified`), never presented as statistics.
 - No external data is read at generation or startup time. Firecrawl was used only for one-time development research. Production generation reads the committed metadata snapshot and makes no network calls. Calibration of the remaining catalog indicators (age, education, household structure, payments, transport, media) remains future work.
-- Income modeling was changed in v1.2 to normalize each country to its own `income_scale` rather than to India's scale (900000 INR). Career base values are now relative multipliers of each country's scale. This removes the India-centric reference divisor and ensures global parity.
+- Income modeling normalizes each country to its own World Bank-refreshed `income_scale`. Career base values are relative multipliers of that local anchor, preserving global parity without an India-centric reference divisor.
 
 ## Performance and limits
 
